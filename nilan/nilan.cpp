@@ -14,68 +14,107 @@ static const char *TAG = "nilan";
 static const uint8_t CMD_READ_INPUT_REG = 0x04;
 static const uint8_t CMD_READ_HOLDING_REG = 0x03;
 static const uint8_t CMD_WRITE_MULTIPLE_REG = 0x10;
-static const uint16_t REGISTER_START[] = {0, 100, 0, 100};
-static const uint16_t REGISTER_COUNT[] = {12, 10, 1, 7};
-static const uint16_t REGISTER_WRITE[] = {4};
+//static const uint16_t REGISTER_START[] = {0, 100, 0, 100};
+//static const uint16_t REGISTER_COUNT[] = {12, 10, 1, 7};
+//static const uint16_t REGISTER_WRITE[] = {4};
 
 void Nilan::add_target_temp_callback(std::function<void(float)> &&callback) { target_temp_callback_.add(std::move(callback)); }
 void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
 
+void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
+  // Temperatures
+  auto raw_16 = get_16bit(data, 0);
+  float t0 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 6);
+  float t3 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 8);
+  float t4 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 14);
+  float t7 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 16);
+  float t8 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 30);
+  float t15 = raw_16 / 100.0;
+  raw_16 = get_16bit(data, 42);
+  float humidity = raw_16 / 100.0;
+
+  ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
+  
+  // Temperatures
+  if (this->temp_t0_sensor_ != nullptr)
+    this->temp_t0_sensor_->publish_state(t0);
+  if (this->temp_t3_sensor_ != nullptr)
+    this->temp_t3_sensor_->publish_state(t3);
+  if (this->temp_t4_sensor_ != nullptr)
+    this->temp_t4_sensor_->publish_state(t4);
+  if (this->temp_t7_sensor_ != nullptr)
+    this->temp_t7_sensor_->publish_state(t7);
+  if (this->temp_t8_sensor_ != nullptr)
+    this->temp_t8_sensor_->publish_state(t8);
+  if (this->temp_t15_sensor_ != nullptr)
+    this->temp_t15_sensor_->publish_state(t15);
+  if (this->measured_humidity_sensor_ != nullptr)
+    this->measured_humidity_sensor_->publish_state(humidity);
+}
+
+void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
+  auto alarm_count = get_16bit(data, 0);
+  if(this->active_alarms_sensor_ != nullptr)
+    this->active_alarms_sensor_->publish_state(alarm_count);
+}
+
+void Nilan::handleAirtempData(const std::vector<uint8_t> &data) {
+  ESP_LOGD(TAG, "Airtemp Data: %s", hexencode(data).c_str());
+  
+  auto value = get_16bit(data, 0);
+  if(this->cool_target_temp_sensor_ != nullptr)
+    this->cool_target_temp_sensor_->publish_state(value);
+
+  value = get_16bit(data, 2) / 100.0;
+  if(this->min_summer_temp_sensor_ != nullptr)
+    this->min_summer_temp_sensor_->publish_state(value);
+    
+  value = get_16bit(data, 4) / 100.0;
+  if(this->min_winter_temp_sensor_ != nullptr)
+    this->min_winter_temp_sensor_->publish_state(value);
+
+  value = get_16bit(data, 6) / 100.0;
+  if(this->max_summer_temp_sensor_ != nullptr)
+    this->max_summer_temp_sensor_->publish_state(value);
+    
+  value = get_16bit(data, 8) / 100.0;
+  if(this->max_winter_temp_sensor_ != nullptr)
+    this->max_winter_temp_sensor_->publish_state(value);
+}
+
 void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
-	uint32_t raw_32;
-	uint16_t raw_16;
-  
-	auto get_16bit = [&](size_t i) -> uint16_t {
-		return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]);
-	};
-  
-	this->waiting_ = false;
-	if (data.size() < REGISTER_COUNT[this->state_ - 1] * 2) {
-		ESP_LOGW(TAG, "Invalid data packet size (%d) for state %d", data.size(), this->state_);
-		return;
-	}
-	ESP_LOGD(TAG, "Data: %s", hexencode(data).c_str());
+  this->waiting_ = false;
+  //if (data.size() < REGISTER_COUNT[this->state_ - 1] * 2) {
+  //  ESP_LOGW(TAG, "Invalid data packet size (%d) for state %d", data.size(), this->state_);
+  //  return;
+  //}
+  //ESP_LOGD(TAG, "Data: %s", hexencode(data).c_str());
 
-	if (this->state_ == 1) {
-		this->state_ = 2;
-		
-		// Temperatures
-		raw_16 = get_16bit(0);
-		float t0 = raw_16 / 100.0;
-		raw_16 = get_16bit(6);
-		float t3 = raw_16 / 100.0;
-		raw_16 = get_16bit(8);
-		float t4 = raw_16 / 100.0;
-		raw_16 = get_16bit(14);
-		float t7 = raw_16 / 100.0;
-		raw_16 = get_16bit(16);
-		float t8 = raw_16 / 100.0;
-		raw_16 = get_16bit(30);
-		float t15 = raw_16 / 100.0;
-    raw_16 = get_16bit(42);
-		float humidity = raw_16 / 100.0;
+  switch(read_state_)
+  {
+    case Nilan::temperatures:
+      handleTemperatureData(data);
+      read_state_ = Nilan::alarms;
+      break;
+    case Nilan::alarms:
+      handleAlarmData(data);
+      read_state_ = Nilan::airtemp;
+      break;    
+    case Nilan::airtemp:
+      handleAirtempData(data);
+      read_state_ = Nilan::idle;
+      break;
+    case Nilan::idle:
+    default:
+      break;
+  }
 
-		ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
-		
-		// Temperatures
-		if (this->temp_t0_sensor_ != nullptr)
-			this->temp_t0_sensor_->publish_state(t0);
-		if (this->temp_t3_sensor_ != nullptr)
-			this->temp_t3_sensor_->publish_state(t3);
-		if (this->temp_t4_sensor_ != nullptr)
-			this->temp_t4_sensor_->publish_state(t4);
-		if (this->temp_t7_sensor_ != nullptr)
-			this->temp_t7_sensor_->publish_state(t7);
-		if (this->temp_t8_sensor_ != nullptr)
-			this->temp_t8_sensor_->publish_state(t8);
-		if (this->temp_t15_sensor_ != nullptr)
-			this->temp_t15_sensor_->publish_state(t15);
-		if (this->measured_humidity_sensor_ != nullptr)
-			this->measured_humidity_sensor_->publish_state(humidity);
-
-		return;
-	}
-	/*
+  /*
 	if (this->state_ == 2) {
 		this->state_ = 3;
 		this->CMD_FUNCTION_REG = 0x03;
@@ -156,42 +195,54 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
 void Nilan::loop() {
   long now = millis();
   // timeout after 15 seconds
-if (this->waiting_ && (now - this->last_send_ > 15000)) {
+  if (this->waiting_ && (now - this->last_send_ > 15000)) {
     ESP_LOGW(TAG, "timed out waiting for response");
     this->waiting_ = false;
   }
-  if (this->waiting_ || (this->state_ == 0) || (now - this->last_send_ < 1000))
+  if (this->waiting_ /*|| (this->state_ == 0)*/ || (now - this->last_send_ < 1000))
     return;
   this->last_send_ = now;
   //this->send(CMD_FUNCTION_REG, REGISTER_START[this->state_ - 1], REGISTER_COUNT[this->state_ - 1]);
   
-	ESP_LOGD(TAG, "Reading temperatures");
-  this->send(CMD_READ_INPUT_REG, 200, 23);
+  switch(read_state_) {
+    case Nilan::temperatures:
+      ESP_LOGD(TAG, "Reading temperatures");
+      this->send(CMD_READ_INPUT_REG, 200, 23);
+      break;
+    case Nilan::alarms:
+      ESP_LOGD(TAG, "Reading alarms");
+      this->send(CMD_READ_INPUT_REG, 400, 10);
+      break;
+    case Nilan::airtemp:
+      ESP_LOGD(TAG, "Reading airtemp");
+      this->send(CMD_READ_INPUT_REG, 1200, 6);
+      break;
+    case Nilan::idle:
+    default:
+      ESP_LOGD(TAG, "No reading");
+      break;
+  }
   
   this->waiting_ = true;
 }
 
-void Nilan::update() { this->state_ = 1; }
+void Nilan::update() { this->read_state_ = Nilan::temperatures; }
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-	
-	ESP_LOGD(TAG, "Writing new target temp to system.... (%f)",(new_target_temp * 10 - 100));
-	this->send(CMD_WRITE_MULTIPLE_REG, TEMPSET, (new_target_temp * 10 - 100));
+  ESP_LOGD(TAG, "Writing new target temp to system.... (%f)",(new_target_temp * 10 - 100));
+  this->send(CMD_WRITE_MULTIPLE_REG, TEMPSET, (new_target_temp * 10 - 100));
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
 {
-	
-	ESP_LOGD(TAG, "Writing new fan speed to system.... (%i)",new_fan_speed);
-	this->send(CMD_WRITE_MULTIPLE_REG, VENTSET, new_fan_speed);
+  ESP_LOGD(TAG, "Writing new fan speed to system.... (%i)",new_fan_speed);
+  this->send(CMD_WRITE_MULTIPLE_REG, VENTSET, new_fan_speed);
 }
-
 
 void Nilan::dump_config() {
   ESP_LOGCONFIG(TAG, "NILAN:");
   ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
-  
 
   LOG_SENSOR("", "Temp_t0", this->temp_t0_sensor_);
   LOG_SENSOR("", "Temp_t3", this->temp_t3_sensor_);
@@ -200,6 +251,9 @@ void Nilan::dump_config() {
   LOG_SENSOR("", "Temp_t8", this->temp_t8_sensor_);
   LOG_SENSOR("", "Temp_t15", this->temp_t15_sensor_);
   LOG_SENSOR("", "Measured_Humidity", this->measured_humidity_sensor_);
+  LOG_SENSOR("", "ActiveAlarms", this->active_alarms_sensor_);
+  LOG_SENSOR("", "CoolSetTemp", this->cool_target_temp_sensor_);
+  
   /*LOG_SENSOR("", "Humidity_Calculated_Setpoint", this->humidity_calculated_setpoint_sensor_);
   LOG_SENSOR("", "Alarm_Bit", this->alarm_bit_sensor_);
   LOG_SENSOR("", "Inlet_Fan", this->inlet_fan_sensor_);
