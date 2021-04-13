@@ -18,8 +18,8 @@ modbus:
   uart_id: uart_modbus
  
 nilan:
-  address: 1
-  update_interval: 60s
+  address: 30
+  update_interval: 30s
  
 sensor:
   - platform: nilan
@@ -33,31 +33,29 @@ sensor:
 
 climate:
   - platform: nilan
-    name: nilan
-    sensor: nilan_temp_t1
+    name: Nilan
+    sensor: controller_temp_t0
 ```
 
 List of optional sensors:
-- `temp_t1`
-- `temp_t3`
-- `temp_t4`
-- `temp_t7`
-- `temp_t2_panel`
-- `measured_humidity`
-- `humidity_calculated_setpoint`
-- `alarm_bit`
-- `inlet_fan`
-- `extract_fan`
-- `bypass`
-- `watervalve`
-- `humidity_fan_control`
-- `bypass_on_off`      
-- `heat`
-- `timer`
-
+- temp_t3:
+- temp_t4:
+- temp_t7:
+- temp_t8:
+- temp_t15:
+- measured_humidity:
+- active_alarms:
+- speed_mode:
+- cool_target_temp:
+- min_summer_temp:
+- max_summer_temp:
+- min_winter_temp:
+- max_winter_temp:
 
 TO-DO:
-1. .....
+1. Add support for more sensors according to the description (https://fr.nilan.dk/Files//Filer/Download/French/Documentation/Guide%20de%20montage/Modbus%20CTS%20602/MODBUS_CTS-602_2.30_Installation-and-user-guide.pdf)
+2. Sometimes sensors get some high values (humidity can be 600). This needs to be looked at
+3. Code should be better structured
 
 Kudos:
 A bit thanks to ssieb from the ESPHome Discord community for assisting i making this happen! https://github.com/ssieb
