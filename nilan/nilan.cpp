@@ -27,7 +27,7 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Temperature Data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Temperature Data: %s", hexencode(data).c_str());
   
   // Temperatures
   auto raw_16 = get_16bit(data, 0);
@@ -70,19 +70,20 @@ void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Alarm Data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Alarm Data: %s", hexencode(data).c_str());
+  
   auto alarm_count = get_16bit(data, 0);
   if(this->active_alarms_sensor_ != nullptr)
     this->active_alarms_sensor_->publish_state(alarm_count);
 }
 
-void Nilan::handleAirtempData(const std::vector<uint8_t> &data) {
+void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   if(data.size() != 12) {
-    ESP_LOGD(TAG, "Airtemp Data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Airtemp Holding data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
-  ESP_LOGD(TAG, "Airtemp Data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
   if(this->cool_target_temp_sensor_ != nullptr)
@@ -105,6 +106,23 @@ void Nilan::handleAirtempData(const std::vector<uint8_t> &data) {
     this->max_winter_temp_sensor_->publish_state(value);
 }
 
+void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
+  if(data.size() != 14) {
+    ESP_LOGD(TAG, "Airtemp Input data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
+  
+  auto value = get_16bit(data, 0);
+  if(this->is_summer_sensor_ != nullptr)
+    this->is_summer_sensor_->publish_state(value);
+
+  value = get_16bit(data, 8) / 100.0;
+  if(this->heat_exchange_efficiency_sensor_ != nullptr)
+    this->heat_exchange_efficiency_sensor_->publish_state(value);
+}
+
 void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
   this->waiting_ = false;
   //if (data.size() < REGISTER_COUNT[this->state_ - 1] * 2) {
@@ -121,10 +139,14 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::alarms:
       handleAlarmData(data);
-      read_state_ = Nilan::airtemp;
+      read_state_ = Nilan::airtemp_holding;
       break;    
-    case Nilan::airtemp:
-      handleAirtempData(data);
+    case Nilan::airtemp_holding:
+      handleAirtempHoldingData(data);
+      read_state_ = Nilan::airtemp_input;
+      break;
+    case Nilan::airtemp_input:
+      handleAirtempInputData(data);
       read_state_ = Nilan::idle;
       break;
     case Nilan::idle:
@@ -231,9 +253,13 @@ void Nilan::loop() {
       ESP_LOGD(TAG, "Reading alarms");
       this->send(CMD_READ_INPUT_REG, 400, 10);
       break;
-    case Nilan::airtemp:
-      ESP_LOGD(TAG, "Reading airtemp");
-      this->send(CMD_READ_INPUT_REG, 1200, 6);
+    case Nilan::airtemp_holding:
+      ESP_LOGD(TAG, "Reading airtemp holding");
+      this->send(CMD_READ_HOLDING_REG, 1200, 6);
+      break;
+    case Nilan::airtemp_input:
+      ESP_LOGD(TAG, "Reading airtemp input");
+      this->send(CMD_READ_INPUT_REG, 1200, 7);
       break;
     case Nilan::idle:
     default:

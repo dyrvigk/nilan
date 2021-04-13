@@ -36,6 +36,8 @@ CONF_TEMP_MIN_SUMMER = "min_summer_temp"
 CONF_TEMP_MIN_WINTER = "min_winter_temp"
 CONF_TEMP_MAX_SUMMER = "max_summer_temp"
 CONF_TEMP_MAX_WINTER = "max_winter_temp"
+CONF_IS_SUMMER = "is_summer"
+CONF_HEAT_EXCHANGE_EFFICIENCY = "heat_exchange_efficiency"
 
 #CONF_HUMIDITY_CALCULATED_SETPOINT = "humidity_calculated_setpoint"
 #CONF_ALARM_BIT = "alarm_bit"
@@ -65,6 +67,8 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_TEMP_MAX_SUMMER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_MIN_WINTER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_MAX_WINTER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
+    cv.Optional(CONF_IS_SUMMER): sensor.sensor_schema(UNIT_EMPTY, ICON_CHECK_CIRCLE_OUTLINE, 1, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_HEAT_EXCHANGE_EFFICIENCY): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
     
 #    cv.Optional(CONF_HUMIDITY_CALCULATED_SETPOINT): sensor.sensor_schema(UNIT_PERCENT, ICON_WATER_PERCENT, 1, DEVICE_CLASS_HUMIDITY),
 #    cv.Optional(CONF_ALARM_BIT): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1, DEVICE_CLASS_EMPTY),
@@ -136,6 +140,14 @@ def to_code(config):
         conf = config[CONF_TEMP_MAX_WINTER]
         sens = yield sensor.new_sensor(conf)
         cg.add(nilan.set_max_winter_temp_sensor(sens))
+    if CONF_IS_SUMMER in config:
+        conf = config[CONF_IS_SUMMER]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_is_summer_sensor(sens))
+    if CONF_HEAT_EXCHANGE_EFFICIENCY in config:
+        conf = config[CONF_HEAT_EXCHANGE_EFFICIENCY]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_heat_exchange_efficiency_sensor(sens))
         
 #    if CONF_HUMIDITY_CALCULATED_SETPOINT in config:
 #        conf = config[CONF_HUMIDITY_CALCULATED_SETPOINT]
