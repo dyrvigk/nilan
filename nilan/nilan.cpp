@@ -22,6 +22,13 @@ void Nilan::add_target_temp_callback(std::function<void(float)> &&callback) { ta
 void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
 
 void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
+  if(data.size() != 46) {
+    ESP_LOGD(TAG, "Temperature Data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Temperature Data: %s", hexencode(data).c_str());
+  
   // Temperatures
   auto raw_16 = get_16bit(data, 0);
   float t0 = raw_16 / 100.0;
@@ -58,12 +65,23 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
 }
 
 void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
+  if(data.size() != 20) {
+    ESP_LOGD(TAG, "Alarm Data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Alarm Data: %s", hexencode(data).c_str());
   auto alarm_count = get_16bit(data, 0);
   if(this->active_alarms_sensor_ != nullptr)
     this->active_alarms_sensor_->publish_state(alarm_count);
 }
 
 void Nilan::handleAirtempData(const std::vector<uint8_t> &data) {
+  if(data.size() != 12) {
+    ESP_LOGD(TAG, "Airtemp Data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
   ESP_LOGD(TAG, "Airtemp Data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
