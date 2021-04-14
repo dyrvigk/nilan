@@ -105,6 +105,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   
  private:
    uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
+   float convertToTemperature(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
 };
 
 }  // namespace nilan

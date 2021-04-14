@@ -31,21 +31,21 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   
   // Temperatures
   auto raw_16 = get_16bit(data, 0);
-  float t0 = raw_16 / 100.0;
+  float t0 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 6);
-  float t3 = raw_16 / 100.0;
+  float t3 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 8);
-  float t4 = raw_16 / 100.0;
+  float t4 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 14);
-  float t7 = raw_16 / 100.0;
+  float t7 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 16);
-  float t8 = raw_16 / 100.0;
+  float t8 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 30);
-  float t15 = raw_16 / 100.0;
+  float t15 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 42);
   float humidity = raw_16 / 100.0;
 
-  ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
+  //ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
   
   // Temperatures
   if (this->temp_t0_sensor_ != nullptr)
@@ -87,23 +87,23 @@ void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   
   auto value = get_16bit(data, 0);
   if(this->cool_target_temp_sensor_ != nullptr)
-    this->cool_target_temp_sensor_->publish_state(value);
+    this->cool_target_temp_sensor_->publish_state(convertToTemperature(value));
 
-  value = get_16bit(data, 2) / 100.0;
+  value = get_16bit(data, 2);
   if(this->min_summer_temp_sensor_ != nullptr)
-    this->min_summer_temp_sensor_->publish_state(value);
+    this->min_summer_temp_sensor_->publish_state(convertToTemperature(value));
     
-  value = get_16bit(data, 4) / 100.0;
+  value = get_16bit(data, 4);
   if(this->min_winter_temp_sensor_ != nullptr)
-    this->min_winter_temp_sensor_->publish_state(value);
+    this->min_winter_temp_sensor_->publish_state(convertToTemperature(value));
 
-  value = get_16bit(data, 6) / 100.0;
+  value = get_16bit(data, 6);
   if(this->max_summer_temp_sensor_ != nullptr)
-    this->max_summer_temp_sensor_->publish_state(value);
+    this->max_summer_temp_sensor_->publish_state(convertToTemperature(value));
     
-  value = get_16bit(data, 8) / 100.0;
+  value = get_16bit(data, 8);
   if(this->max_winter_temp_sensor_ != nullptr)
-    this->max_winter_temp_sensor_->publish_state(value);
+    this->max_winter_temp_sensor_->publish_state(convertToTemperature(value));
 }
 
 void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
@@ -112,7 +112,7 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
   if(this->is_summer_sensor_ != nullptr)
