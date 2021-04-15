@@ -123,6 +123,108 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
     this->heat_exchange_efficiency_sensor_->publish_state(value);
 }
 
+void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
+  if(data.size() != 8) {
+    ESP_LOGD(TAG, "Control state data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Control state data: %s", hexencode(data).c_str());
+  
+  auto value = get_16bit(data, 0);
+  if(this->on_off_state_sensor_ != nullptr)
+    this->on_off_state_sensor_->publish_state(value);
+
+  value = get_16bit(data, 2);
+  if(this->operation_mode_sensor_ != nullptr)
+  {
+    std::string mode_str;
+    switch(value)
+    {
+      case 0:
+        mode_str = "Off";
+        break;
+      case 1:
+        mode_str = "Heat";
+        break;
+      case 2:
+        mode_str = "Cool";
+        break;
+      case 3:
+        mode_str = "Auto";
+        break;
+      case 4:
+        mode_str = "Service";
+        break;
+      default:
+        mode_str = "Unknown";
+        break;
+    }
+    
+    ESP_LOGD(TAG, "Mode: %s", mode_str.c_str());
+
+    this->operation_mode_sensor_->publish_state(value); // Convert to text sensor?
+  }
+  
+  value = get_16bit(data, 4);
+  if(this->control_state_sensor_ != nullptr)
+  {
+    std::string state_str;
+    switch(value)
+    {
+      case 0:
+        state_str = "Off";
+        break;
+      case 1:
+        state_str = "Shift";
+        break;
+      case 2:
+        state_str = "Stop";
+        break;
+      case 3:
+        state_str = "Start";
+        break;
+      case 4:
+        state_str = "Standby";
+        break;
+      case 5:
+        state_str = "Ventilation stop";
+        break;
+      case 6:
+        state_str = "Ventilation";
+        break;
+      case 7:
+        state_str = "Heating";
+        break;
+      case 8:
+        state_str = "Cooling";
+        break;
+      case 9:
+        state_str = "Hot water";
+        break;
+      case 10:
+        state_str = "Legionella";
+        break;
+      case 11:
+        state_str = "Cooling + hot water";
+        break;
+      case 12:
+        state_str = "Central heating";
+        break;
+      case 13:
+        state_str = "Defrost";
+        break;
+      default:
+        state_str = "Unknown";
+        break;
+    }
+    
+    ESP_LOGD(TAG, "State: %s", state_str.c_str());
+
+    this->control_state_sensor_->publish_state(value); // Convert to text sensor?
+  }
+}
+
 void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
   this->waiting_ = false;
   //if (data.size() < REGISTER_COUNT[this->state_ - 1] * 2) {
@@ -147,6 +249,10 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::airtemp_input:
       handleAirtempInputData(data);
+      read_state_ = Nilan::control_state;
+      break;
+    case Nilan::control_state:
+      handleControlStateData(data);
       read_state_ = Nilan::idle;
       break;
     case Nilan::idle:
@@ -260,6 +366,10 @@ void Nilan::loop() {
     case Nilan::airtemp_input:
       ESP_LOGD(TAG, "Reading airtemp input");
       this->send(CMD_READ_INPUT_REG, 1200, 7);
+      break;
+    case Nilan::control_state:
+      ESP_LOGD(TAG, "Reading control state input");
+      this->send(CMD_READ_INPUT_REG, 1000, 4);
       break;
     case Nilan::idle:
     default:

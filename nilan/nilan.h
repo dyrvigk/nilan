@@ -25,6 +25,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_max_summer_temp_sensor(sensor::Sensor *max_summer_temp_sensor) { max_summer_temp_sensor_ = max_summer_temp_sensor; }
   void set_is_summer_sensor(sensor::Sensor *is_summer_sensor) { is_summer_sensor_ = is_summer_sensor; }
   void set_heat_exchange_efficiency_sensor(sensor::Sensor *heat_exchange_efficiency_sensor) { heat_exchange_efficiency_sensor_ = heat_exchange_efficiency_sensor; }
+  void set_on_off_state_sensor(sensor::Sensor *on_off_state_sensor) { on_off_state_sensor_ = on_off_state_sensor; }
+  void set_operation_mode_sensor(sensor::Sensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
+  void set_control_state_sensor(sensor::Sensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
   
 //  void set_humidity_calculated_setpoint_sensor(sensor::Sensor *humidity_calculated_setpoint_sensor) { humidity_calculated_setpoint_sensor_ = humidity_calculated_setpoint_sensor; }
 //  void set_alarm_bit_sensor(sensor::Sensor *alarm_bit_sensor) { alarm_bit_sensor_ = alarm_bit_sensor; }
@@ -51,6 +54,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void handleAlarmData(const std::vector<uint8_t> &data);
   void handleAirtempHoldingData(const std::vector<uint8_t> &data);
   void handleAirtempInputData(const std::vector<uint8_t> &data);
+  void handleControlStateData(const std::vector<uint8_t> &data);
   
   void writeTargetTemperature(float new_target_temp);
   void writeFanMode(int new_fan_speed);
@@ -63,7 +67,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     temperatures = 1,
     alarms = 2,
     airtemp_holding = 3,
-    airtemp_input = 4
+    airtemp_input = 4,
+    control_state = 5
   };
   
   ReadState read_state_{idle};
@@ -86,6 +91,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *max_winter_temp_sensor_;
   sensor::Sensor *is_summer_sensor_;
   sensor::Sensor *heat_exchange_efficiency_sensor_;
+  sensor::Sensor *on_off_state_sensor_;
+  sensor::Sensor *operation_mode_sensor_;
+  sensor::Sensor *control_state_sensor_;
   
   //sensor::Sensor *alarm_bit_sensor_;
   //sensor::Sensor *humidity_calculated_setpoint_sensor_;

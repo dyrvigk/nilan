@@ -38,6 +38,9 @@ CONF_TEMP_MAX_SUMMER = "max_summer_temp"
 CONF_TEMP_MAX_WINTER = "max_winter_temp"
 CONF_IS_SUMMER = "is_summer"
 CONF_HEAT_EXCHANGE_EFFICIENCY = "heat_exchange_efficiency"
+CONF_ON_OFF_STATE = "on_off_state"
+CONF_OPERATION_MODE = "operation_mode"
+CONF_CONTROL_STATE = "control_state"
 
 #CONF_HUMIDITY_CALCULATED_SETPOINT = "humidity_calculated_setpoint"
 #CONF_ALARM_BIT = "alarm_bit"
@@ -67,8 +70,11 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_TEMP_MAX_SUMMER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_MIN_WINTER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_MAX_WINTER): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
-    cv.Optional(CONF_IS_SUMMER): sensor.sensor_schema(UNIT_EMPTY, ICON_CHECK_CIRCLE_OUTLINE, 1, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_IS_SUMMER): sensor.sensor_schema(UNIT_EMPTY, ICON_CHECK_CIRCLE_OUTLINE, 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_HEAT_EXCHANGE_EFFICIENCY): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_ON_OFF_STATE): sensor.sensor_schema(UNIT_EMPTY, ICON_CHECK_CIRCLE_OUTLINE, 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_OPERATION_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_CONTROL_STATE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
     
 #    cv.Optional(CONF_HUMIDITY_CALCULATED_SETPOINT): sensor.sensor_schema(UNIT_PERCENT, ICON_WATER_PERCENT, 1, DEVICE_CLASS_HUMIDITY),
 #    cv.Optional(CONF_ALARM_BIT): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1, DEVICE_CLASS_EMPTY),
@@ -148,7 +154,19 @@ def to_code(config):
         conf = config[CONF_HEAT_EXCHANGE_EFFICIENCY]
         sens = yield sensor.new_sensor(conf)
         cg.add(nilan.set_heat_exchange_efficiency_sensor(sens))
-        
+    if CONF_ON_OFF_STATE in config:
+        conf = config[CONF_ON_OFF_STATE]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_on_off_state_sensor(sens))
+    if CONF_OPERATION_MODE in config:
+        conf = config[CONF_OPERATION_MODE]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_operation_mode_sensor(sens))
+    if CONF_CONTROL_STATE in config:
+        conf = config[CONF_CONTROL_STATE]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_control_state_sensor(sens))
+
 #    if CONF_HUMIDITY_CALCULATED_SETPOINT in config:
 #        conf = config[CONF_HUMIDITY_CALCULATED_SETPOINT]
 #        sens = yield sensor.new_sensor(conf)
