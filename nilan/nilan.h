@@ -65,6 +65,15 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void handleControlStateData(const std::vector<uint8_t> &data);
   void handleVersionInfoData(const std::vector<uint8_t> &data);
   
+  void publishState(sensor::Sensor * sensor, float value) {
+    if(sensor && sensor->state != value)
+      sensor->publish_state(value);
+  }   
+  void publishState(binary_sensor::BinarySensor * sensor, bool value) {
+    if(sensor && sensor->state != value)
+      sensor->publish_state(value);
+  }
+
   void writeTargetTemperature(float new_target_temp);
   void writeFanMode(int new_fan_speed);
   

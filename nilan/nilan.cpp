@@ -45,20 +45,13 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   //ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
   
   // Temperatures
-  if (this->temp_t0_sensor_ != nullptr)
-    this->temp_t0_sensor_->publish_state(t0);
-  if (this->temp_t3_sensor_ != nullptr)
-    this->temp_t3_sensor_->publish_state(t3);
-  if (this->temp_t4_sensor_ != nullptr)
-    this->temp_t4_sensor_->publish_state(t4);
-  if (this->temp_t7_sensor_ != nullptr)
-    this->temp_t7_sensor_->publish_state(t7);
-  if (this->temp_t8_sensor_ != nullptr)
-    this->temp_t8_sensor_->publish_state(t8);
-  if (this->temp_t15_sensor_ != nullptr)
-    this->temp_t15_sensor_->publish_state(t15);
-  if (this->measured_humidity_sensor_ != nullptr)
-    this->measured_humidity_sensor_->publish_state(humidity);
+  publishState(this->temp_t0_sensor_, t0);
+  publishState(this->temp_t3_sensor_, t3);
+  publishState(this->temp_t4_sensor_, t4);
+  publishState(this->temp_t7_sensor_, t7);
+  publishState(this->temp_t8_sensor_, t8);
+  publishState(this->temp_t15_sensor_, t15);
+  publishState(this->measured_humidity_sensor_, humidity);
 }
 
 void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
@@ -70,8 +63,7 @@ void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
   //ESP_LOGD(TAG, "Alarm Data: %s", hexencode(data).c_str());
   
   auto alarm_count = get_16bit(data, 0);
-  if(this->active_alarms_sensor_ != nullptr)
-    this->active_alarms_sensor_->publish_state(alarm_count);
+  publishState(this->active_alarms_sensor_, alarm_count);
 }
 
 void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
@@ -82,13 +74,10 @@ void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
   
   ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
   
-  auto filter_alarm = get_16bit(data, 2);
-  if(this->filter_ok_sensor_ != nullptr)
-    this->filter_ok_sensor_->publish_state(!filter_alarm);
-
+  auto filter_alarm = get_16bit(data, 2); 
   auto door_open = get_16bit(data, 4);
-  if(this->door_open_sensor_ != nullptr)
-    this->door_open_sensor_->publish_state(door_open);
+  publishState(this->filter_ok_sensor_, !filter_alarm);
+  publishState(this->door_open_sensor_, door_open);
 }
 
 void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
@@ -100,24 +89,19 @@ void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   //ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
-  if(this->cool_target_temp_sensor_ != nullptr)
-    this->cool_target_temp_sensor_->publish_state(convertToTemperature(value));
+  publishState(this->cool_target_temp_sensor_, convertToTemperature(value));
 
   value = get_16bit(data, 2);
-  if(this->min_summer_temp_sensor_ != nullptr)
-    this->min_summer_temp_sensor_->publish_state(convertToTemperature(value));
-    
+  publishState(this->min_summer_temp_sensor_, convertToTemperature(value));
+
   value = get_16bit(data, 4);
-  if(this->min_winter_temp_sensor_ != nullptr)
-    this->min_winter_temp_sensor_->publish_state(convertToTemperature(value));
+  publishState(this->min_winter_temp_sensor_, convertToTemperature(value));
 
   value = get_16bit(data, 6);
-  if(this->max_summer_temp_sensor_ != nullptr)
-    this->max_summer_temp_sensor_->publish_state(convertToTemperature(value));
+  publishState(this->max_summer_temp_sensor_, convertToTemperature(value));
     
   value = get_16bit(data, 8);
-  if(this->max_winter_temp_sensor_ != nullptr)
-    this->max_winter_temp_sensor_->publish_state(convertToTemperature(value));
+  publishState(this->max_winter_temp_sensor_, convertToTemperature(value));
 }
 
 void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
@@ -129,12 +113,10 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
   //ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
-  if(this->is_summer_sensor_ != nullptr)
-    this->is_summer_sensor_->publish_state(value);
+  publishState(this->is_summer_sensor_, value);
 
   value = get_16bit(data, 8) / 100.0;
-  if(this->heat_exchange_efficiency_sensor_ != nullptr)
-    this->heat_exchange_efficiency_sensor_->publish_state(value);
+  publishState(this->heat_exchange_efficiency_sensor_, value);
 }
 
 void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
@@ -146,8 +128,7 @@ void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
   ESP_LOGD(TAG, "Control state data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
-  if(this->on_off_state_sensor_ != nullptr)
-    this->on_off_state_sensor_->publish_state(value);
+  publishState(this->on_off_state_sensor_, value);
 
   value = get_16bit(data, 2);
   if(this->operation_mode_sensor_ != nullptr)
@@ -176,8 +157,7 @@ void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
     }
     
     ESP_LOGD(TAG, "Mode: %s", mode_str.c_str());
-
-    this->operation_mode_sensor_->publish_state(value); // Convert to text sensor?
+    publishState(this->operation_mode_sensor_, value); // Convert to text sensor?
   }
   
   value = get_16bit(data, 4);
@@ -234,8 +214,7 @@ void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
     }
     
     ESP_LOGD(TAG, "State: %s", state_str.c_str());
-
-    this->control_state_sensor_->publish_state(value); // Convert to text sensor?
+    publishState(this->control_state_sensor_, value); // Convert to text sensor?
   }
 }
 
@@ -300,83 +279,6 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
     default:
       break;
   }
-
-  /*
-	if (this->state_ == 2) {
-		this->state_ = 3;
-		this->CMD_FUNCTION_REG = 0x03;
-		
-		raw_16 = get_16bit(2);
-		float alarm_bit = raw_16;
-		raw_16 = get_16bit(4);
-		float inlet_fan = raw_16;
-		raw_16 = get_16bit(6);
-		float extract_fan = raw_16;
-		raw_16 = get_16bit(8);
-		float bypass = raw_16;
-		raw_16 = get_16bit(10);
-		float watervalve = raw_16;
-		raw_16 = get_16bit(12);
-		float humidity_fan_control = raw_16;
-		raw_16 = get_16bit(14);
-		float bypass_on_off = raw_16;
-		
-		ESP_LOGD(TAG, "Alarm: Alarm=%.2f", alarm_bit);
-		ESP_LOGD(TAG, "Runinfo: Inlet=%.2f %%, Extract=%.2f %%, Bypass=%.2f %%, Watervalve=%.2f %%, Humidity_fan_control=%.2f %%, Bypass_on_off=%.2f", inlet_fan, extract_fan, bypass, watervalve, humidity_fan_control, bypass_on_off);
-		if (this->alarm_bit_sensor_ != nullptr)
-			this->alarm_bit_sensor_->publish_state(alarm_bit);
-		if (this->inlet_fan_sensor_ != nullptr)
-			this->inlet_fan_sensor_->publish_state(inlet_fan);
-		if (this->extract_fan_sensor_ != nullptr)
-			this->extract_fan_sensor_->publish_state(extract_fan);
-		if (this->bypass_sensor_ != nullptr)
-			this->bypass_sensor_->publish_state(bypass);
-		if (this->watervalve_sensor_ != nullptr)
-			this->watervalve_sensor_->publish_state(watervalve);
-		if (this->humidity_fan_control_sensor_ != nullptr)
-			this->humidity_fan_control_sensor_->publish_state(humidity_fan_control);
-		if (this->bypass_on_off_sensor_ != nullptr)
-			this->bypass_on_off_sensor_->publish_state(bypass_on_off);
-		
-		
-		return;
-	}
-	
-	if (this->state_ == 3) {
-		this->state_ = 4;
-		this->CMD_FUNCTION_REG = 0x03;
-		
-		raw_16 = get_16bit(0);
-		float target_temp = (raw_16 + 100) / 10;
-		
-		ESP_LOGD(TAG, "Target_temp: Target_Temp=%.2f", target_temp);
-		if (this->target_temp_sensor_ != nullptr)
-			this->target_temp_sensor_->publish_state(target_temp);
-		target_temp_callback_.call(target_temp);
-		return;
-	}
-	
-	if (this->state_ == 4) {
-		this->state_ = 0;
-		this->CMD_FUNCTION_REG = 0x04;
-		
-		raw_16 = get_16bit(0);
-		int speed_mode = raw_16;
-		raw_16 = get_16bit(4);
-		float heat = raw_16;
-		raw_16 = get_16bit(12);
-		float timer = raw_16;
-		
-		ESP_LOGD(TAG, "Speed: Speed_Mode=%d, heat=%.2f, timer=%.2f" , speed_mode, heat, timer);
-		if (this->speed_mode_sensor_ != nullptr)
-			this->speed_mode_sensor_->publish_state(speed_mode);
-		fan_speed_callback_.call(speed_mode);
-		if (this->heat_sensor_ != nullptr)
-			this->heat_sensor_->publish_state(heat);
-		if (this->timer_sensor_ != nullptr)
-			this->timer_sensor_->publish_state(timer);
-		return;
-	}*/
 }
 
 void Nilan::loop() {
@@ -420,8 +322,6 @@ void Nilan::loop() {
       ESP_LOGD(TAG, "Reading version info");
       this->send(CMD_READ_INPUT_REG, 0, 4);
       break;
-      
-
     case Nilan::idle:
     default:
       ESP_LOGD(TAG, "No reading");
