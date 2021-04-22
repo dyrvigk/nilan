@@ -14,9 +14,6 @@ static const char *TAG = "nilan";
 static const uint8_t CMD_READ_INPUT_REG = 0x04;
 static const uint8_t CMD_READ_HOLDING_REG = 0x03;
 static const uint8_t CMD_WRITE_MULTIPLE_REG = 0x10;
-//static const uint16_t REGISTER_START[] = {0, 100, 0, 100};
-//static const uint16_t REGISTER_COUNT[] = {12, 10, 1, 7};
-//static const uint16_t REGISTER_WRITE[] = {4};
 
 void Nilan::add_target_temp_callback(std::function<void(float)> &&callback) { target_temp_callback_.add(std::move(callback)); }
 void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
@@ -75,6 +72,23 @@ void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
   auto alarm_count = get_16bit(data, 0);
   if(this->active_alarms_sensor_ != nullptr)
     this->active_alarms_sensor_->publish_state(alarm_count);
+}
+
+void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
+  if(data.size() != 28) {
+    ESP_LOGD(TAG, "Specific Alarm data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
+  
+  auto filter_alarm = get_16bit(data, 2);
+  if(this->filter_ok_sensor_ != nullptr)
+    this->filter_ok_sensor_->publish_state(!filter_alarm);
+
+  auto door_open = get_16bit(data, 4);
+  if(this->door_open_sensor_ != nullptr)
+    this->door_open_sensor_->publish_state(door_open);
 }
 
 void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
@@ -225,6 +239,25 @@ void Nilan::handleControlStateData(const std::vector<uint8_t> &data) {
   }
 }
 
+void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
+  if(data.size() != 8) {
+    ESP_LOGD(TAG, "Version info data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+
+  ESP_LOGD(TAG, "Version info data: %s", hexencode(data).c_str());
+  
+  char versionStr[50]; // enough to hold all numbers up to 64-bits
+  sprintf(versionStr, "Bus version: %u - Version: %c%c%c%c%c%c", 
+    get_16bit(data, 0),
+    data[3], data[2],
+    data[5], data[4],
+    data[7], data[6]);
+
+  //if(this->version_info_sensor_ != nullptr)
+  //  this->version_info_sensor_->publish_state(versionStr);
+}
+
 void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
   this->waiting_ = false;
   //if (data.size() < REGISTER_COUNT[this->state_ - 1] * 2) {
@@ -241,6 +274,10 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::alarms:
       handleAlarmData(data);
+      read_state_ = Nilan::specific_alarms;
+      break; 
+    case Nilan::specific_alarms:
+      handleSpecificAlarms(data);
       read_state_ = Nilan::airtemp_holding;
       break;    
     case Nilan::airtemp_holding:
@@ -253,6 +290,10 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::control_state:
       handleControlStateData(data);
+      read_state_ = Nilan::version_info;
+      break;
+    case Nilan::version_info:
+      handleVersionInfoData(data);
       read_state_ = Nilan::idle;
       break;
     case Nilan::idle:
@@ -359,6 +400,10 @@ void Nilan::loop() {
       ESP_LOGD(TAG, "Reading alarms");
       this->send(CMD_READ_INPUT_REG, 400, 10);
       break;
+    case Nilan::specific_alarms:
+      ESP_LOGD(TAG, "Reading specific alarms");
+      this->send(CMD_READ_INPUT_REG, 100, 14);
+      break;
     case Nilan::airtemp_holding:
       ESP_LOGD(TAG, "Reading airtemp holding");
       this->send(CMD_READ_HOLDING_REG, 1200, 6);
@@ -371,6 +416,12 @@ void Nilan::loop() {
       ESP_LOGD(TAG, "Reading control state input");
       this->send(CMD_READ_INPUT_REG, 1000, 4);
       break;
+    case Nilan::version_info:
+      ESP_LOGD(TAG, "Reading version info");
+      this->send(CMD_READ_INPUT_REG, 0, 4);
+      break;
+      
+
     case Nilan::idle:
     default:
       ESP_LOGD(TAG, "No reading");

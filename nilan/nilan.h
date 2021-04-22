@@ -3,13 +3,19 @@
 #include "esphome/core/component.h"
 #include "esphome/core/helpers.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
+//#include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/modbus/modbus.h"
 
 namespace esphome {
 namespace nilan {
 
 class Nilan : public PollingComponent, public modbus::ModbusDevice {
- public:
+ public: 
+  /*Nilan() {
+    operation_mode_sensor_ = new text_sensor::TextSensor("Operation mode");
+    this->register_text_sensor(operation_mode_sensor_);
+  }*/
   void set_temp_t0_sensor(sensor::Sensor * temp_t0_sensor) { temp_t0_sensor_ = temp_t0_sensor; }
   void set_temp_t3_sensor(sensor::Sensor * temp_t3_sensor) { temp_t3_sensor_ = temp_t3_sensor; }
   void set_temp_t4_sensor(sensor::Sensor * temp_t4_sensor) { temp_t4_sensor_ = temp_t4_sensor; }
@@ -23,20 +29,21 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_max_winter_temp_sensor(sensor::Sensor *max_winter_temp_sensor) { max_winter_temp_sensor_ = max_winter_temp_sensor; }
   void set_min_summer_temp_sensor(sensor::Sensor *min_summer_temp_sensor) { min_summer_temp_sensor_ = min_summer_temp_sensor; }
   void set_max_summer_temp_sensor(sensor::Sensor *max_summer_temp_sensor) { max_summer_temp_sensor_ = max_summer_temp_sensor; }
-  void set_is_summer_sensor(sensor::Sensor *is_summer_sensor) { is_summer_sensor_ = is_summer_sensor; }
   void set_heat_exchange_efficiency_sensor(sensor::Sensor *heat_exchange_efficiency_sensor) { heat_exchange_efficiency_sensor_ = heat_exchange_efficiency_sensor; }
-  void set_on_off_state_sensor(sensor::Sensor *on_off_state_sensor) { on_off_state_sensor_ = on_off_state_sensor; }
   void set_operation_mode_sensor(sensor::Sensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
   void set_control_state_sensor(sensor::Sensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
-  
-//  void set_humidity_calculated_setpoint_sensor(sensor::Sensor *humidity_calculated_setpoint_sensor) { humidity_calculated_setpoint_sensor_ = humidity_calculated_setpoint_sensor; }
-//  void set_alarm_bit_sensor(sensor::Sensor *alarm_bit_sensor) { alarm_bit_sensor_ = alarm_bit_sensor; }
+
+  void set_is_summer_sensor(binary_sensor::BinarySensor *is_summer_sensor) { is_summer_sensor_ = is_summer_sensor; }
+  void set_filter_ok_sensor(binary_sensor::BinarySensor *filter_ok_sensor) { filter_ok_sensor_ = filter_ok_sensor; }
+  void set_door_open_sensor(binary_sensor::BinarySensor *door_open_sensor) { door_open_sensor_ = door_open_sensor; }
+  void set_bypass_on_off_sensor(binary_sensor::BinarySensor *bypass_on_off_sensor) { bypass_on_off_sensor_ = bypass_on_off_sensor; }
+  void set_on_off_state_sensor(binary_sensor::BinarySensor *on_off_state_sensor) { on_off_state_sensor_ = on_off_state_sensor; }
+
   void set_inlet_fan_sensor(sensor::Sensor *inlet_fan_sensor) { inlet_fan_sensor_ = inlet_fan_sensor; }
   void set_extract_fan_sensor(sensor::Sensor *extract_fan_sensor) { extract_fan_sensor_ = extract_fan_sensor; }
   void set_bypass_sensor(sensor::Sensor *bypass_sensor) { bypass_sensor_ = bypass_sensor; }
   void set_watervalve_sensor(sensor::Sensor *watervalve_sensor) { watervalve_sensor_ = watervalve_sensor; }
   void set_humidity_fan_control_sensor(sensor::Sensor *humidity_fan_control_sensor) { humidity_fan_control_sensor_ = humidity_fan_control_sensor; }
-  void set_bypass_on_off_sensor(sensor::Sensor *bypass_on_off_sensor) { bypass_on_off_sensor_ = bypass_on_off_sensor; }
 //  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
   void set_speed_mode_sensor(sensor::Sensor *speed_mode_sensor) { speed_mode_sensor_ = speed_mode_sensor; }
   void set_heat_sensor(sensor::Sensor *heat_sensor) { heat_sensor_ = heat_sensor; }
@@ -52,9 +59,11 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   
   void handleTemperatureData(const std::vector<uint8_t> &data);
   void handleAlarmData(const std::vector<uint8_t> &data);
+  void handleSpecificAlarms(const std::vector<uint8_t> &data);
   void handleAirtempHoldingData(const std::vector<uint8_t> &data);
   void handleAirtempInputData(const std::vector<uint8_t> &data);
   void handleControlStateData(const std::vector<uint8_t> &data);
+  void handleVersionInfoData(const std::vector<uint8_t> &data);
   
   void writeTargetTemperature(float new_target_temp);
   void writeFanMode(int new_fan_speed);
@@ -66,9 +75,11 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     idle = 0,
     temperatures = 1,
     alarms = 2,
-    airtemp_holding = 3,
-    airtemp_input = 4,
-    control_state = 5
+    specific_alarms = 3,
+    airtemp_holding = 4,
+    airtemp_input = 5,
+    control_state = 6,
+    version_info = 7
   };
   
   ReadState read_state_{idle};
@@ -89,20 +100,21 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *max_summer_temp_sensor_;
   sensor::Sensor *min_winter_temp_sensor_;
   sensor::Sensor *max_winter_temp_sensor_;
-  sensor::Sensor *is_summer_sensor_;
   sensor::Sensor *heat_exchange_efficiency_sensor_;
-  sensor::Sensor *on_off_state_sensor_;
-  sensor::Sensor *operation_mode_sensor_;
   sensor::Sensor *control_state_sensor_;
+  sensor::Sensor *operation_mode_sensor_;
+  binary_sensor::BinarySensor *on_off_state_sensor_;
+  binary_sensor::BinarySensor *is_summer_sensor_;
+  binary_sensor::BinarySensor *filter_ok_sensor_;
+  binary_sensor::BinarySensor *door_open_sensor_;
+  binary_sensor::BinarySensor *bypass_on_off_sensor_;
+  //text_sensor::TextSensor *version_info_sensor_;
   
-  //sensor::Sensor *alarm_bit_sensor_;
-  //sensor::Sensor *humidity_calculated_setpoint_sensor_;
   sensor::Sensor *inlet_fan_sensor_;
   sensor::Sensor *extract_fan_sensor_;
   sensor::Sensor *bypass_sensor_;
   sensor::Sensor *watervalve_sensor_;
   sensor::Sensor *humidity_fan_control_sensor_;
-  sensor::Sensor *bypass_on_off_sensor_;
   //sensor::Sensor *target_temp_sensor_;
   sensor::Sensor *speed_mode_sensor_;
   sensor::Sensor *heat_sensor_;
