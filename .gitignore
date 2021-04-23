@@ -1,4 +1,1 @@
-
-genvex/__pycache__/climate.cpython-36.pyc
-genvex/__pycache__/sensor.cpython-36.pyc
-genvex/__pycache__
+*.pyc
