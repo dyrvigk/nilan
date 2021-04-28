@@ -51,7 +51,7 @@ def to_code(config):
     if CONF_FILTER_OK in config:
         conf = config[CONF_FILTER_OK]        
         sens = yield binary_sensor.new_binary_sensor(conf)
-        cg.add(nilan.set_is_summer_sensor(sens))
+        cg.add(nilan.set_filter_ok_sensor(sens))
     if CONF_ON_OFF_STATE in config:
         conf = config[CONF_ON_OFF_STATE]        
         sens = yield binary_sensor.new_binary_sensor(conf)

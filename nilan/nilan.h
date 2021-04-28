@@ -62,15 +62,16 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void handleSpecificAlarms(const std::vector<uint8_t> &data);
   void handleAirtempHoldingData(const std::vector<uint8_t> &data);
   void handleAirtempInputData(const std::vector<uint8_t> &data);
-  void handleControlStateData(const std::vector<uint8_t> &data);
+  void handleControlStateInputData(const std::vector<uint8_t> &data);
+  void handleControlStateHoldingData(const std::vector<uint8_t>& data);
   void handleVersionInfoData(const std::vector<uint8_t> &data);
   
   void publishState(sensor::Sensor * sensor, float value) {
-    if(sensor && sensor->state != value)
+    if(sensor && (sensor->state != value || ignore_previous_state_))
       sensor->publish_state(value);
   }   
   void publishState(binary_sensor::BinarySensor * sensor, bool value) {
-    if(sensor && sensor->state != value)
+    if(sensor && (sensor->state != value || ignore_previous_state_))
       sensor->publish_state(value);
   }
 
@@ -87,8 +88,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     specific_alarms = 3,
     airtemp_holding = 4,
     airtemp_input = 5,
-    control_state = 6,
-    version_info = 7
+    control_state_input = 6,
+    control_state_holding = 7,
+    version_info = 8
   };
   
   ReadState read_state_{idle};
@@ -135,6 +137,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
  private:
    uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
    float convertToTemperature(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
+
+   bool ignore_previous_state_ = true;
 };
 
 }  // namespace nilan
