@@ -74,9 +74,10 @@ void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
   
   ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
   
-  auto filter_alarm = get_16bit(data, 2); 
-  auto door_open = get_16bit(data, 4);
+  auto filter_alarm = get_16bit(data, 2);
   publishState(this->filter_ok_sensor_, !filter_alarm);
+   
+  auto door_open = get_16bit(data, 4);
   publishState(this->door_open_sensor_, door_open);
 }
 
