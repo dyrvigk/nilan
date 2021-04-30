@@ -214,7 +214,7 @@ void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
         break;
     }
     
-    ESP_LOGD(TAG, "CONTROL State: %s", state_str.c_str());
+    //ESP_LOGD(TAG, "CONTROL State: %s", state_str.c_str());
     publishState(this->control_state_sensor_, value); // Convert to text sensor?
   }
 }
