@@ -41,7 +41,6 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
   void set_inlet_fan_sensor(sensor::Sensor *inlet_fan_sensor) { inlet_fan_sensor_ = inlet_fan_sensor; }
   void set_extract_fan_sensor(sensor::Sensor *extract_fan_sensor) { extract_fan_sensor_ = extract_fan_sensor; }
-  void set_bypass_sensor(sensor::Sensor *bypass_sensor) { bypass_sensor_ = bypass_sensor; }
   void set_watervalve_sensor(sensor::Sensor *watervalve_sensor) { watervalve_sensor_ = watervalve_sensor; }
   void set_humidity_fan_control_sensor(sensor::Sensor *humidity_fan_control_sensor) { humidity_fan_control_sensor_ = humidity_fan_control_sensor; }
 //  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
@@ -64,6 +63,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void handleAirtempInputData(const std::vector<uint8_t> &data);
   void handleControlStateInputData(const std::vector<uint8_t> &data);
   void handleControlStateHoldingData(const std::vector<uint8_t>& data);
+  void handleFlapsData(const std::vector<uint8_t>& data);
   void handleVersionInfoData(const std::vector<uint8_t> &data);
   
   void publishState(sensor::Sensor * sensor, float value) {
@@ -90,7 +90,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     airtemp_input = 5,
     control_state_input = 6,
     control_state_holding = 7,
-    version_info = 8
+    flaps_data = 8,
+    version_info = 9
   };
   
   ReadState read_state_{idle};
@@ -123,7 +124,6 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   
   sensor::Sensor *inlet_fan_sensor_;
   sensor::Sensor *extract_fan_sensor_;
-  sensor::Sensor *bypass_sensor_;
   sensor::Sensor *watervalve_sensor_;
   sensor::Sensor *humidity_fan_control_sensor_;
   //sensor::Sensor *target_temp_sensor_;

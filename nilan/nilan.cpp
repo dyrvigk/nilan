@@ -239,7 +239,17 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
     ESP_LOGD(TAG, "User temperature setpoint is %f", convertToTemperature(value));
 }
 
+void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
+    if (data.size() != 8) {
+        ESP_LOGD(TAG, "Flaps data has wrong size!!! %s", hexencode(data).c_str());
+        return;
+    }
 
+    ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+
+    auto value = get_16bit(data, 6);
+    publishState(this->bypass_on_off_sensor_, value);
+}
 
 void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
   if(data.size() != 8) {
@@ -291,6 +301,10 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::control_state_holding:
       handleControlStateHoldingData(data);
+      read_state_ = Nilan::flaps_data;
+      break;
+    case Nilan::flaps_data:
+      handleFlapsData(data);
       read_state_ = Nilan::version_info;
       break;
     case Nilan::version_info:
@@ -344,6 +358,10 @@ void Nilan::loop() {
       //ESP_LOGD(TAG, "Reading control state holding");
       this->send(CMD_READ_HOLDING_REG, 1000, 5);
       break;
+    case Nilan::flaps_data:
+      //ESP_LOGD(TAG, "Reading flaps data");
+      this->send(CMD_READ_HOLDING_REG, 100, 4);
+      break;
     case Nilan::version_info:
       //ESP_LOGD(TAG, "Reading version info");
       this->send(CMD_READ_INPUT_REG, 0, 4);
@@ -390,7 +408,6 @@ void Nilan::dump_config() {
   LOG_SENSOR("", "Alarm_Bit", this->alarm_bit_sensor_);
   LOG_SENSOR("", "Inlet_Fan", this->inlet_fan_sensor_);
   LOG_SENSOR("", "Extract_Fan", this->extract_fan_sensor_);
-  LOG_SENSOR("", "Bypass_Sensor", this->bypass_sensor_);
   LOG_SENSOR("", "Watervalve", this->watervalve_sensor_);
   LOG_SENSOR("", "Target_Temp", this->target_temp_sensor_);
   LOG_SENSOR("", "Speed_Mode", this->speed_mode_sensor_);
