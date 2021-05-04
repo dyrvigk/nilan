@@ -309,11 +309,12 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       read_state_ = Nilan::version_info;
       break;
     case Nilan::version_info:
-      handleVersionInfoData(data);
+      //handleVersionInfoData(data);
       read_state_ = Nilan::idle;
       break;
     case Nilan::idle:
     default:
+      ESP_LOGW(TAG, "Received data, while in idle mode. Should not happen");
       break;
   }
 }
@@ -330,6 +331,8 @@ void Nilan::loop() {
   this->last_send_ = now;
   //this->send(CMD_FUNCTION_REG, REGISTER_START[this->state_ - 1], REGISTER_COUNT[this->state_ - 1]);
   
+  this->waiting_ = true;
+
   switch(read_state_) {
     case Nilan::temperatures:
       //ESP_LOGD(TAG, "Reading temperatures");
@@ -369,20 +372,19 @@ void Nilan::loop() {
       break;
     case Nilan::idle:
     default:
-      //ESP_LOGD(TAG, "No reading");
-      ignore_previous_state_ = false;
+      ESP_LOGD(TAG, "No reading");
+      this->ignore_previous_state_ = false;
+      this->waiting_ = false;
       break;
   }
-  
-  this->waiting_ = true;
 }
 
 void Nilan::update() { this->read_state_ = Nilan::temperatures; }
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-  ESP_LOGD(TAG, "Writing new target temp to system.... (%f)",(new_target_temp * 10 - 100));
-  this->send(CMD_WRITE_MULTIPLE_REG, TEMPSET, (new_target_temp * 10 - 100));
+  ESP_LOGD(TAG, "Writing new target temp to system.... (%f)",new_target_temp);
+  this->send(CMD_WRITE_MULTIPLE_REG, TEMPSET, new_target_temp*100);
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
