@@ -246,10 +246,12 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
         return;
     }
 
-    ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+    //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
 
-    auto value = get_16bit(data, 6);
-    publishState(this->bypass_on_off_sensor_, value);
+    auto bypass_open = get_16bit(data, 4);
+    auto bypass_closed = get_16bit(data, 6);
+    ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_closed );
+    publishState(this->bypass_on_off_sensor_, bypass_open);
 }
 
 void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
