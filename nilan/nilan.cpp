@@ -249,9 +249,14 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
     //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
 
     auto bypass_open = get_16bit(data, 4);
-    auto bypass_closed = get_16bit(data, 6);
-    ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_closed );
-    publishState(this->bypass_on_off_sensor_, bypass_open);
+    auto bypass_close = get_16bit(data, 6);
+    ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_close);
+    if(this->bypass_on_off_sensor_->state && bypass_close) {
+      publishState(this->bypass_on_off_sensor_, false);
+    }
+    else if(!this->bypass_on_off_sensor_->state && bypass_open) {
+      publishState(this->bypass_on_off_sensor_, true);
+    }
 }
 
 void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
