@@ -41,6 +41,7 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   float t15 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 42);
   float humidity = raw_16 / 100.0;
+  auto co2_level = get_16bit(data, 43);
 
   //ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
   
@@ -52,6 +53,7 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   publishState(this->temp_t8_sensor_, t8);
   publishState(this->temp_t15_sensor_, t15);
   publishState(this->measured_humidity_sensor_, humidity);
+  publishState(this->co2_sensor_, co2_level);
 }
 
 void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {

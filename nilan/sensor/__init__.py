@@ -12,6 +12,8 @@ from esphome.const import (
     UNIT_PERCENT,
     ICON_EMPTY,
     UNIT_EMPTY,
+    ICON_MOLECULE_CO2,
+    UNIT_PARTS_PER_MILLION ,
     ICON_PERCENT,
     ICON_CHECK_CIRCLE_OUTLINE,
     ICON_GAUGE,
@@ -40,6 +42,7 @@ CONF_IS_SUMMER = "is_summer"
 CONF_HEAT_EXCHANGE_EFFICIENCY = "heat_exchange_efficiency"
 CONF_OPERATION_MODE = "operation_mode"
 CONF_CONTROL_STATE = "control_state"
+CONF_CO2_LEVEL = "co2_ppm_level"
 
 #CONF_HUMIDITY_CALCULATED_SETPOINT = "humidity_calculated_setpoint"
 #CONF_ALARM_BIT = "alarm_bit"
@@ -72,6 +75,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_HEAT_EXCHANGE_EFFICIENCY): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_OPERATION_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_CONTROL_STATE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_CO2_LEVEL): sensor.sensor_schema(UNIT_PARTS_PER_MILLION , ICON_MOLECULE_CO2 , 0, DEVICE_CLASS_EMPTY),
     
 #    cv.Optional(CONF_HUMIDITY_CALCULATED_SETPOINT): sensor.sensor_schema(UNIT_PERCENT, ICON_WATER_PERCENT, 1, DEVICE_CLASS_HUMIDITY),
 #    cv.Optional(CONF_ALARM_BIT): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1, DEVICE_CLASS_EMPTY),
@@ -158,6 +162,10 @@ def to_code(config):
         conf = config[CONF_CONTROL_STATE]
         sens = yield sensor.new_sensor(conf)
         cg.add(nilan.set_control_state_sensor(sens))
+    if CONF_CO2_LEVEL in config:
+        conf = config[CONF_CO2_LEVEL]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_co2_sensor(sens))
 
 #    if CONF_INLET_FAN in config:
 #        conf = config[CONF_INLET_FAN]

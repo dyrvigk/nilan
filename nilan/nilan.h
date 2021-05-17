@@ -32,6 +32,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_heat_exchange_efficiency_sensor(sensor::Sensor *heat_exchange_efficiency_sensor) { heat_exchange_efficiency_sensor_ = heat_exchange_efficiency_sensor; }
   void set_operation_mode_sensor(sensor::Sensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
   void set_control_state_sensor(sensor::Sensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
+  void set_co2_sensor(sensor::Sensor *co2_sensor) { co2_sensor_ = co2_sensor; }
 
   void set_is_summer_sensor(binary_sensor::BinarySensor *is_summer_sensor) { is_summer_sensor_ = is_summer_sensor; }
   void set_filter_ok_sensor(binary_sensor::BinarySensor *filter_ok_sensor) { filter_ok_sensor_ = filter_ok_sensor; }
@@ -115,6 +116,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *heat_exchange_efficiency_sensor_;
   sensor::Sensor *control_state_sensor_;
   sensor::Sensor *operation_mode_sensor_;
+  sensor::Sensor *co2_sensor_;
   binary_sensor::BinarySensor *on_off_state_sensor_;
   binary_sensor::BinarySensor *is_summer_sensor_;
   binary_sensor::BinarySensor *filter_ok_sensor_;
