@@ -43,14 +43,8 @@ CONF_HEAT_EXCHANGE_EFFICIENCY = "heat_exchange_efficiency"
 CONF_OPERATION_MODE = "operation_mode"
 CONF_CONTROL_STATE = "control_state"
 CONF_CO2_LEVEL = "co2_ppm_level"
-
-#CONF_HUMIDITY_CALCULATED_SETPOINT = "humidity_calculated_setpoint"
-#CONF_ALARM_BIT = "alarm_bit"
 CONF_INLET_FAN = "inlet_fan"
-CONF_EXTRACT_FAN = "extract_fan"
-CONF_BYPASS = "bypass"
-CONF_WATERVALVE = "watervalve"
-CONF_HUMIDITY_FAN_CONTROL = "humidity_fan_control"
+CONF_EXHAUST_FAN = "exhaust_fan"
 #CONF_TARGET_TEMP = "target_temp"
 CONF_SPEED_MODE = "speed_mode"
 CONF_HEAT = "heat"
@@ -75,15 +69,9 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_HEAT_EXCHANGE_EFFICIENCY): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_OPERATION_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_CONTROL_STATE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_CO2_LEVEL): sensor.sensor_schema(UNIT_PARTS_PER_MILLION , ICON_MOLECULE_CO2 , 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_INLET_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_EXHAUST_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
     
-#    cv.Optional(CONF_HUMIDITY_CALCULATED_SETPOINT): sensor.sensor_schema(UNIT_PERCENT, ICON_WATER_PERCENT, 1, DEVICE_CLASS_HUMIDITY),
-#    cv.Optional(CONF_ALARM_BIT): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_INLET_FAN): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_EXTRACT_FAN): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_BYPASS): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_WATERVALVE): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
-    cv.Optional(CONF_HUMIDITY_FAN_CONTROL): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
 #    cv.Required(CONF_TARGET_TEMP): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Required(CONF_SPEED_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_GAUGE, 1, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_HEAT): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_EMPTY),
@@ -166,15 +154,14 @@ def to_code(config):
         conf = config[CONF_CO2_LEVEL]
         sens = yield sensor.new_sensor(conf)
         cg.add(nilan.set_co2_sensor(sens))
-
-#    if CONF_INLET_FAN in config:
-#        conf = config[CONF_INLET_FAN]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_inlet_fan_sensor(sens))
-#    if CONF_EXTRACT_FAN in config:
-#        conf = config[CONF_EXTRACT_FAN]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_extract_fan_sensor(sens))
+    if CONF_INLET_FAN in config:
+        conf = config[CONF_INLET_FAN]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_inlet_fan_sensor(sens))
+    if CONF_EXHAUST_FAN in config:
+        conf = config[CONF_EXHAUST_FAN]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_exhaust_fan_sensor(sens))
 #    if CONF_BYPASS in config:
 #        conf = config[CONF_BYPASS]
 #        sens = yield sensor.new_sensor(conf)

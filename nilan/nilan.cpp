@@ -28,19 +28,19 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   
   // Temperatures
   auto raw_16 = get_16bit(data, 0);
-  float t0 = convertToTemperature(raw_16);
+  float t0 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 6);
-  float t3 = convertToTemperature(raw_16);
+  float t3 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 8);
-  float t4 = convertToTemperature(raw_16);
+  float t4 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 14);
-  float t7 = convertToTemperature(raw_16);
+  float t7 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 16);
-  float t8 = convertToTemperature(raw_16);
+  float t8 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 30);
-  float t15 = convertToTemperature(raw_16);
+  float t15 = scaleAndConvertToFloat(raw_16);
   raw_16 = get_16bit(data, 42);
-  float humidity = raw_16 / 100.0;
+  float humidity = scaleAndConvertToFloat(raw_16);
   auto co2_level = get_16bit(data, 44);
 
   //ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
@@ -92,19 +92,19 @@ void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   //ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
   
   auto value = get_16bit(data, 0);
-  publishState(this->cool_target_temp_sensor_, convertToTemperature(value));
+  publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
 
   value = get_16bit(data, 2);
-  publishState(this->min_summer_temp_sensor_, convertToTemperature(value));
+  publishState(this->min_summer_temp_sensor_, scaleAndConvertToFloat(value));
 
   value = get_16bit(data, 4);
-  publishState(this->min_winter_temp_sensor_, convertToTemperature(value));
+  publishState(this->min_winter_temp_sensor_, scaleAndConvertToFloat(value));
 
   value = get_16bit(data, 6);
-  publishState(this->max_summer_temp_sensor_, convertToTemperature(value));
+  publishState(this->max_summer_temp_sensor_, scaleAndConvertToFloat(value));
     
   value = get_16bit(data, 8);
-  publishState(this->max_winter_temp_sensor_, convertToTemperature(value));
+  publishState(this->max_winter_temp_sensor_, scaleAndConvertToFloat(value));
 }
 
 void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
@@ -118,8 +118,9 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
   auto value = get_16bit(data, 0);
   publishState(this->is_summer_sensor_, value);
 
-  value = get_16bit(data, 8) / 100.0;
-  publishState(this->heat_exchange_efficiency_sensor_, value);
+  value = get_16bit(data, 8);
+  auto efficiency = scaleAndConvertToFloat(value);
+  publishState(this->heat_exchange_efficiency_sensor_, efficiency);
 }
 
 void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
@@ -239,7 +240,7 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
     ESP_LOGD(TAG, "Ventilation step is set to %d", value);
 
     value = get_16bit(data, 8);
-    ESP_LOGD(TAG, "User temperature setpoint is %f", convertToTemperature(value));
+    ESP_LOGD(TAG, "User temperature setpoint is %f", scaleAndConvertToFloat(value));
 }
 
 void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
@@ -252,13 +253,33 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
 
     auto bypass_open = get_16bit(data, 4);
     auto bypass_close = get_16bit(data, 6);
-    ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_close);
-    if(this->bypass_on_off_sensor_->state && bypass_close) {
-      publishState(this->bypass_on_off_sensor_, false);
+    //ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_close);
+    if(this->bypass_on_off_sensor_) {
+      if(this->bypass_on_off_sensor_->state && bypass_close) {
+        publishState(this->bypass_on_off_sensor_, false);
+      }
+      else if(!this->bypass_on_off_sensor_->state && bypass_open) {
+        publishState(this->bypass_on_off_sensor_, true);
+      }
     }
-    else if(!this->bypass_on_off_sensor_->state && bypass_open) {
-      publishState(this->bypass_on_off_sensor_, true);
+}
+
+void Nilan::handleFanData(const std::vector<uint8_t>& data) {
+    if (data.size() != 4) {
+        ESP_LOGD(TAG, "Fan data has wrong size!!! %s", hexencode(data).c_str());
+        return;
     }
+
+    //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+
+    auto raw_16 = get_16bit(data, 0);
+    float exhaust = scaleAndConvertToFloat(raw_16);
+    raw_16 = get_16bit(data, 2);
+    float inlet = scaleAndConvertToFloat(raw_16);
+
+    //ESP_LOGD(TAG, "Exhaust: %f - Inlet: %f", exhaust, inlet);
+    publishState(this->exhaust_fan_sensor_, exhaust);
+    publishState(this->inlet_fan_sensor_, inlet);
 }
 
 void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
@@ -315,6 +336,10 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::flaps_data:
       handleFlapsData(data);
+      read_state_ = Nilan::fan_data;
+      break;
+    case Nilan::fan_data:
+      handleFanData(data);
       read_state_ = Nilan::version_info;
       break;
     case Nilan::version_info:
@@ -375,6 +400,10 @@ void Nilan::loop() {
       //ESP_LOGD(TAG, "Reading flaps data");
       this->send(CMD_READ_HOLDING_REG, 100, 4);
       break;
+    case Nilan::fan_data:
+      //ESP_LOGD(TAG, "Reading fan data");
+      this->send(CMD_READ_HOLDING_REG, 200, 2);
+      break;
     case Nilan::version_info:
       //ESP_LOGD(TAG, "Reading version info");
       this->send(CMD_READ_INPUT_REG, 0, 4);
@@ -415,12 +444,12 @@ void Nilan::dump_config() {
   LOG_SENSOR("", "Measured_Humidity", this->measured_humidity_sensor_);
   LOG_SENSOR("", "ActiveAlarms", this->active_alarms_sensor_);
   LOG_SENSOR("", "CoolSetTemp", this->cool_target_temp_sensor_);
-  
-  /*LOG_SENSOR("", "Humidity_Calculated_Setpoint", this->humidity_calculated_setpoint_sensor_);
-  LOG_SENSOR("", "Alarm_Bit", this->alarm_bit_sensor_);
   LOG_SENSOR("", "Inlet_Fan", this->inlet_fan_sensor_);
-  LOG_SENSOR("", "Extract_Fan", this->extract_fan_sensor_);
-  LOG_SENSOR("", "Watervalve", this->watervalve_sensor_);
+  LOG_SENSOR("", "Extract_Fan", this->exhaust_fan_sensor_);
+  //LOG_SENSOR("", "Bypass", this->bypass_on_off_sensor_);
+  //LOG_SENSOR("", "Summer mode", this->is_summer_sensor_);
+  
+  /*
   LOG_SENSOR("", "Target_Temp", this->target_temp_sensor_);
   LOG_SENSOR("", "Speed_Mode", this->speed_mode_sensor_);
   LOG_SENSOR("", "Heat", this->heat_sensor_);
