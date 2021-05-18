@@ -41,7 +41,7 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   float t15 = convertToTemperature(raw_16);
   raw_16 = get_16bit(data, 42);
   float humidity = raw_16 / 100.0;
-  auto co2_level = get_16bit(data, 43);
+  auto co2_level = get_16bit(data, 44);
 
   //ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C, T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
   
