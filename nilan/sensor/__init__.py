@@ -69,6 +69,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_HEAT_EXCHANGE_EFFICIENCY): sensor.sensor_schema(UNIT_PERCENT, ICON_PERCENT, 1, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_OPERATION_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_CONTROL_STATE): sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 0, DEVICE_CLASS_EMPTY),
+    cv.Optional(CONF_CO2_LEVEL): sensor.sensor_schema(UNIT_PARTS_PER_MILLION , ICON_MOLECULE_CO2 , 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_INLET_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_EXHAUST_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
     
