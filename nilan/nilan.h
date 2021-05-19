@@ -4,7 +4,7 @@
 #include "esphome/core/helpers.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
-//#include "esphome/components/text_sensor/text_sensor.h"
+#include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/modbus/modbus.h"
 
 namespace esphome {
@@ -30,8 +30,6 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_min_summer_temp_sensor(sensor::Sensor *min_summer_temp_sensor) { min_summer_temp_sensor_ = min_summer_temp_sensor; }
   void set_max_summer_temp_sensor(sensor::Sensor *max_summer_temp_sensor) { max_summer_temp_sensor_ = max_summer_temp_sensor; }
   void set_heat_exchange_efficiency_sensor(sensor::Sensor *heat_exchange_efficiency_sensor) { heat_exchange_efficiency_sensor_ = heat_exchange_efficiency_sensor; }
-  void set_operation_mode_sensor(sensor::Sensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
-  void set_control_state_sensor(sensor::Sensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
   void set_co2_sensor(sensor::Sensor *co2_sensor) { co2_sensor_ = co2_sensor; }
   void set_inlet_fan_sensor(sensor::Sensor *inlet_fan_sensor) { inlet_fan_sensor_ = inlet_fan_sensor; }
   void set_exhaust_fan_sensor(sensor::Sensor *exhaust_fan_sensor) { exhaust_fan_sensor_ = exhaust_fan_sensor; }
@@ -41,6 +39,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_door_open_sensor(binary_sensor::BinarySensor *door_open_sensor) { door_open_sensor_ = door_open_sensor; }
   void set_bypass_on_off_sensor(binary_sensor::BinarySensor *bypass_on_off_sensor) { bypass_on_off_sensor_ = bypass_on_off_sensor; }
   void set_on_off_state_sensor(binary_sensor::BinarySensor *on_off_state_sensor) { on_off_state_sensor_ = on_off_state_sensor; }
+
+  void set_operation_mode_sensor(text_sensor::TextSensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
+  void set_control_state_sensor(text_sensor::TextSensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
 
 //  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
   void set_speed_mode_sensor(sensor::Sensor *speed_mode_sensor) { speed_mode_sensor_ = speed_mode_sensor; }
@@ -71,6 +72,10 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
       sensor->publish_state(value);
   }   
   void publishState(binary_sensor::BinarySensor * sensor, bool value) {
+    if(sensor && (sensor->state != value || ignore_previous_state_))
+      sensor->publish_state(value);
+  }
+  void publishState(text_sensor::TextSensor * sensor, const std::string & value) {
     if(sensor && (sensor->state != value || ignore_previous_state_))
       sensor->publish_state(value);
   }
@@ -114,8 +119,6 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *min_winter_temp_sensor_;
   sensor::Sensor *max_winter_temp_sensor_;
   sensor::Sensor *heat_exchange_efficiency_sensor_;
-  sensor::Sensor *control_state_sensor_;
-  sensor::Sensor *operation_mode_sensor_;
   sensor::Sensor *co2_sensor_;
   sensor::Sensor *exhaust_fan_sensor_;
   sensor::Sensor *inlet_fan_sensor_;
@@ -125,6 +128,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   binary_sensor::BinarySensor *door_open_sensor_;
   binary_sensor::BinarySensor *bypass_on_off_sensor_;
   //text_sensor::TextSensor *version_info_sensor_;
+  text_sensor::TextSensor *control_state_sensor_;
+  text_sensor::TextSensor *operation_mode_sensor_;
   
   sensor::Sensor *watervalve_sensor_;
   sensor::Sensor *humidity_fan_control_sensor_;

@@ -22,7 +22,6 @@ nilan_ns = cg.esphome_ns.namespace('nilan')
 #NilanBinarySensor = nilan_ns.class_('NilanBinarySensor', binary_sensor.BinarySensor, cg.Component)
  
 CONFIG_SCHEMA = cv.Schema({
-    #cv.GenerateID(): cv.declare_id(NilanBinarySensor),
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
     cv.Optional(CONF_IS_SUMMER): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class

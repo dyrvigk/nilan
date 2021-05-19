@@ -160,8 +160,7 @@ void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
         break;
     }
     
-    ESP_LOGD(TAG, "Mode: %s", mode_str.c_str());
-    publishState(this->operation_mode_sensor_, value); // Convert to text sensor?
+    publishState(this->operation_mode_sensor_, mode_str);
   }
   
   value = get_16bit(data, 4);
@@ -217,8 +216,7 @@ void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
         break;
     }
     
-    //ESP_LOGD(TAG, "CONTROL State: %s", state_str.c_str());
-    publishState(this->control_state_sensor_, value); // Convert to text sensor?
+    publishState(this->control_state_sensor_, state_str);
   }
 }
 
