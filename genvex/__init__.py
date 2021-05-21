@@ -5,6 +5,8 @@ from esphome.automation import maybe_simple_id
 from esphome.const import CONF_ID, CONF_ADDRESS, CONF_UPDATE_INTERVAL
 from esphome.components import modbus
 
+AUTO_LOAD = ['modbus', 'sensor']
+
 genvex_ns = cg.esphome_ns.namespace('genvex')
 Genvex = genvex_ns.class_('Genvex', cg.PollingComponent, modbus.ModbusDevice)
 
@@ -24,4 +26,4 @@ def to_code(config):
     if CONF_ADDRESS in config:
         cg.add(var.set_address(config[CONF_ADDRESS]))
     if CONF_UPDATE_INTERVAL in config:
-        cg.add(var.set_update_interval(config[CONF_UPDATE_INTERVAL]))    
+        cg.add(var.set_update_interval(config[CONF_UPDATE_INTERVAL]))
