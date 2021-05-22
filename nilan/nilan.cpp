@@ -74,7 +74,7 @@ void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
   
   auto filter_alarm = get_16bit(data, 2);
   publishState(this->filter_ok_sensor_, !filter_alarm);
@@ -90,7 +90,6 @@ void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   }
   
   //ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
-  
   auto value = get_16bit(data, 0);
   publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
 
@@ -113,8 +112,7 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
-  
+  //ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
   auto value = get_16bit(data, 0);
   publishState(this->is_summer_sensor_, value);
 
@@ -129,8 +127,7 @@ void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
     return;
   }
   
-  ESP_LOGD(TAG, "Control state input data: %s", hexencode(data).c_str());
-  
+  //ESP_LOGD(TAG, "Control state input data: %s", hexencode(data).c_str());
   auto value = get_16bit(data, 0);
   publishState(this->on_off_state_sensor_, value);
 
@@ -229,16 +226,16 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
     ESP_LOGD(TAG, "Control state holding data: %s", hexencode(data).c_str());
 
     auto value = get_16bit(data, 2);
-    ESP_LOGD(TAG, "User on/off is set to %d", value);
+    //ESP_LOGD(TAG, "User on/off is set to %d", value);
 
     value = get_16bit(data, 4);
-    ESP_LOGD(TAG, "Operation mode is set to %d", value);
+    //ESP_LOGD(TAG, "Operation mode is set to %d", value);
 
     value = get_16bit(data, 6);
-    ESP_LOGD(TAG, "Ventilation step is set to %d", value);
+    //ESP_LOGD(TAG, "Ventilation step is set to %d", value);
 
     value = get_16bit(data, 8);
-    ESP_LOGD(TAG, "User temperature setpoint is %f", scaleAndConvertToFloat(value));
+    //ESP_LOGD(TAG, "User temperature setpoint is %f", scaleAndConvertToFloat(value));
 }
 
 void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
@@ -248,9 +245,9 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
     }
 
     //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
-
     auto bypass_open = get_16bit(data, 4);
     auto bypass_close = get_16bit(data, 6);
+
     //ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_close);
     if(this->bypass_on_off_sensor_) {
       if(this->bypass_on_off_sensor_->state && bypass_close) {
@@ -269,7 +266,6 @@ void Nilan::handleFanData(const std::vector<uint8_t>& data) {
     }
 
     //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
-
     auto raw_16 = get_16bit(data, 0);
     float exhaust = scaleAndConvertToFloat(raw_16);
     raw_16 = get_16bit(data, 2);
@@ -286,17 +282,17 @@ void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
     return;
   }
 
-  ESP_LOGD(TAG, "Version info data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Version info data: %s", hexencode(data).c_str());
   
-  char versionStr[50]; // enough to hold all numbers up to 64-bits
-  sprintf(versionStr, "Bus version: %u - Version: %c%c%c%c%c%c", 
-    get_16bit(data, 0),
+  char version_cstr[20];
+  sprintf(version_cstr, "%c%c%c%c%c%c", 
+    //get_16bit(data, 0), // Bus version
     data[3], data[2],
     data[5], data[4],
     data[7], data[6]);
 
-  //if(this->version_info_sensor_ != nullptr)
-  //  this->version_info_sensor_->publish_state(versionStr);
+  std::string version_str = version_cstr;
+  publishState(this->version_info_sensor_, version_str);
 }
 
 void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
@@ -341,7 +337,7 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       read_state_ = Nilan::version_info;
       break;
     case Nilan::version_info:
-      //handleVersionInfoData(data);
+      handleVersionInfoData(data);
       read_state_ = Nilan::idle;
       break;
     case Nilan::idle:
@@ -408,7 +404,7 @@ void Nilan::loop() {
       break;
     case Nilan::idle:
     default:
-      ESP_LOGD(TAG, "No reading");
+      //ESP_LOGD(TAG, "No reading");
       this->ignore_previous_state_ = false;
       this->waiting_ = false;
       break;

@@ -42,6 +42,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
   void set_operation_mode_sensor(text_sensor::TextSensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
   void set_control_state_sensor(text_sensor::TextSensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
+  void set_version_info_sensor(text_sensor::TextSensor *version_info_sensor) { version_info_sensor_ = version_info_sensor; }
 
 //  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
   void set_speed_mode_sensor(sensor::Sensor *speed_mode_sensor) { speed_mode_sensor_ = speed_mode_sensor; }
@@ -127,7 +128,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   binary_sensor::BinarySensor *filter_ok_sensor_;
   binary_sensor::BinarySensor *door_open_sensor_;
   binary_sensor::BinarySensor *bypass_on_off_sensor_;
-  //text_sensor::TextSensor *version_info_sensor_;
+  text_sensor::TextSensor *version_info_sensor_;
   text_sensor::TextSensor *control_state_sensor_;
   text_sensor::TextSensor *operation_mode_sensor_;
   
