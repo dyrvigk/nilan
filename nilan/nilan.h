@@ -149,8 +149,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
    float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
 
    bool ignore_previous_state_ = true;
-   uint16_t target_temp_write_value_ = -1;
-   uint16_t fan_mode_write_value_ = -1;
+   int16_t target_temp_write_value_ = -1;
+   int16_t fan_mode_write_value_ = -1;
 };
 
 }  // namespace nilan

@@ -6,10 +6,10 @@ namespace nilan {
 
 static const char *TAG = "nilan";
 
-static const uint16_t RUNSET = 1000;
-static const uint16_t MODESET = 1001;
-static const uint16_t VENTSET = 1002;
-static const uint16_t TEMPSET = 1003;
+static const uint16_t RUNSET = 1000+1;
+static const uint16_t MODESET = 1001+1;
+static const uint16_t VENTSET = 1002+1;
+static const uint16_t TEMPSET = 1003+1;
 
 static const uint8_t CMD_READ_INPUT_REG = 4;
 static const uint8_t CMD_READ_HOLDING_REG = 3;
@@ -498,14 +498,14 @@ void Nilan::update() { this->state_ = Nilan::temperatures; }
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-  this->target_temp_write_value_ = static_cast<uint16_t>(new_target_temp*100);
-  ESP_LOGD(TAG, "Target temp write pending.... (%u)", this->target_temp_write_value_);
+  this->target_temp_write_value_ = new_target_temp*100;
+  ESP_LOGD(TAG, "Target temp write pending.... (%i)", this->target_temp_write_value_);
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
 {
-  this->fan_mode_write_value_ = static_cast<uint16_t>(new_fan_speed);
-  ESP_LOGD(TAG, "Fan speed write pending.... (%u)", this->fan_mode_write_value_);
+  this->fan_mode_write_value_ = new_fan_speed;
+  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", this->fan_mode_write_value_);
 }
 
 void Nilan::dump_config() {
