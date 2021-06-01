@@ -98,10 +98,12 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     control_state_holding = 7,
     flaps_data = 8,
     fan_data = 9,
-    version_info = 10
+    version_info = 10,
+    fan_write = 11,
+    target_temp_write = 12
   };
   
-  ReadState read_state_{idle};
+  ReadState state_{idle};
   uint8_t CMD_FUNCTION_REG{0x04};
   bool waiting_{false};
   long last_send_{0};
@@ -147,6 +149,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
    float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
 
    bool ignore_previous_state_ = true;
+   uint16_t target_temp_write_value_ = -1;
+   uint16_t fan_mode_write_value_ = -1;
 };
 
 }  // namespace nilan
