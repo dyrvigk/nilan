@@ -14,7 +14,8 @@ class NilanClimate : public climate::Climate, public Component {
   void setup() override;
   void dump_config() override;
 
-  void set_sensor(sensor::Sensor *sensor) { this->sensor_ = sensor; }
+  void set_current_temp_sensor(sensor::Sensor *sensor) { this->current_temp_sensor_ = sensor; }
+  void set_temp_setpoint_sensor(sensor::Sensor *sensor) { this->temp_setpoint_sensor_ = sensor; }
 
  protected:
   Nilan *nilan_;
@@ -24,7 +25,9 @@ class NilanClimate : public climate::Climate, public Component {
   climate::ClimateTraits traits() override;
 
   /// The sensor used for getting the current temperature
-  sensor::Sensor *sensor_{nullptr};
+  sensor::Sensor *current_temp_sensor_{nullptr};
+  /// The sensor used for getting the temperature setpoint
+  sensor::Sensor *temp_setpoint_sensor_{nullptr};
 };
 
 }  // namespace nilan

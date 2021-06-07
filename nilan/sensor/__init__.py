@@ -43,17 +43,16 @@ CONF_HEAT_EXCHANGE_EFFICIENCY = "heat_exchange_efficiency"
 CONF_CO2_LEVEL = "co2_ppm_level"
 CONF_INLET_FAN = "inlet_fan"
 CONF_EXHAUST_FAN = "exhaust_fan"
-#CONF_TARGET_TEMP = "target_temp"
-CONF_SPEED_MODE = "speed_mode"
+CONF_TARGET_TEMP = "target_temp"
 CONF_HEAT = "heat"
 CONF_TIMER = "timer"
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
-    cv.Required(CONF_TEMP_T0): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
+    cv.Optional(CONF_TEMP_T0): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_T3): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_T4): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
-    cv.Optional(CONF_TEMP_T7): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
+    cv.Required(CONF_TEMP_T7): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_T8): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_TEMP_T15): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_MEASURED_HUMIDITY): sensor.sensor_schema(UNIT_PERCENT, ICON_WATER_PERCENT, 1, DEVICE_CLASS_HUMIDITY),
@@ -69,8 +68,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_INLET_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_EXHAUST_FAN): sensor.sensor_schema(UNIT_PERCENT , ICON_PERCENT , 0, DEVICE_CLASS_EMPTY),
     
-#    cv.Required(CONF_TARGET_TEMP): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
-    cv.Required(CONF_SPEED_MODE): sensor.sensor_schema(UNIT_EMPTY, ICON_GAUGE, 1, DEVICE_CLASS_EMPTY),
+    cv.Required(CONF_TARGET_TEMP): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_TEMPERATURE),
     cv.Optional(CONF_HEAT): sensor.sensor_schema(UNIT_CELSIUS, ICON_THERMOMETER, 1, DEVICE_CLASS_EMPTY),
     cv.Optional(CONF_TIMER): sensor.sensor_schema(UNIT_EMPTY, ICON_GAUGE, 1, DEVICE_CLASS_EMPTY)
 }).extend(cv.polling_component_schema('60s'))
@@ -151,24 +149,7 @@ def to_code(config):
         conf = config[CONF_EXHAUST_FAN]
         sens = yield sensor.new_sensor(conf)
         cg.add(nilan.set_exhaust_fan_sensor(sens))
-#    if CONF_HUMIDITY_FAN_CONTROL in config:
-#        conf = config[CONF_HUMIDITY_FAN_CONTROL]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_humidity_fan_control_sensor(sens))
-#    if CONF_TARGET_TEMP in config:
-#        conf = config[CONF_TARGET_TEMP]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_target_temp_sensor(sens))
-#    if CONF_SPEED_MODE in config:
-#        conf = config[CONF_SPEED_MODE]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_speed_mode_sensor(sens))
-#    if CONF_HEAT in config:
-#        conf = config[CONF_HEAT]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_heat_sensor(sens))
-#    if CONF_TIMER in config:
-#        conf = config[CONF_TIMER]
-#        sens = yield sensor.new_sensor(conf)
-#        cg.add(nilan.set_timer_sensor(sens))          
-        
+    if CONF_TARGET_TEMP in config:
+        conf = config[CONF_TARGET_TEMP]
+        sens = yield sensor.new_sensor(conf)
+        cg.add(nilan.set_target_temp_sensor(sens))

@@ -7,8 +7,14 @@ namespace nilan {
 static const char *TAG = "nilan.climate";
 
 void NilanClimate::setup() {
-  sensor_->add_on_state_callback([this](float state) {
+  current_temp_sensor_->add_on_state_callback([this](float state) {
+    ESP_LOGD(TAG, "CURRENT TEMP CHANGE CALLBACK: %f", state);
     current_temperature = state;
+    publish_state();
+  });
+  temp_setpoint_sensor_->add_on_state_callback([this](float state) {
+    ESP_LOGD(TAG, "TEMP SETPOINT CHANGE CALLBACK: %f", state);
+    target_temperature = state;
     publish_state();
   });
   nilan_->add_target_temp_callback([this](float state) {
@@ -27,8 +33,8 @@ void NilanClimate::setup() {
     fan_mode = fmode;
     publish_state();
   });
-  current_temperature = sensor_->state;
-  target_temperature = sensor_->state;
+  current_temperature = current_temp_sensor_->state;
+  target_temperature = temp_setpoint_sensor_->state;
   mode = climate::CLIMATE_MODE_HEAT;
   fan_mode = climate::CLIMATE_FAN_OFF;
 }
@@ -45,8 +51,7 @@ void NilanClimate::control(const climate::ClimateCall &call) {
   if (call.get_fan_mode().has_value())
   {
     int mode;
-    this->fan_mode = *call.get_fan_mode();
-    switch (fan_mode) {
+    switch (*call.get_fan_mode()) {
       case climate::CLIMATE_FAN_LOW: mode = 2; break;
       case climate::CLIMATE_FAN_MEDIUM: mode = 3; break;
       case climate::CLIMATE_FAN_HIGH: mode = 4; break;

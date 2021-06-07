@@ -25,6 +25,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_measured_humidity_sensor(sensor::Sensor *measured_humidity_sensor) { measured_humidity_sensor_ = measured_humidity_sensor; }
   void set_active_alarms_sensor(sensor::Sensor *active_alarms_sensor) { active_alarms_sensor_ = active_alarms_sensor; }
   void set_cool_target_temp_sensor(sensor::Sensor *cool_target_temp_sensor) { cool_target_temp_sensor_ = cool_target_temp_sensor; }
+  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
   void set_min_winter_temp_sensor(sensor::Sensor *min_winter_temp_sensor) { min_winter_temp_sensor_ = min_winter_temp_sensor; }
   void set_max_winter_temp_sensor(sensor::Sensor *max_winter_temp_sensor) { max_winter_temp_sensor_ = max_winter_temp_sensor; }
   void set_min_summer_temp_sensor(sensor::Sensor *min_summer_temp_sensor) { min_summer_temp_sensor_ = min_summer_temp_sensor; }
@@ -43,11 +44,6 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_operation_mode_sensor(text_sensor::TextSensor *operation_mode_sensor) { operation_mode_sensor_ = operation_mode_sensor; }
   void set_control_state_sensor(text_sensor::TextSensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
   void set_version_info_sensor(text_sensor::TextSensor *version_info_sensor) { version_info_sensor_ = version_info_sensor; }
-
-//  void set_target_temp_sensor(sensor::Sensor *target_temp_sensor) { target_temp_sensor_ = target_temp_sensor; }
-  void set_speed_mode_sensor(sensor::Sensor *speed_mode_sensor) { speed_mode_sensor_ = speed_mode_sensor; }
-  void set_heat_sensor(sensor::Sensor *heat_sensor) { heat_sensor_ = heat_sensor; }
-  void set_timer_sensor(sensor::Sensor *timer_sensor) { timer_sensor_ = timer_sensor; }
 
   void add_target_temp_callback(std::function<void(float)> &&callback);
   void add_fan_speed_callback(std::function<void(int)> &&callback);
@@ -125,6 +121,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *co2_sensor_;
   sensor::Sensor *exhaust_fan_sensor_;
   sensor::Sensor *inlet_fan_sensor_;
+  sensor::Sensor *target_temp_sensor_;
   binary_sensor::BinarySensor *on_off_state_sensor_;
   binary_sensor::BinarySensor *is_summer_sensor_;
   binary_sensor::BinarySensor *filter_ok_sensor_;
@@ -134,12 +131,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   text_sensor::TextSensor *control_state_sensor_;
   text_sensor::TextSensor *operation_mode_sensor_;
   
-  sensor::Sensor *watervalve_sensor_;
-  sensor::Sensor *humidity_fan_control_sensor_;
-  //sensor::Sensor *target_temp_sensor_;
-  sensor::Sensor *speed_mode_sensor_;
-  sensor::Sensor *heat_sensor_;
-  sensor::Sensor *timer_sensor_;
+  //sensor::Sensor *watervalve_sensor_;
+  //sensor::Sensor *humidity_fan_control_sensor_;
 
   CallbackManager<void(float)> target_temp_callback_;
   CallbackManager<void(int)> fan_speed_callback_;

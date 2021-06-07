@@ -252,6 +252,7 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
 
     value = get_16bit(data, 8);
     ESP_LOGD(TAG, "User temperature setpoint is %f", scaleAndConvertToFloat(value));
+    publishState(this->target_temp_sensor_, scaleAndConvertToFloat(value));
 }
 
 void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
@@ -523,14 +524,12 @@ void Nilan::dump_config() {
   LOG_SENSOR("", "CoolSetTemp", this->cool_target_temp_sensor_);
   LOG_SENSOR("", "Inlet_Fan", this->inlet_fan_sensor_);
   LOG_SENSOR("", "Extract_Fan", this->exhaust_fan_sensor_);
-  //LOG_SENSOR("", "Bypass", this->bypass_on_off_sensor_);
-  //LOG_SENSOR("", "Summer mode", this->is_summer_sensor_);
+  LOG_SENSOR("", "Target_Temp", this->target_temp_sensor_);
   
   /*
-  LOG_SENSOR("", "Target_Temp", this->target_temp_sensor_);
-  LOG_SENSOR("", "Speed_Mode", this->speed_mode_sensor_);
-  LOG_SENSOR("", "Heat", this->heat_sensor_);
-  LOG_SENSOR("", "Timer", this->timer_sensor_);*/
+    LOG_SENSOR("", "Bypass", this->bypass_on_off_sensor_);
+    LOG_SENSOR("", "Summer mode", this->is_summer_sensor_);   
+  */
 }
 
 }  // namespace nilan
