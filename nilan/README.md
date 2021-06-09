@@ -77,6 +77,9 @@ sensor:
     target_temp:
       name: "Target temperature"
       id: nilan_target_temperature
+    ventilation_speed:
+      name: "Ventilation speed"
+      id: nilan_ventilation_speed
       
 binary_sensor:
   - platform: nilan
@@ -113,12 +116,11 @@ climate:
     name: Nilan
     current_temp_sensor_id: nilan_inlet_temp_t7
     target_temp_sensor_id: nilan_target_temperature
-    
+    fan_speed_sensor_id: nilan_ventilation_speed
 ```
 
 TO-DO:
 1. Add support for more sensors according to the description (https://fr.nilan.dk/Files//Filer/Download/French/Documentation/Guide%20de%20montage/Modbus%20CTS%20602/MODBUS_CTS-602_2.30_Installation-and-user-guide.pdf)
-3. Add support for TextSensors struggling with Scheme and registering in to_code method
 
 Kudos:
 A bit thanks to ssieb from the ESPHome Discord community for assisting i making this happen! https://github.com/ssieb

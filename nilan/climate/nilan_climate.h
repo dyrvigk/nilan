@@ -16,6 +16,7 @@ class NilanClimate : public climate::Climate, public Component {
 
   void set_current_temp_sensor(sensor::Sensor *sensor) { this->current_temp_sensor_ = sensor; }
   void set_temp_setpoint_sensor(sensor::Sensor *sensor) { this->temp_setpoint_sensor_ = sensor; }
+  void set_fan_speed_sensor(sensor::Sensor* sensor) { this->fan_speed_sensor_ = sensor; }
 
  protected:
   Nilan *nilan_;
@@ -28,6 +29,8 @@ class NilanClimate : public climate::Climate, public Component {
   sensor::Sensor *current_temp_sensor_{nullptr};
   /// The sensor used for getting the temperature setpoint
   sensor::Sensor *temp_setpoint_sensor_{nullptr};
+  /// The sensor used for getting fan speed
+  sensor::Sensor* fan_speed_sensor_{ nullptr };
 };
 
 }  // namespace nilan

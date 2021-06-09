@@ -12,10 +12,6 @@ namespace nilan {
 
 class Nilan : public PollingComponent, public modbus::ModbusDevice {
  public: 
-  /*Nilan() {
-    operation_mode_sensor_ = new text_sensor::TextSensor("Operation mode");
-    this->register_text_sensor(operation_mode_sensor_);
-  }*/
   void set_temp_t0_sensor(sensor::Sensor * temp_t0_sensor) { temp_t0_sensor_ = temp_t0_sensor; }
   void set_temp_t3_sensor(sensor::Sensor * temp_t3_sensor) { temp_t3_sensor_ = temp_t3_sensor; }
   void set_temp_t4_sensor(sensor::Sensor * temp_t4_sensor) { temp_t4_sensor_ = temp_t4_sensor; }
@@ -34,6 +30,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_co2_sensor(sensor::Sensor *co2_sensor) { co2_sensor_ = co2_sensor; }
   void set_inlet_fan_sensor(sensor::Sensor *inlet_fan_sensor) { inlet_fan_sensor_ = inlet_fan_sensor; }
   void set_exhaust_fan_sensor(sensor::Sensor *exhaust_fan_sensor) { exhaust_fan_sensor_ = exhaust_fan_sensor; }
+  void set_ventilation_speed_sensor(sensor::Sensor* ventilation_speed_sensor) { ventilation_speed_sensor_ = ventilation_speed_sensor; }
 
   void set_is_summer_sensor(binary_sensor::BinarySensor *is_summer_sensor) { is_summer_sensor_ = is_summer_sensor; }
   void set_filter_ok_sensor(binary_sensor::BinarySensor *filter_ok_sensor) { filter_ok_sensor_ = filter_ok_sensor; }
@@ -47,6 +44,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
   void add_target_temp_callback(std::function<void(float)> &&callback);
   void add_fan_speed_callback(std::function<void(int)> &&callback);
+  void add_operation_mode_callback(std::function<void(int)>&& callback);
   
   void loop() override;
   void update() override;
@@ -79,6 +77,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
   void writeTargetTemperature(float new_target_temp);
   void writeFanMode(int new_fan_speed);
+  void writeOperationMode(int new_mode);
   
   void dump_config() override;
 
@@ -96,7 +95,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     fan_data = 9,
     version_info = 10,
     fan_write = 11,
-    target_temp_write = 12
+    target_temp_write = 12,
+    operation_mode_write = 13
   };
   
   ReadState state_{idle};
@@ -122,6 +122,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   sensor::Sensor *exhaust_fan_sensor_;
   sensor::Sensor *inlet_fan_sensor_;
   sensor::Sensor *target_temp_sensor_;
+  sensor::Sensor* ventilation_speed_sensor_;
   binary_sensor::BinarySensor *on_off_state_sensor_;
   binary_sensor::BinarySensor *is_summer_sensor_;
   binary_sensor::BinarySensor *filter_ok_sensor_;
@@ -131,11 +132,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   text_sensor::TextSensor *control_state_sensor_;
   text_sensor::TextSensor *operation_mode_sensor_;
   
-  //sensor::Sensor *watervalve_sensor_;
-  //sensor::Sensor *humidity_fan_control_sensor_;
-
   CallbackManager<void(float)> target_temp_callback_;
   CallbackManager<void(int)> fan_speed_callback_;
+  CallbackManager<void(int)> operation_mode_callback_;
   
  private:
    uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
@@ -144,6 +143,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
    bool ignore_previous_state_ = true;
    int16_t target_temp_write_value_ = -1;
    int16_t fan_mode_write_value_ = -1;
+   int16_t operation_mode_write_value_ = -1;
 };
 
 }  // namespace nilan
