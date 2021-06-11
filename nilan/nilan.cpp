@@ -6,10 +6,10 @@ namespace nilan {
 
 static const char *TAG = "nilan";
 
-static const uint16_t RUNSET = 1000+1;
-static const uint16_t MODESET = 1001+1;
-static const uint16_t VENTSET = 1002+1;
-static const uint16_t TEMPSET = 1003+1;
+static const uint16_t RUNSET = 1001;
+static const uint16_t MODESET = 1002;
+static const uint16_t VENTSET = 1003;
+static const uint16_t TEMPSET = 1004;
 
 static const uint8_t CMD_READ_INPUT_REG = 4;
 static const uint8_t CMD_READ_HOLDING_REG = 3;
