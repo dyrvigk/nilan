@@ -110,7 +110,7 @@ void NilanClimate::control(const climate::ClimateCall &call) {
 climate::ClimateTraits NilanClimate::traits() {
   auto traits = climate::ClimateTraits();
   traits.set_supports_current_temperature(true);
-  //traits.set_supports_auto_mode(true);
+  traits.set_supports_auto_mode(true);
   traits.set_supports_cool_mode(true);
   traits.set_supports_heat_mode(true);
   traits.set_supports_fan_mode_off(true);
