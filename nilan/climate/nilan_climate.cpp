@@ -78,7 +78,7 @@ void NilanClimate::control(const climate::ClimateCall &call) {
     auto new_mode = *call.get_mode();
     mode = new_mode;
     switch (new_mode) {
-      case climate::CLIMATE_MODE_OFF: operation_mode = 0; break;
+      case climate::CLIMATE_MODE_OFF: operation_mode = 3; break; // Not supported yet - write to different register to set it to off - for now it will just go to auto
       case climate::CLIMATE_MODE_HEAT: operation_mode = 1; break;
       case climate::CLIMATE_MODE_COOL: operation_mode = 2; break;
       case climate::CLIMATE_MODE_AUTO: operation_mode = 3; break;
@@ -109,15 +109,19 @@ void NilanClimate::control(const climate::ClimateCall &call) {
 
 climate::ClimateTraits NilanClimate::traits() {
   auto traits = climate::ClimateTraits();
-  traits.set_supports_current_temperature(true);
   traits.set_supports_auto_mode(true);
   traits.set_supports_cool_mode(true);
   traits.set_supports_heat_mode(true);
+  
   traits.set_supports_fan_mode_off(true);
   traits.set_supports_fan_mode_low(true);
   traits.set_supports_fan_mode_medium(true);
   traits.set_supports_fan_mode_high(true);
+  
+  traits.set_supports_current_temperature(true);
   traits.set_visual_temperature_step(1);
+  traits.set_visual_min_temperature(5);
+  traits.set_visual_max_temperature(30);
   return traits;
 }
 

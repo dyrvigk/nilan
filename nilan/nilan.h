@@ -94,9 +94,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     flaps_data = 8,
     fan_data = 9,
     version_info = 10,
-    fan_write = 11,
-    target_temp_write = 12,
-    operation_mode_write = 13
+    write = 11
   };
   
   ReadState state_{idle};
@@ -137,6 +135,7 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   CallbackManager<void(int)> operation_mode_callback_;
   
  private:
+   void writeModbusRegister(const uint16_t register_address, const uint16_t write_value );
    uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
    float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
 
