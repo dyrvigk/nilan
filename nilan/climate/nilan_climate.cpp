@@ -23,14 +23,19 @@ void NilanClimate::setup() {
       mode = climate::CLIMATE_MODE_OFF;
     }
     publish_state();
-    });
+  });
+  mode_sensor_->add_on_state_callback([this](std::string state) {
+    ESP_LOGD(TAG, "OPERATION MODE CALLBACK: %s", state.c_str());
+    mode = nilanmodetext_to_climatemode(state);
+    publish_state();
+  });
   fan_speed_sensor_->add_on_state_callback([this](float state) {
     ESP_LOGD(TAG, "FAN SPEED SENSOR CALLBACK: %f", state);
     fan_mode = nilanfanspeed_to_fanmode(state);
     publish_state();
   });
 
-  nilan_->add_target_temp_callback([this](float state) {
+  /*nilan_->add_target_temp_callback([this](float state) {
     ESP_LOGD(TAG, "TARGET TEMP CHANGE CALLBACK: %f", state);
     target_temperature = state;
     publish_state();
@@ -44,12 +49,12 @@ void NilanClimate::setup() {
     ESP_LOGD(TAG, "FAN SPEED CHANGE CALLBACK: %d", state);
     fan_mode = nilanfanspeed_to_fanmode(state);
     publish_state();
-  });
+  });*/
 
   current_temperature = current_temp_sensor_->state;
   target_temperature = temp_setpoint_sensor_->state;
-  fan_mode = nilanmode_to_fanmode(fan_speed_sensor_->state);
-  mode = climate::CLIMATE_MODE_OFF;
+  fan_mode = nilanfanspeed_to_fanmode(fan_speed_sensor_->state);
+  mode = nilanmodetext_to_climatemode(mode_sensor_->state);
 }
 
 void NilanClimate::control(const climate::ClimateCall &call) {

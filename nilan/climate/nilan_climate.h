@@ -5,6 +5,7 @@
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
+#include "esphome/components/text_sensor/text_sensor.h"
 
 namespace esphome {
 namespace nilan {
@@ -19,6 +20,7 @@ class NilanClimate : public climate::Climate, public Component {
   void set_temp_setpoint_sensor(sensor::Sensor *sensor) { this->temp_setpoint_sensor_ = sensor; }
   void set_fan_speed_sensor(sensor::Sensor* sensor) { this->fan_speed_sensor_ = sensor; }
   void set_on_off_sensor(binary_sensor::BinarySensor* sensor) { this->on_off_sensor_ = sensor; }
+  void set_mode_sensor(text_sensor::TextSensor* sensor) { this->mode_sensor_ = sensor; }
 
  protected:
   Nilan *nilan_;
@@ -33,11 +35,13 @@ class NilanClimate : public climate::Climate, public Component {
   sensor::Sensor *temp_setpoint_sensor_{nullptr};
   /// The sensor used for getting fan speed
   sensor::Sensor* fan_speed_sensor_{ nullptr };
-  /// The sensor used for getting the machine on/off mode
+  /// The binary sensor used for getting the on/off mode
   binary_sensor::BinarySensor* on_off_sensor_{ nullptr };
+  /// The text sensor used for getting the operation mode
+  text_sensor::TextSensor* mode_sensor_{ nullptr };
 
  private:
-   climate::ClimateFanMode nilanfanspeed_to_fanmode(int state)
+   climate::ClimateFanMode nilanfanspeed_to_fanmode(const int state)
    {
      climate::ClimateFanMode return_value;
      switch (state) {
@@ -51,7 +55,7 @@ class NilanClimate : public climate::Climate, public Component {
      return return_value;
    }
 
-   int climatemode_to_nilanoperationmode(climate::ClimateMode mode)
+   int climatemode_to_nilanoperationmode(const climate::ClimateMode mode)
    {
      int return_value;
      switch (mode) {
@@ -65,6 +69,25 @@ class NilanClimate : public climate::Climate, public Component {
      return return_value;
    }
 
+   climate::ClimateMode nilanmodetext_to_climatemode(const std::string & mode)
+   {
+     climate::ClimateMode return_value;
+
+     if (mode == "Off") {
+       return_value = climate::CLIMATE_MODE_OFF;
+     }
+     else if (mode == "Heat") {
+       return_value = climate::CLIMATE_MODE_HEAT;
+     }
+     else if (mode == "Cool") {
+       return_value = climate::CLIMATE_MODE_COOL;
+     }
+     else {
+       return_value = climate::CLIMATE_MODE_AUTO;
+     }
+
+     return return_value;
+   }
 
 };
 

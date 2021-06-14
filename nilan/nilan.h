@@ -48,9 +48,9 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void set_control_state_sensor(text_sensor::TextSensor *control_state_sensor) { control_state_sensor_ = control_state_sensor; }
   void set_version_info_sensor(text_sensor::TextSensor *version_info_sensor) { version_info_sensor_ = version_info_sensor; }
 
-  void add_target_temp_callback(std::function<void(float)> &&callback);
-  void add_fan_speed_callback(std::function<void(int)> &&callback);
-  void add_operation_mode_callback(std::function<void(int)>&& callback);
+  //void add_target_temp_callback(std::function<void(float)> &&callback);
+  //void add_fan_speed_callback(std::function<void(int)> &&callback);
+  //void add_operation_mode_callback(std::function<void(int)>&& callback);
   
   void loop() override;
   void update() override;

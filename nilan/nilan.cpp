@@ -31,9 +31,9 @@ uint16_t crc16(const uint8_t *data, uint8_t len) {
   return crc;
 }
 
-void Nilan::add_target_temp_callback(std::function<void(float)> &&callback) { target_temp_callback_.add(std::move(callback)); }
-void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
-void Nilan::add_operation_mode_callback(std::function<void(int)>&& callback) { operation_mode_callback_.add(std::move(callback)); }
+//void Nilan::add_target_temp_callback(std::function<void(float)> &&callback) { target_temp_callback_.add(std::move(callback)); }
+//void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
+//void Nilan::add_operation_mode_callback(std::function<void(int)>&& callback) { operation_mode_callback_.add(std::move(callback)); }
 
 void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   if(data.size() != 46) {
