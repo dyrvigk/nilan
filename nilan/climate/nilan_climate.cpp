@@ -17,19 +17,16 @@ void NilanClimate::setup() {
     target_temperature = state;
     publish_state();
   });
+  on_off_sensor_->add_on_state_callback([this](bool state) {
+    ESP_LOGD(TAG, "ON/OFF STATE CALLBACK: %d", state);
+    if (!state) {
+      mode = climate::CLIMATE_MODE_OFF;
+    }
+    publish_state();
+    });
   fan_speed_sensor_->add_on_state_callback([this](float state) {
     ESP_LOGD(TAG, "FAN SPEED SENSOR CALLBACK: %f", state);
-
-    climate::ClimateFanMode fmode;
-    switch ((int)state) {
-      case 0: fmode = climate::CLIMATE_FAN_OFF; break;
-      case 2: fmode = climate::CLIMATE_FAN_LOW; break;
-      case 3: fmode = climate::CLIMATE_FAN_MEDIUM; break;
-      case 4: fmode = climate::CLIMATE_FAN_HIGH; break;
-      default: fmode = climate::CLIMATE_FAN_ON; break;
-    }
-
-    fan_mode = fmode;
+    fan_mode = nilanfanspeed_to_fanmode(state);
     publish_state();
   });
 
@@ -45,21 +42,13 @@ void NilanClimate::setup() {
   });
   nilan_->add_fan_speed_callback([this](int state) {
     ESP_LOGD(TAG, "FAN SPEED CHANGE CALLBACK: %d", state);
-    climate::ClimateFanMode fmode;
-    switch (state) {
-    case 1: fmode = climate::CLIMATE_FAN_LOW; break;
-      case 2: fmode = climate::CLIMATE_FAN_LOW; break;
-      case 3: fmode = climate::CLIMATE_FAN_MEDIUM; break;
-      case 4: fmode = climate::CLIMATE_FAN_HIGH; break;
-      default: fmode = climate::CLIMATE_FAN_OFF; break;
-    }
-    fan_mode = fmode;
+    fan_mode = nilanfanspeed_to_fanmode(state);
     publish_state();
   });
 
   current_temperature = current_temp_sensor_->state;
   target_temperature = temp_setpoint_sensor_->state;
-  fan_mode = climate::CLIMATE_FAN_OFF;
+  fan_mode = nilanmode_to_fanmode(fan_speed_sensor_->state);
   mode = climate::CLIMATE_MODE_OFF;
 }
 
@@ -74,18 +63,18 @@ void NilanClimate::control(const climate::ClimateCall &call) {
 
   if (call.get_mode().has_value())
   {
-    int operation_mode;
     auto new_mode = *call.get_mode();
     mode = new_mode;
-    switch (new_mode) {
-      case climate::CLIMATE_MODE_OFF: operation_mode = 3; break; // Not supported yet - write to different register to set it to off - for now it will just go to auto
-      case climate::CLIMATE_MODE_HEAT: operation_mode = 1; break;
-      case climate::CLIMATE_MODE_COOL: operation_mode = 2; break;
-      case climate::CLIMATE_MODE_AUTO: operation_mode = 3; break;
-      default: operation_mode = 4; break;
-    }
+    int operation_mode = climatemode_to_nilanoperationmode(new_mode);
+
     ESP_LOGD(TAG, "Operation mode changed to: %d", operation_mode);
-    nilan_->writeOperationMode(operation_mode);
+    if (operation_mode > 0) {
+      nilan_->writeRunset(1);
+      nilan_->writeOperationMode(operation_mode);
+    }
+    else {
+      nilan_->writeRunset(0);
+    }
   }
   
   if (call.get_fan_mode().has_value())

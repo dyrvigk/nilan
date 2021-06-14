@@ -23,13 +23,13 @@ nilan_ns = cg.esphome_ns.namespace('nilan')
  
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
+    cv.Required(CONF_ON_OFF_STATE): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
+        cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
+    }),
     cv.Optional(CONF_IS_SUMMER): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
     }),
     cv.Optional(CONF_FILTER_OK): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
-        cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
-    }),
-    cv.Optional(CONF_ON_OFF_STATE): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
     }),
     cv.Optional(CONF_BYPASS_ON_OFF): binary_sensor.BINARY_SENSOR_SCHEMA.extend({

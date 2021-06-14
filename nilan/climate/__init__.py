@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, sensor
+from esphome.components import climate, sensor, binary_sensor
 from .. import Nilan, CONF_NILAN_ID
 from esphome.const import (
     CONF_ID
@@ -9,6 +9,7 @@ from esphome.const import (
 CONF_TARGET_TEMP = "target_temp_sensor_id"
 CONF_CURRENT_TEMP = "current_temp_sensor_id"
 CONF_FAN_SPEED = "fan_speed_sensor_id"
+CONF_ON_OFF = "on_off_state_sensor_id"
 
 nilan_ns = cg.esphome_ns.namespace('nilan')
 NilanClimate = nilan_ns.class_('NilanClimate', climate.Climate, cg.Component)
@@ -18,7 +19,8 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend({
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
     cv.Required(CONF_TARGET_TEMP): cv.use_id(sensor.Sensor),
     cv.Required(CONF_CURRENT_TEMP): cv.use_id(sensor.Sensor),
-    cv.Required(CONF_FAN_SPEED): cv.use_id(sensor.Sensor)
+    cv.Required(CONF_FAN_SPEED): cv.use_id(sensor.Sensor),
+    cv.Required(CONF_ON_OFF): cv.use_id(binary_sensor.BinarySensor)
 }).extend(cv.COMPONENT_SCHEMA)
  
 def to_code(config):
@@ -35,3 +37,6 @@ def to_code(config):
 
     sens_fan_speed = yield cg.get_variable(config[CONF_FAN_SPEED])
     cg.add(var.set_fan_speed_sensor(sens_fan_speed))
+        
+    sens_on_off = yield cg.get_variable(config[CONF_ON_OFF])
+    cg.add(var.set_on_off_sensor(sens_on_off))
