@@ -17,13 +17,6 @@ void NilanClimate::setup() {
     target_temperature = state;
     publish_state();
   });
-  on_off_sensor_->add_on_state_callback([this](bool state) {
-    ESP_LOGD(TAG, "ON/OFF STATE CALLBACK: %d", state);
-    if (!state) {
-      mode = climate::CLIMATE_MODE_OFF;
-    }
-    publish_state();
-  });
   mode_sensor_->add_on_state_callback([this](std::string state) {
     ESP_LOGD(TAG, "OPERATION MODE CALLBACK: %s", state.c_str());
     mode = nilanmodetext_to_climatemode(state);

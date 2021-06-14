@@ -117,7 +117,6 @@ climate:
     current_temp_sensor_id: nilan_inlet_temp_t7
     target_temp_sensor_id: nilan_target_temperature
     fan_speed_sensor_id: nilan_ventilation_speed
-    on_off_state_binary_sensor_id: nilan_on_off_state
     mode_text_sensor_id: nilan_operation_mode
 ```
 
