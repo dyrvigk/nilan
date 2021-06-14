@@ -363,15 +363,25 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       handleVersionInfoData(data);
       state_ = Nilan::idle;
       break;
-    case Nilan::write:
+    case Nilan::write_data:
       ESP_LOGD(TAG, "Write response: %s", hexencode(data).c_str());
-      state_ = Nilan::idle;
+      
+      if (this->writequeue_.size() == 0) {
+          state_ = Nilan::temperatures;
+          ESP_LOGD(TAG, "Restarting read sequence");
+      }
       break;
     case Nilan::idle:
     default:
       ESP_LOGW(TAG, "Received data, while in idle mode. Should not happen");
       break;
   }
+
+  if (this->writequeue_.size() > 0) {
+      ESP_LOGD(TAG, "Write queue size is now: %d. Switching to write mode", this->writequeue_.size());
+      state_ = Nilan::write_data;
+  }
+
 }
 
 void Nilan::loop() {
@@ -383,9 +393,8 @@ void Nilan::loop() {
   }
   if (this->waiting_ /*|| (this->state_ == 0)*/ || (now - this->last_send_ < 1000))
     return;
-  this->last_send_ = now;
-  //this->send(CMD_FUNCTION_REG, REGISTER_START[this->state_ - 1], REGISTER_COUNT[this->state_ - 1]);
-  
+
+  this->last_send_ = now;  
   this->waiting_ = true;
 
   switch(state_) {
@@ -429,23 +438,14 @@ void Nilan::loop() {
       //ESP_LOGD(TAG, "Reading version info");
       this->send(CMD_READ_INPUT_REG, 0, 4);
       break;
+    case Nilan::write_data:
+      writeModbusRegister(this->writequeue_.front());
+      this->writequeue_.pop_front();
+      break;
     case Nilan::idle:
     default:
       this->ignore_previous_state_ = false;
       this->waiting_ = false;
-
-      if(this->target_temp_write_value_ != -1) {
-        writeModbusRegister(TEMPSET, this->target_temp_write_value_);
-        this->target_temp_write_value_ = -1;
-      }
-      else if(this->fan_mode_write_value_ != -1) {
-        writeModbusRegister(VENTSET, this->fan_mode_write_value_);
-        this->fan_mode_write_value_ = -1;
-      }
-      else if (this->operation_mode_write_value_ != -1) {
-        writeModbusRegister(MODESET, this->operation_mode_write_value_);
-        this->operation_mode_write_value_ = -1;
-      }
       break;
   }
 }
@@ -454,37 +454,57 @@ void Nilan::update() { this->state_ = Nilan::temperatures; }
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-  this->target_temp_write_value_ = static_cast<uint16_t>(new_target_temp*100);
-  ESP_LOGD(TAG, "Target temp write pending.... (%i)", this->target_temp_write_value_);
+  WriteableData data;
+  data.write_value = static_cast<uint16_t>(new_target_temp * 100);
+  data.register_value = TEMPSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Target temp write pending.... (%i)", data.write_value);
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
 {
-  this->fan_mode_write_value_ = static_cast<uint16_t>(new_fan_speed);
-  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", this->fan_mode_write_value_);
+  WriteableData data;
+  data.write_value = static_cast<uint16_t>(new_fan_speed);
+  data.register_value = VENTSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", data.write_value);
 }
 
 void Nilan::writeOperationMode(int new_mode)
 {
-    this->operation_mode_write_value_ = static_cast<uint16_t>(new_mode);
-    ESP_LOGD(TAG, "Operation mode write pending.... (%i)", this->operation_mode_write_value_);
+  WriteableData data;
+  data.write_value = static_cast<uint16_t>(new_mode);
+  data.register_value = MODESET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Operation mode write pending.... (%i)", data.write_value);
 }
 
-void Nilan::writeModbusRegister(const uint16_t register_address, const uint16_t write_value )
+void Nilan::writeRunset(int new_mode)
 {
-  ESP_LOGD(TAG, "Writing %d to address %d", write_value, register_address);
-  this->state_ = Nilan::write;
+  WriteableData data;
+  data.write_value = static_cast<uint16_t>(new_mode);
+  data.register_value = RUNSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Runset write pending.... (%i)", data.write_value);
+}
+void Nilan::writeModbusRegister(WriteableData write_data)
+{
+  ESP_LOGD(TAG, "Writing %d to address %d", write_data.write_value, write_data.register_value);
 
   uint8_t data[11] = {
     address_,
     CMD_WRITE_MULTIPLE_REG,
-    (uint8_t)(register_address >> 8), // VENTSET msb
-    (uint8_t)(register_address & 0xff), // VENTSET lsb
+    (uint8_t)(write_data.register_value >> 8), // VENTSET msb
+    (uint8_t)(write_data.register_value & 0xff), // VENTSET lsb
     0, // Number of registers to write msb
     1, // Number of registers to write lsb
     2, // Number of bytes to come
-    (uint8_t)(write_value >> 8),
-    (uint8_t)(write_value & 0xff),
+    (uint8_t)(write_data.write_value >> 8),
+    (uint8_t)(write_data.write_value & 0xff),
     0,
     0
   };

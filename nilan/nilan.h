@@ -10,6 +10,12 @@
 namespace esphome {
 namespace nilan {
 
+struct WriteableData
+{
+    uint16_t register_value;
+    uint16_t write_value;
+};
+
 class Nilan : public PollingComponent, public modbus::ModbusDevice {
  public: 
   void set_temp_t0_sensor(sensor::Sensor * temp_t0_sensor) { temp_t0_sensor_ = temp_t0_sensor; }
@@ -78,11 +84,12 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void writeTargetTemperature(float new_target_temp);
   void writeFanMode(int new_fan_speed);
   void writeOperationMode(int new_mode);
+  void writeRunset(int new_mode);
   
   void dump_config() override;
 
  protected:
-  enum ReadState { 
+  enum ReadWriteState { 
     idle = 0,
     temperatures = 1,
     alarms = 2,
@@ -94,14 +101,14 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
     flaps_data = 8,
     fan_data = 9,
     version_info = 10,
-    write = 11
+    write_data = 11
   };
   
-  ReadState state_{idle};
-  uint8_t CMD_FUNCTION_REG{0x04};
+  ReadWriteState state_{idle};
   bool waiting_{false};
   long last_send_{0};
-  
+  std::deque<WriteableData> writequeue_;
+
   sensor::Sensor *temp_t0_sensor_;
   sensor::Sensor *temp_t3_sensor_;
   sensor::Sensor *temp_t4_sensor_;
@@ -135,14 +142,11 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   CallbackManager<void(int)> operation_mode_callback_;
   
  private:
-   void writeModbusRegister(const uint16_t register_address, const uint16_t write_value );
+   void writeModbusRegister(WriteableData write_data);
    uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
    float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
 
    bool ignore_previous_state_ = true;
-   int16_t target_temp_write_value_ = -1;
-   int16_t fan_mode_write_value_ = -1;
-   int16_t operation_mode_write_value_ = -1;
 };
 
 }  // namespace nilan
