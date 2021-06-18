@@ -96,7 +96,9 @@ void NilanClimate::control(const climate::ClimateCall &call) {
 
 climate::ClimateTraits NilanClimate::traits() {
   auto traits = climate::ClimateTraits();
-  traits.set_supports_auto_mode(true);
+
+  //traits.set_supports_auto_mode(true);
+  traits.set_supports_heat_cool_mode(true);
   traits.set_supports_cool_mode(true);
   traits.set_supports_heat_mode(true);
   
@@ -109,6 +111,7 @@ climate::ClimateTraits NilanClimate::traits() {
   traits.set_visual_temperature_step(1);
   traits.set_visual_min_temperature(5);
   traits.set_visual_max_temperature(30);
+  
   return traits;
 }
 
