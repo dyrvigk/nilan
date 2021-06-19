@@ -58,7 +58,7 @@ class NilanClimate : public climate::Climate, public Component {
      case climate::CLIMATE_MODE_OFF: return_value = 0; break;
      case climate::CLIMATE_MODE_HEAT: return_value = 1; break;
      case climate::CLIMATE_MODE_COOL: return_value = 2; break;
-     case climate::CLIMATE_MODE_AUTO: return_value = 3; break;
+     case climate::CLIMATE_MODE_HEAT_COOL: return_value = 3; break;
      default: return_value = 4; break;
      }
 
@@ -79,7 +79,7 @@ class NilanClimate : public climate::Climate, public Component {
        return_value = climate::CLIMATE_MODE_COOL;
      }
      else {
-       return_value = climate::CLIMATE_MODE_AUTO;
+       return_value = climate::CLIMATE_MODE_HEAT_COOL;
      }
 
      return return_value;
