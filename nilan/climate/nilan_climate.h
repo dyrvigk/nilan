@@ -84,7 +84,6 @@ class NilanClimate : public climate::Climate, public Component {
 
      return return_value;
    }
-
 };
 
 }  // namespace nilan

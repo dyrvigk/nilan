@@ -35,13 +35,13 @@ uint16_t crc16(const uint8_t *data, uint8_t len) {
 //void Nilan::add_fan_speed_callback(std::function<void(int)> &&callback) { fan_speed_callback_.add(std::move(callback)); }
 //void Nilan::add_operation_mode_callback(std::function<void(int)>&& callback) { operation_mode_callback_.add(std::move(callback)); }
 
-void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
+void Nilan::handleAnalogIOInputData(const std::vector<uint8_t> &data) {
   if(data.size() != 46) {
-    ESP_LOGD(TAG, "Temperature Data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Analog IO data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
-  //ESP_LOGD(TAG, "Temperature Data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Analog IO data: %s", hexencode(data).c_str());
   
   // Temperatures
   auto raw_16 = get_16bit(data, 0);
@@ -73,9 +73,9 @@ void Nilan::handleTemperatureData(const std::vector<uint8_t> &data) {
   publishState(this->co2_sensor_, co2_level);
 }
 
-void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
+void Nilan::handleAlarmInputData(const std::vector<uint8_t> &data) {
   if(data.size() != 20) {
-    ESP_LOGD(TAG, "Alarm Data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Alarm input data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
@@ -85,13 +85,13 @@ void Nilan::handleAlarmData(const std::vector<uint8_t> &data) {
   publishState(this->active_alarms_sensor_, alarm_count);
 }
 
-void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
-  if(data.size() != 28) {
-    ESP_LOGD(TAG, "Specific Alarm data has wrong size!!! %s", hexencode(data).c_str());
+void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t> &data) {
+  if(data.size() != 32) {
+    ESP_LOGD(TAG, "Discrete IO data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
-  //ESP_LOGD(TAG, "Specific Alarm data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Discrete IO data: %s", hexencode(data).c_str());
   
   auto filter_alarm = get_16bit(data, 2);
   publishState(this->filter_ok_sensor_, !filter_alarm);
@@ -102,11 +102,12 @@ void Nilan::handleSpecificAlarms(const std::vector<uint8_t> &data) {
 
 void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
   if(data.size() != 12) {
-    ESP_LOGD(TAG, "Airtemp Holding data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Airtemp holding data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
   //ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
+
   auto value = get_16bit(data, 0);
   publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
 
@@ -125,11 +126,11 @@ void Nilan::handleAirtempHoldingData(const std::vector<uint8_t> &data) {
 
 void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
   if(data.size() != 14) {
-    ESP_LOGD(TAG, "Airtemp Input data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Airtemp input data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
-  //ESP_LOGD(TAG, "Airtemp Input data: %s", hexencode(data).c_str());
+  ESP_LOGD(TAG, "Airtemp input data: %s", hexencode(data).c_str());
   auto value = get_16bit(data, 0);
   publishState(this->is_summer_sensor_, value);
 
@@ -138,13 +139,14 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
   publishState(this->heat_exchange_efficiency_sensor_, efficiency);
 }
 
-void Nilan::handleControlStateInputData(const std::vector<uint8_t> &data) {
+void Nilan::handleControlInputData(const std::vector<uint8_t> &data) {
   if(data.size() != 8) {
-    ESP_LOGD(TAG, "Control state input data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Control input data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
   
-  //ESP_LOGD(TAG, "Control state input data: %s", hexencode(data).c_str());
+  //ESP_LOGD(TAG, "Control input data: %s", hexencode(data).c_str());
+
   auto value = get_16bit(data, 0);
   publishState(this->on_off_state_sensor_, value);
 
@@ -295,24 +297,33 @@ void Nilan::handleFanData(const std::vector<uint8_t>& data) {
     publishState(this->inlet_fan_sensor_, inlet);
 }
 
-void Nilan::handleVersionInfoData(const std::vector<uint8_t> &data) {
+void Nilan::handleDeviceInputData(const std::vector<uint8_t> &data) {
   if(data.size() != 8) {
-    ESP_LOGD(TAG, "Version info data has wrong size!!! %s", hexencode(data).c_str());
+    ESP_LOGD(TAG, "Device input data has wrong size!!! %s", hexencode(data).c_str());
     return;
   }
 
-  ESP_LOGD(TAG, "Version info data: %s", hexencode(data).c_str());
+  ESP_LOGD(TAG, "Device input data: %s", hexencode(data).c_str());
   
+  auto bus_version = get_16bit(data, 0);
   char version_cstr[20];
-  sprintf(version_cstr, "%c%c%c%c%c%c", 
-    //get_16bit(data, 0), // Bus version
-    data[3], data[2],
-    data[5], data[4],
-    data[7], data[6]); // Bus version 8
 
-  // TODO:
-  // Bus version 16: skift ikke plads - sæt selv punktummer
-  // Eks: 1.6.45 - 00.16.20.31.20.36.34.35
+  // For some reason, the version number is stored differently on older systems with bus version 8
+  if(bus_version == 8)
+  {
+    sprintf(version_cstr, "%c%c%c%c%c%c", 
+      data[3], data[2],
+      data[5], data[4],
+      data[7], data[6]);
+  }
+  // Verified with bus version 16
+  else 
+  {
+    sprintf(version_cstr, "%c%c.%c%c.%c%c", 
+      data[2], data[3],
+      data[4], data[5],
+      data[6], data[7]);
+  }
 
   std::string version_str = version_cstr;
   publishState(this->version_info_sensor_, version_str);
@@ -323,28 +334,32 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
 
   switch(state_)
   {
-    case Nilan::temperatures:
-      handleTemperatureData(data);
-      state_ = Nilan::alarms;
+    case Nilan::device_input:
+      handleDeviceInputData(data);
+      state_ = Nilan::discrete_io_input;
       break;
-    case Nilan::alarms:
-      handleAlarmData(data);
-      state_ = Nilan::specific_alarms;
-      break; 
-    case Nilan::specific_alarms:
-      handleSpecificAlarms(data);
+    case Nilan::discrete_io_input:
+      handleDiscreteIOInputData(data);
+      state_ = Nilan::analog_io_input;
+      break;   
+    case Nilan::analog_io_input:
+      handleAnalogIOInputData(data);
+      state_ = Nilan::alarm_input;
+      break;
+    case Nilan::alarm_input:
+      handleAlarmInputData(data);
+      state_ = Nilan::control_input;
+      break;  
+    case Nilan::control_input:
+      handleControlInputData(data);
       state_ = Nilan::airtemp_holding;
-      break;    
+      break;
     case Nilan::airtemp_holding:
       handleAirtempHoldingData(data);
       state_ = Nilan::airtemp_input;
       break;
     case Nilan::airtemp_input:
       handleAirtempInputData(data);
-      state_ = Nilan::control_state_input;
-      break;
-    case Nilan::control_state_input:
-      handleControlStateInputData(data);
       state_ = Nilan::control_state_holding;
       break;
     case Nilan::control_state_holding:
@@ -357,17 +372,13 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;
     case Nilan::fan_data:
       handleFanData(data);
-      state_ = Nilan::version_info;
-      break;
-    case Nilan::version_info:
-      handleVersionInfoData(data);
       state_ = Nilan::idle;
       break;
     case Nilan::write_data:
       ESP_LOGD(TAG, "Write response: %s", hexencode(data).c_str());
       
       if (this->writequeue_.size() == 0) {
-          state_ = Nilan::temperatures;
+          state_ = Nilan::device_input;
           ESP_LOGD(TAG, "Restarting read sequence");
       }
       break;
@@ -398,17 +409,25 @@ void Nilan::loop() {
   this->waiting_ = true;
 
   switch(state_) {
-    case Nilan::temperatures:
-      //ESP_LOGD(TAG, "Reading temperatures");
+    case Nilan::device_input:
+      //ESP_LOGD(TAG, "Reading device input registers");
+      this->send(CMD_READ_INPUT_REG, 0, 4);
+      break;
+    case Nilan::discrete_io_input:
+      //ESP_LOGD(TAG, "Reading discrete io input registers");
+      this->send(CMD_READ_INPUT_REG, 100, 16);
+      break;
+    case Nilan::analog_io_input:
+      //ESP_LOGD(TAG, "Reading analog io input registers");
       this->send(CMD_READ_INPUT_REG, 200, 23);
       break;
-    case Nilan::alarms:
-      //ESP_LOGD(TAG, "Reading alarms");
+    case Nilan::alarm_input:
+      //ESP_LOGD(TAG, "Reading alarm input registers");
       this->send(CMD_READ_INPUT_REG, 400, 10);
       break;
-    case Nilan::specific_alarms:
-      //ESP_LOGD(TAG, "Reading specific alarms");
-      this->send(CMD_READ_INPUT_REG, 100, 14);
+    case Nilan::control_input:
+      //ESP_LOGD(TAG, "Reading control input registers");
+      this->send(CMD_READ_INPUT_REG, 1000, 4);
       break;
     case Nilan::airtemp_holding:
       //ESP_LOGD(TAG, "Reading airtemp holding");
@@ -417,10 +436,6 @@ void Nilan::loop() {
     case Nilan::airtemp_input:
       //ESP_LOGD(TAG, "Reading airtemp input");
       this->send(CMD_READ_INPUT_REG, 1200, 7);
-      break;
-    case Nilan::control_state_input:
-      //ESP_LOGD(TAG, "Reading control state input");
-      this->send(CMD_READ_INPUT_REG, 1000, 4);
       break;
     case Nilan::control_state_holding:
       //ESP_LOGD(TAG, "Reading control state holding");
@@ -434,10 +449,6 @@ void Nilan::loop() {
       //ESP_LOGD(TAG, "Reading fan data");
       this->send(CMD_READ_HOLDING_REG, 200, 2);
       break;
-    case Nilan::version_info:
-      //ESP_LOGD(TAG, "Reading version info");
-      this->send(CMD_READ_INPUT_REG, 0, 4);
-      break;
     case Nilan::write_data:
       writeModbusRegister(this->writequeue_.front());
       this->writequeue_.pop_front();
@@ -450,7 +461,7 @@ void Nilan::loop() {
   }
 }
 
-void Nilan::update() { this->state_ = Nilan::temperatures; }
+void Nilan::update() { this->state_ = Nilan::device_input; }
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {

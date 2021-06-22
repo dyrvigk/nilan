@@ -1,10 +1,8 @@
 # Nilan air circulation modbus interface
 
-!!! Currently this compononet will only compile wit DEV version of ESPHome !!!
-
 A configured uart component and a modbus component is required.
 
-Example minimal required config:
+Example of all available sensors configured:
 ```yaml
 uart:
   rx_pin: GPIO16
@@ -124,4 +122,4 @@ TO-DO:
 1. Add support for more sensors according to the description (https://fr.nilan.dk/Files//Filer/Download/French/Documentation/Guide%20de%20montage/Modbus%20CTS%20602/MODBUS_CTS-602_2.30_Installation-and-user-guide.pdf)
 
 Kudos:
-A bit thanks to ssieb from the ESPHome Discord community for assisting i making this happen! https://github.com/ssieb
+

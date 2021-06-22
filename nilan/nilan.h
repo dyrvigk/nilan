@@ -57,16 +57,16 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
   void on_modbus_data(const std::vector<uint8_t> &data) override;
   
-  void handleTemperatureData(const std::vector<uint8_t> &data);
-  void handleAlarmData(const std::vector<uint8_t> &data);
-  void handleSpecificAlarms(const std::vector<uint8_t> &data);
+  void handleDeviceInputData(const std::vector<uint8_t> &data);
+  void handleDiscreteIOInputData(const std::vector<uint8_t> &data);
+  void handleAnalogIOInputData(const std::vector<uint8_t> &data);
+  void handleAlarmInputData(const std::vector<uint8_t> &data);
+  void handleControlInputData(const std::vector<uint8_t> &data);
   void handleAirtempHoldingData(const std::vector<uint8_t> &data);
   void handleAirtempInputData(const std::vector<uint8_t> &data);
-  void handleControlStateInputData(const std::vector<uint8_t> &data);
   void handleControlStateHoldingData(const std::vector<uint8_t>& data);
   void handleFlapsData(const std::vector<uint8_t>& data);
   void handleFanData(const std::vector<uint8_t>& data);
-  void handleVersionInfoData(const std::vector<uint8_t> &data);
   
   void publishState(sensor::Sensor * sensor, float value) {
     if(sensor && (sensor->state != value || ignore_previous_state_))
@@ -90,18 +90,19 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
 
  protected:
   enum ReadWriteState { 
-    idle = 0,
-    temperatures = 1,
-    alarms = 2,
-    specific_alarms = 3,
-    airtemp_holding = 4,
-    airtemp_input = 5,
-    control_state_input = 6,
-    control_state_holding = 7,
-    flaps_data = 8,
-    fan_data = 9,
-    version_info = 10,
-    write_data = 11
+    device_input,
+    discrete_io_input,
+    analog_io_input,
+    alarm_input,
+    control_input,
+    //time_holding
+    airtemp_holding,
+    airtemp_input,
+    control_state_holding,
+    flaps_data,
+    fan_data,
+    write_data,
+    idle,
   };
   
   ReadWriteState state_{idle};
