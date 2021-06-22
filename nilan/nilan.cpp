@@ -242,7 +242,7 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
         return;
     }
 
-    ESP_LOGD(TAG, "Control state holding data: %s", hexencode(data).c_str());
+    //ESP_LOGD(TAG, "Control state holding data: %s", hexencode(data).c_str());
 
     auto value = get_16bit(data, 2);
     //ESP_LOGD(TAG, "User on/off is set to %d", value);
@@ -266,10 +266,10 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
     }
 
     //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+
     auto bypass_open = get_16bit(data, 4);
     auto bypass_close = get_16bit(data, 6);
 
-    //ESP_LOGD(TAG, "BypassOpen: %d - BypassClose: %d", bypass_open, bypass_close);
     if(this->bypass_on_off_sensor_) {
       if(this->bypass_on_off_sensor_->state && bypass_close) {
         publishState(this->bypass_on_off_sensor_, false);
@@ -287,12 +287,12 @@ void Nilan::handleFanData(const std::vector<uint8_t>& data) {
     }
 
     //ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+
     auto raw_16 = get_16bit(data, 0);
     float exhaust = scaleAndConvertToFloat(raw_16);
     raw_16 = get_16bit(data, 2);
     float inlet = scaleAndConvertToFloat(raw_16);
 
-    //ESP_LOGD(TAG, "Exhaust: %f - Inlet: %f", exhaust, inlet);
     publishState(this->exhaust_fan_sensor_, exhaust);
     publishState(this->inlet_fan_sensor_, inlet);
 }
@@ -502,6 +502,7 @@ void Nilan::writeRunset(int new_mode)
   writequeue_.emplace_back(data);
   ESP_LOGD(TAG, "Runset write pending.... (%i)", data.write_value);
 }
+
 void Nilan::writeModbusRegister(WriteableData write_data)
 {
   ESP_LOGD(TAG, "Writing %d to address %d", write_data.write_value, write_data.register_value);
@@ -525,7 +526,6 @@ void Nilan::writeModbusRegister(WriteableData write_data)
   parent_->write_array(data, sizeof(data));
   parent_->flush();
 }
-
 
 void Nilan::dump_config() {
   ESP_LOGCONFIG(TAG, "NILAN:");
