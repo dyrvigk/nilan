@@ -131,6 +131,7 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t> &data) {
   }
   
   ESP_LOGD(TAG, "Airtemp input data: %s", hexencode(data).c_str());
+  
   auto value = get_16bit(data, 0);
   publishState(this->is_summer_sensor_, value);
 
@@ -234,6 +235,15 @@ void Nilan::handleControlInputData(const std::vector<uint8_t> &data) {
     
     publishState(this->control_state_sensor_, state_str);
   }
+}
+
+void Nilan::handleAirflowInputData(const std::vector<uint8_t> &data) {
+  if(data.size() != 10) {
+    ESP_LOGD(TAG, "Airflow input data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  ESP_LOGD(TAG, "Airflow input data: %s", hexencode(data).c_str()); 
 }
 
 void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
@@ -352,14 +362,18 @@ void Nilan::on_modbus_data(const std::vector<uint8_t> &data) {
       break;  
     case Nilan::control_input:
       handleControlInputData(data);
-      state_ = Nilan::airtemp_holding;
+      state_ = Nilan::airflow_input;
       break;
-    case Nilan::airtemp_holding:
-      handleAirtempHoldingData(data);
+    case Nilan::airflow_input:
+      handleAirflowInputData(data);
       state_ = Nilan::airtemp_input;
       break;
     case Nilan::airtemp_input:
       handleAirtempInputData(data);
+      state_ = Nilan::airtemp_holding;
+      break;
+    case Nilan::airtemp_holding:
+      handleAirtempHoldingData(data);
       state_ = Nilan::control_state_holding;
       break;
     case Nilan::control_state_holding:
@@ -425,6 +439,14 @@ void Nilan::loop() {
       //ESP_LOGD(TAG, "Reading alarm input registers");
       this->send(CMD_READ_INPUT_REG, 400, 10);
       break;
+    case Nilan::airflow_input:
+      //ESP_LOGD(TAG, "Reading airflow input registers");
+      this->send(CMD_READ_INPUT_REG, 1100, 5);
+      break;  
+    case Nilan::airtemp_input:
+      //ESP_LOGD(TAG, "Reading airtemp input registers");
+      this->send(CMD_READ_INPUT_REG, 1200, 7);
+      break;
     case Nilan::control_input:
       //ESP_LOGD(TAG, "Reading control input registers");
       this->send(CMD_READ_INPUT_REG, 1000, 4);
@@ -432,10 +454,6 @@ void Nilan::loop() {
     case Nilan::airtemp_holding:
       //ESP_LOGD(TAG, "Reading airtemp holding");
       this->send(CMD_READ_HOLDING_REG, 1200, 6);
-      break;
-    case Nilan::airtemp_input:
-      //ESP_LOGD(TAG, "Reading airtemp input");
-      this->send(CMD_READ_INPUT_REG, 1200, 7);
       break;
     case Nilan::control_state_holding:
       //ESP_LOGD(TAG, "Reading control state holding");
