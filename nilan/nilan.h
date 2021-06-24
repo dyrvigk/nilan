@@ -56,7 +56,8 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void update() override;
 
   void on_modbus_data(const std::vector<uint8_t> & data) override;
-  
+
+  void handleData(const std::vector<uint8_t> & data);
   void handleDeviceInputData(const std::vector<uint8_t> & data);
   void handleDiscreteIOInputData(const std::vector<uint8_t> & data);
   void handleAnalogIOInputData(const std::vector<uint8_t> & data);
@@ -91,27 +92,48 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   void dump_config() override;
 
  protected:
-  enum ReadWriteState { 
+  enum ReadRegister { 
     device_input,
     discrete_io_input,
     analog_io_input,
     alarm_input,
     control_input,
     airflow_input,
-    //time_holding
-    airtemp_holding,
     airtemp_input,
+    time_holding,
+    airtemp_holding,
     control_state_holding,
     flaps_data,
-    fan_data,
-    write_data,
-    idle,
+    fan_data
+  };
+
+  enum ReadWriteMode {
+    read,
+    write,
+    idle
   };
   
-  ReadWriteState state_{idle};
+  const std::vector<ReadRegister> enabled_read_registers_ = { 
+    device_input,
+    discrete_io_input,
+    analog_io_input,
+    alarm_input,
+    control_input,
+    //airflow_input,
+    airtemp_input,
+    //time_holding,
+    airtemp_holding,
+    control_state_holding,
+    flaps_data,
+    fan_data
+  };
+
+
+  ReadWriteMode current_read_write_mode_ = { Nilan::read };
+  std::vector<ReadRegister>::const_iterator read_state_ = { enabled_read_registers_.begin() };
+  std::deque<WriteableData> writequeue_;
   bool waiting_{false};
   long last_send_{0};
-  std::deque<WriteableData> writequeue_;
 
   sensor::Sensor *temp_t0_sensor_;
   sensor::Sensor *temp_t3_sensor_;
@@ -146,11 +168,14 @@ class Nilan : public PollingComponent, public modbus::ModbusDevice {
   CallbackManager<void(int)> operation_mode_callback_;
   
  private:
-   void writeModbusRegister(WriteableData write_data);
-   uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
-   float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };
+  void writeModbusRegister(WriteableData write_data);
+  uint16_t get_16bit(const std::vector<uint8_t> &data, size_t i) { return (uint16_t(data[i]) << 8) | uint16_t(data[i + 1]); };
+  float scaleAndConvertToFloat(uint16_t rawValue) { return static_cast<int16_t>(rawValue) / 100.0; };    
+  void nextReadState(bool rollover);
+  void loopRead();
+  void idleToWriteMode();
 
-   bool ignore_previous_state_ = true;
+  bool ignore_previous_state_ = true; 
 };
 
 }  // namespace nilan
