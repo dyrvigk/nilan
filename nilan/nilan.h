@@ -145,7 +145,8 @@ public:
   void handleControlInputData(const std::vector<uint8_t>& data);
   void handleAirflowInputData(const std::vector<uint8_t>& data);
   void handleAirtempInputData(const std::vector<uint8_t>& data);
-
+  void handleCentralHeatInputData(const std::vector<uint8_t>& data);
+  
   void handleAirtempHoldingData(const std::vector<uint8_t>& data);
   void handleControlStateHoldingData(const std::vector<uint8_t>& data);
   void handleFlapsData(const std::vector<uint8_t>& data);
@@ -186,6 +187,7 @@ protected:
     control_input,
     airflow_input,
     airtemp_input,
+    central_heat_input,
     time_holding,
     airtemp_holding,
     control_state_holding,
@@ -205,10 +207,9 @@ protected:
     analog_io_input,
     alarm_input,
     control_input,
-
     // airflow_input,
     airtemp_input,
-
+    // central_heat_input,
     // time_holding,
     airtemp_holding,
     control_state_holding,

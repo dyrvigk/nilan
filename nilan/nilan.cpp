@@ -71,6 +71,10 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     handleAirtempInputData(data);
     break;
 
+  case Nilan::central_heat_input:
+    handleCentralHeatInputData(data);
+    break;
+
   case Nilan::airtemp_holding:
     handleAirtempHoldingData(data);
     break;
@@ -91,6 +95,61 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     ESP_LOGW(TAG, "Received data, in unhandled mode. Should not happen");
     break;
   }
+}
+
+void Nilan::handleDeviceInputData(const std::vector<uint8_t>& data) {
+  if (data.size() != 8) {
+    ESP_LOGD(TAG,
+             "Device input data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  // ESP_LOGD(TAG, "Device input data: %s", hexencode(data).c_str());
+
+  auto bus_version = get_16bit(data, 0);
+  char version_cstr[20];
+
+  // For some reason, the version number is stored differently on older systems
+  // with bus version 8
+  if (bus_version == 8)
+  {
+    sprintf(version_cstr, "%c%c%c%c%c%c",
+            data[3], data[2],
+            data[5], data[4],
+            data[7], data[6]);
+  }
+
+  // Verified with bus version 16
+  else
+  {
+    sprintf(version_cstr, "%c%c.%c%c.%c%c",
+            data[2], data[3],
+            data[4], data[5],
+            data[6], data[7]);
+  }
+
+  std::string version_str = version_cstr;
+
+  publishState(this->version_info_sensor_, version_str);
+}
+
+void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
+  if (data.size() != 32) {
+    ESP_LOGD(TAG, "Discrete IO data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  // ESP_LOGD(TAG, "Discrete IO data: %s", hexencode(data).c_str());
+
+  auto filter_alarm = get_16bit(data, 2);
+
+  publishState(this->filter_ok_sensor_, !filter_alarm);
+
+  auto door_open = get_16bit(data, 4);
+
+  publishState(this->door_open_sensor_, door_open);
 }
 
 void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
@@ -145,76 +204,11 @@ void Nilan::handleAlarmInputData(const std::vector<uint8_t>& data) {
     return;
   }
 
-  // ESP_LOGD(TAG, "Alarm Data: %s", hexencode(data).c_str());
+  // ESP_LOGD(TAG, "Alarm data: %s", hexencode(data).c_str());
 
   auto alarm_count = get_16bit(data, 0);
 
   publishState(this->active_alarms_sensor_, alarm_count);
-}
-
-void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
-  if (data.size() != 32) {
-    ESP_LOGD(TAG, "Discrete IO data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Discrete IO data: %s", hexencode(data).c_str());
-
-  auto filter_alarm = get_16bit(data, 2);
-
-  publishState(this->filter_ok_sensor_, !filter_alarm);
-
-  auto door_open = get_16bit(data, 4);
-
-  publishState(this->door_open_sensor_, door_open);
-}
-
-void Nilan::handleAirtempHoldingData(const std::vector<uint8_t>& data) {
-  if (data.size() != 12) {
-    ESP_LOGD(TAG,
-             "Airtemp holding data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
-
-  auto value = get_16bit(data, 0);
-
-  publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 2);
-  publishState(this->min_summer_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 4);
-  publishState(this->min_winter_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 6);
-  publishState(this->max_summer_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 8);
-  publishState(this->max_winter_temp_sensor_,  scaleAndConvertToFloat(value));
-}
-
-void Nilan::handleAirtempInputData(const std::vector<uint8_t>& data) {
-  if (data.size() != 14) {
-    ESP_LOGD(TAG,
-             "Airtemp input data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Airtemp input data: %s", hexencode(data).c_str());
-
-  auto value = get_16bit(data, 0);
-
-  publishState(this->is_summer_sensor_, value);
-
-  value = get_16bit(data, 8);
-  auto efficiency = scaleAndConvertToFloat(value);
-
-  publishState(this->heat_exchange_efficiency_sensor_, efficiency);
 }
 
 void Nilan::handleControlInputData(const std::vector<uint8_t>& data) {
@@ -351,6 +345,68 @@ void Nilan::handleAirflowInputData(const std::vector<uint8_t>& data) {
   ESP_LOGD(TAG, "Airflow input data: %s", hexencode(data).c_str());
 }
 
+void Nilan::handleAirtempInputData(const std::vector<uint8_t>& data) {
+  if (data.size() != 14) {
+    ESP_LOGD(TAG,
+             "Airtemp input data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  // ESP_LOGD(TAG, "Airtemp input data: %s", hexencode(data).c_str());
+
+  auto value = get_16bit(data, 0);
+
+  publishState(this->is_summer_sensor_, value);
+
+  value = get_16bit(data, 8);
+  auto efficiency = scaleAndConvertToFloat(value);
+
+  publishState(this->heat_exchange_efficiency_sensor_, efficiency);
+}
+
+void Nilan::handleCentralHeatInputData(const std::vector<uint8_t>& data) {
+  if (data.size() != 2) {
+    ESP_LOGD(TAG, "Central heat input data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  // ESP_LOGD(TAG, "Central heat input data: %s", hexencode(data).c_str());
+
+  auto value = get_16bit(data, 0);
+  auto external_heat_setpoint = scaleAndConvertToFloat(value);
+  // ESP_LOGD(TAG, "External heat setpoint data: %f", external_heat_setpoint);
+  // TODO: Make sensor
+}
+
+void Nilan::handleAirtempHoldingData(const std::vector<uint8_t>& data) {
+  if (data.size() != 12) {
+    ESP_LOGD(TAG,
+             "Airtemp holding data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  // ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
+
+  auto value = get_16bit(data, 0);
+
+  publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
+
+  value = get_16bit(data, 2);
+  publishState(this->min_summer_temp_sensor_,  scaleAndConvertToFloat(value));
+
+  value = get_16bit(data, 4);
+  publishState(this->min_winter_temp_sensor_,  scaleAndConvertToFloat(value));
+
+  value = get_16bit(data, 6);
+  publishState(this->max_summer_temp_sensor_,  scaleAndConvertToFloat(value));
+
+  value = get_16bit(data, 8);
+  publishState(this->max_winter_temp_sensor_,  scaleAndConvertToFloat(value));
+}
+
 void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
   if (data.size() != 10) {
     ESP_LOGD(TAG, "Control state holding data has wrong size!!! %s",
@@ -417,43 +473,6 @@ void Nilan::handleFanData(const std::vector<uint8_t>& data) {
 
   publishState(this->exhaust_fan_sensor_, exhaust);
   publishState(this->inlet_fan_sensor_,   inlet);
-}
-
-void Nilan::handleDeviceInputData(const std::vector<uint8_t>& data) {
-  if (data.size() != 8) {
-    ESP_LOGD(TAG,
-             "Device input data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Device input data: %s", hexencode(data).c_str());
-
-  auto bus_version = get_16bit(data, 0);
-  char version_cstr[20];
-
-  // For some reason, the version number is stored differently on older systems
-  // with bus version 8
-  if (bus_version == 8)
-  {
-    sprintf(version_cstr, "%c%c%c%c%c%c",
-            data[3], data[2],
-            data[5], data[4],
-            data[7], data[6]);
-  }
-
-  // Verified with bus version 16
-  else
-  {
-    sprintf(version_cstr, "%c%c.%c%c.%c%c",
-            data[2], data[3],
-            data[4], data[5],
-            data[6], data[7]);
-  }
-
-  std::string version_str = version_cstr;
-
-  publishState(this->version_info_sensor_, version_str);
 }
 
 void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
@@ -657,6 +676,11 @@ void Nilan::loopRead()
     this->send(CMD_READ_INPUT_REG, 400, 10);
     break;
 
+  case Nilan::control_input:
+    // ESP_LOGD(TAG, "Reading control input registers");
+    this->send(CMD_READ_INPUT_REG, 1000, 4);
+    break;
+
   case Nilan::airflow_input:
     // ESP_LOGD(TAG, "Reading airflow input registers");
     this->send(CMD_READ_INPUT_REG, 1100, 5);
@@ -667,9 +691,9 @@ void Nilan::loopRead()
     this->send(CMD_READ_INPUT_REG, 1200, 7);
     break;
 
-  case Nilan::control_input:
-    // ESP_LOGD(TAG, "Reading control input registers");
-    this->send(CMD_READ_INPUT_REG, 1000, 4);
+  case Nilan::central_heat_input:
+    // ESP_LOGD(TAG, "Reading airtemp input registers");
+    this->send(CMD_READ_INPUT_REG, 1800, 1);
     break;
 
   case Nilan::airtemp_holding:
