@@ -102,15 +102,18 @@ void NilanClimate::control(const climate::ClimateCall& call) {
 climate::ClimateTraits NilanClimate::traits() {
   auto traits = climate::ClimateTraits();
 
-  // traits.set_supports_auto_mode(true);
-  traits.set_supports_heat_cool_mode(true);
-  traits.set_supports_cool_mode(true);
-  traits.set_supports_heat_mode(true);
+  traits.set_supported_fan_modes({ 
+    climate::ClimateFanMode::CLIMATE_FAN_OFF , 
+    climate::ClimateFanMode::CLIMATE_FAN_LOW,
+    climate::ClimateFanMode::CLIMATE_FAN_MEDIUM,
+    climate::ClimateFanMode::CLIMATE_FAN_HIGH
+  });
 
-  traits.set_supports_fan_mode_off(true);
-  traits.set_supports_fan_mode_low(true);
-  traits.set_supports_fan_mode_medium(true);
-  traits.set_supports_fan_mode_high(true);
+  traits.set_supported_modes({
+    climate::ClimateMode::CLIMATE_MODE_COOL,
+    climate::ClimateMode::CLIMATE_MODE_HEAT,
+    climate::ClimateMode::CLIMATE_MODE_HEAT_COOL
+   });
 
   traits.set_supports_current_temperature(true);
   traits.set_visual_temperature_step(1);
