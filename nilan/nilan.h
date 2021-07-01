@@ -128,6 +128,14 @@ public:
     version_info_sensor_ = version_info_sensor;
   }
 
+  void set_display_line1_sensor(text_sensor::TextSensor *display_line1_sensor) {
+    display_line1_sensor_ = display_line1_sensor;
+  }
+
+  void set_display_line2_sensor(text_sensor::TextSensor *display_line2_sensor) {
+    display_line2_sensor_ = display_line2_sensor;
+  }
+
   // void add_target_temp_callback(std::function<void(float)> &&callback);
   // void add_fan_speed_callback(std::function<void(int)> &&callback);
   // void add_operation_mode_callback(std::function<void(int)>&& callback);
@@ -146,6 +154,7 @@ public:
   void handleAirflowInputData(const std::vector<uint8_t>& data);
   void handleAirtempInputData(const std::vector<uint8_t>& data);
   void handleCentralHeatInputData(const std::vector<uint8_t>& data);
+  void handleUserPanelInputData(const std::vector<uint8_t>& data);
   
   void handleAirtempHoldingData(const std::vector<uint8_t>& data);
   void handleControlStateHoldingData(const std::vector<uint8_t>& data);
@@ -188,6 +197,7 @@ protected:
     airflow_input,
     airtemp_input,
     central_heat_input,
+    user_panel_input,
     time_holding,
     airtemp_holding,
     control_state_holding,
@@ -210,6 +220,7 @@ protected:
     // airflow_input,
     airtemp_input,
     // central_heat_input,
+    // user_panel_input,
     // time_holding,
     airtemp_holding,
     control_state_holding,
@@ -252,6 +263,8 @@ protected:
   text_sensor::TextSensor *version_info_sensor_;
   text_sensor::TextSensor *control_state_sensor_;
   text_sensor::TextSensor *operation_mode_sensor_;
+  text_sensor::TextSensor *display_line1_sensor_;
+  text_sensor::TextSensor *display_line2_sensor_;
 
   CallbackManager<void(float)>target_temp_callback_;
   CallbackManager<void(int)>fan_speed_callback_;

@@ -75,6 +75,10 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     handleCentralHeatInputData(data);
     break;
 
+  case Nilan::user_panel_input:
+    handleUserPanelInputData(data);
+    break;
+
   case Nilan::airtemp_holding:
     handleAirtempHoldingData(data);
     break;
@@ -378,6 +382,44 @@ void Nilan::handleCentralHeatInputData(const std::vector<uint8_t>& data) {
   auto external_heat_setpoint = scaleAndConvertToFloat(value);
   // ESP_LOGD(TAG, "External heat setpoint data: %f", external_heat_setpoint);
   // TODO: Make sensor
+}
+
+void Nilan::handleUserPanelInputData(const std::vector<uint8_t>& data) {
+  if (data.size() != 24) {
+    ESP_LOGD(TAG, "User panel input data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  ESP_LOGD(TAG, "User panel input data: %s", hexencode(data).c_str());
+
+  // bool led_1_state = static_cast<bool>(get_16bit(data, 0));
+  // bool led_2_state = static_cast<bool>(get_16bit(data, 2));
+  // char display_line[8];
+
+  /*std::string first_line = { data[5], data[4], data[7], data[6], data[9], data[8], data[11], data[10] };
+  std::string second_line = { data[15], data[14], data[17], data[16], data[19], data[18], data[21], data[20] };
+
+  for( auto & character : first_line)
+  {
+    character = (character == 9 ? 'Ø' : character);
+    character = (character == 223 ? '°' : character);
+    character = (character == 62 ? '>' : character);
+    character = (character == 60 ? '<' : character);
+  }
+  
+  for( auto & character : second_line)
+  {
+    character = (character == 9 ? 'Ø' : character);
+    character = (character == 223 ? 'x' : character);
+    character = (character == 62 ? 'y' : character);
+    character = (character == 60 ? 'z' : character);
+  }
+  publishState(display_line1_sensor_, first_line);
+  publishState(display_line2_sensor_, second_line);
+  */
+  // ESP_LOGD(TAG, "User panel first line: %s", first_line.c_str());
+  // ESP_LOGD(TAG, "User panel second line: %s", second_line.c_str());
 }
 
 void Nilan::handleAirtempHoldingData(const std::vector<uint8_t>& data) {
@@ -694,6 +736,11 @@ void Nilan::loopRead()
   case Nilan::central_heat_input:
     // ESP_LOGD(TAG, "Reading airtemp input registers");
     this->send(CMD_READ_INPUT_REG, 1800, 1);
+    break;
+
+  case Nilan::user_panel_input:
+    ESP_LOGD(TAG, "Reading user panel input registers");
+    this->send(CMD_READ_INPUT_REG, 2000, 12);
     break;
 
   case Nilan::airtemp_holding:
