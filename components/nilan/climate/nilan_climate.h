@@ -65,11 +65,11 @@ private:
     case 2:
     case 3:
     case 4:
-      custom_fan_mode = esphome::to_string(state);
+      this->custom_fan_mode = esphome::to_string(state);
       break;
     case 0:
     default: 
-      fan_mode = climate::CLIMATE_FAN_OFF; 
+      this->fan_mode = climate::CLIMATE_FAN_OFF; 
       break;
     }
   }
@@ -93,24 +93,20 @@ private:
     return return_value;
   }
 
-  climate::ClimateMode nilanmodetext_to_climatemode(const std::string& mode)
+  void nilanmodetext_to_climatemode(const std::string& nilan_mode)
   {
-    climate::ClimateMode return_value;
-
-    if (mode == "Off") {
-      return_value = climate::CLIMATE_MODE_OFF;
+    if (nilan_mode == "Off") {
+      this->mode = climate::CLIMATE_MODE_OFF;
     }
-    else if (mode == "Heat") {
-      return_value = climate::CLIMATE_MODE_HEAT;
+    else if (nilan_mode == "Heat") {
+      this->mode = climate::CLIMATE_MODE_HEAT;
     }
-    else if (mode == "Cool") {
-      return_value = climate::CLIMATE_MODE_COOL;
+    else if (nilan_mode == "Cool") {
+      this->mode = climate::CLIMATE_MODE_COOL;
     }
     else {
-      return_value = climate::CLIMATE_MODE_HEAT_COOL;
+      this->mode = climate::CLIMATE_MODE_HEAT_COOL;
     }
-
-    return return_value;
   }
 };
 } // namespace nilan
