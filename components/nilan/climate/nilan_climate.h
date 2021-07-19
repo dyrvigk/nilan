@@ -56,23 +56,22 @@ protected:
 
 private:
 
-  climate::ClimateFanMode nilanfanspeed_to_fanmode(const int state)
+  void nilanfanspeed_to_fanmode(const int state)
   {
     climate::ClimateFanMode return_value;
 
     switch (state) {
-    case 0: return_value = climate::CLIMATE_FAN_OFF; break;
-
-    case 2: return_value = climate::CLIMATE_FAN_LOW; break;
-
-    case 3: return_value = climate::CLIMATE_FAN_MEDIUM; break;
-
-    case 4: return_value = climate::CLIMATE_FAN_HIGH; break;
-
-    default: return_value = climate::CLIMATE_FAN_ON; break;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      custom_fan_mode = esphome::to_string(state);
+      break;
+    case 0:
+    default: 
+      fan_mode = climate::CLIMATE_FAN_OFF; 
+      break;
     }
-
-    return return_value;
   }
 
   int climatemode_to_nilanoperationmode(const climate::ClimateMode mode)
