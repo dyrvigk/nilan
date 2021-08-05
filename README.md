@@ -48,6 +48,8 @@ text_sensor:
       name: "Operation mode"
       id: nilan_operation_mode
 
+binary_sensor:
+
 climate:
   - platform: nilan
     name: Nilan
