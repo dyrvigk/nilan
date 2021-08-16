@@ -168,11 +168,23 @@ void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
   auto  raw_16 = get_16bit(data, 0);
   float t0     = scaleAndConvertToFloat(raw_16);
 
+  raw_16 = get_16bit(data, 2);
+  float t1 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 4);
+  float t2 = scaleAndConvertToFloat(raw_16);
+
   raw_16 = get_16bit(data, 6);
   float t3 = scaleAndConvertToFloat(raw_16);
 
   raw_16 = get_16bit(data, 8);
   float t4 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 10);
+  float t5 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 12);
+  float t6 = scaleAndConvertToFloat(raw_16);
 
   raw_16 = get_16bit(data, 14);
   float t7 = scaleAndConvertToFloat(raw_16);
@@ -180,23 +192,60 @@ void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
   raw_16 = get_16bit(data, 16);
   float t8 = scaleAndConvertToFloat(raw_16);
 
+  raw_16 = get_16bit(data, 18);
+  float t9 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 20);
+  float t10 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 22);
+  float t11 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 24);
+  float t12 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 26);
+  float t13 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 28);
+  float t14 = scaleAndConvertToFloat(raw_16);
+
   raw_16 = get_16bit(data, 30);
   float t15 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 32);
+  float t16 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 34);
+  float t17 = scaleAndConvertToFloat(raw_16);
+
+  raw_16 = get_16bit(data, 36);
+  float t18 = scaleAndConvertToFloat(raw_16);
 
   raw_16 = get_16bit(data, 42);
   float humidity  = scaleAndConvertToFloat(raw_16);
   auto  co2_level = get_16bit(data, 44);
 
-  // ESP_LOGD(TAG, "NILAN Temperature: T0=%.1f °C, T3=%.1f °C, T4=%.1f °C,
-  // T7=%.1f °C, T8=%.1f °C, T15=%.1f °C", t0, t3, t4, t7, t8, t15);
-
   // Temperatures
   publishState(this->temp_t0_sensor_,           t0);
+  publishState(this->temp_t1_sensor_,           t1);
+  publishState(this->temp_t2_sensor_,           t2);
   publishState(this->temp_t3_sensor_,           t3);
   publishState(this->temp_t4_sensor_,           t4);
+  publishState(this->temp_t5_sensor_,           t5);
+  publishState(this->temp_t6_sensor_,           t6);
   publishState(this->temp_t7_sensor_,           t7);
   publishState(this->temp_t8_sensor_,           t8);
+  publishState(this->temp_t9_sensor_,           t9);
+  publishState(this->temp_t10_sensor_,          t10);
+  publishState(this->temp_t11_sensor_,          t11);
+  publishState(this->temp_t12_sensor_,          t12);
+  publishState(this->temp_t12_sensor_,          t13);
+  publishState(this->temp_t12_sensor_,          t14);
   publishState(this->temp_t15_sensor_,          t15);
+  publishState(this->temp_t16_sensor_,          t16);
+  publishState(this->temp_t17_sensor_,          t17);
+  publishState(this->temp_t18_sensor_,          t18);
   publishState(this->measured_humidity_sensor_, humidity);
   publishState(this->co2_sensor_,               co2_level);
 }
