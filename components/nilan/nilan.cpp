@@ -240,8 +240,8 @@ void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
   publishState(this->temp_t10_sensor_,          t10);
   publishState(this->temp_t11_sensor_,          t11);
   publishState(this->temp_t12_sensor_,          t12);
-  publishState(this->temp_t12_sensor_,          t13);
-  publishState(this->temp_t12_sensor_,          t14);
+  publishState(this->temp_t13_sensor_,          t13);
+  publishState(this->temp_t14_sensor_,          t14);
   publishState(this->temp_t15_sensor_,          t15);
   publishState(this->temp_t16_sensor_,          t16);
   publishState(this->temp_t17_sensor_,          t17);
