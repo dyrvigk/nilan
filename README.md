@@ -25,6 +25,7 @@ modbus:
  
 external_components:
   - source: github://Jopand/esphome_components
+    refresh: 0s
  
 nilan:
   address: 30
@@ -76,6 +77,7 @@ modbus:
 
 external_components:
   - source: github://Jopand/esphome_components
+    refresh: 0s
  
 nilan:
   address: 30
