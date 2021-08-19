@@ -19,7 +19,6 @@ CONF_BYPASS_ON_OFF = "bypass_on_off"
 CONF_DOOR_OPEN = "door_open"
 
 nilan_ns = cg.esphome_ns.namespace('nilan')
-#NilanBinarySensor = nilan_ns.class_('NilanBinarySensor', binary_sensor.BinarySensor, cg.Component)
  
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
