@@ -59,6 +59,10 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     handleAlarmInputData(data);
     break;
 
+  case Nilan::user_functions_holding:
+    handleUserFunctionsHoldingData(data);
+    break;
+
   case Nilan::control_input:
     handleControlInputData(data);
     break;
@@ -262,6 +266,50 @@ void Nilan::handleAlarmInputData(const std::vector<uint8_t>& data) {
   auto alarm_count = get_16bit(data, 0);
 
   publishState(this->active_alarms_sensor_, alarm_count);
+}
+
+void Nilan::handleUserFunctionsHoldingData(const std::vector<uint8_t>& data) {
+  if (data.size() != 12) {
+    ESP_LOGD(TAG, "User function holding data has wrong size!!! %s",
+             hexencode(data).c_str());
+    return;
+  }
+
+  ESP_LOGD(TAG, "User function holding data: %s", hexencode(data).c_str());
+
+  auto userFuncAct = get_16bit(data, 0);
+  std::string actual_user_function;
+  switch(userFuncAct) {
+    case 0:
+      actual_user_function = "0 : None";
+      break;
+    case 1:
+      actual_user_function = "1 : Extend";
+      break;
+    case 2:
+      actual_user_function = "2 : Inlet";
+      break;
+    case 3:
+      actual_user_function = "3 : Exhaust";
+      break;
+    case 4:
+      actual_user_function = "4 : External heater offset";
+      break;
+    case 5:
+      actual_user_function = "5 : Ventilate";
+      break;
+    case 6:
+      actual_user_function = "6 : Cooker Hood";
+      break;
+  }
+
+  publishState(user_function_actual_sensor_, actual_user_function);
+
+  auto userFuncSet = get_16bit(data, 2);
+  auto userTimeSet = get_16bit(data, 4);
+  auto userVentSet = get_16bit(data, 6);
+  auto userTempSet = get_16bit(data, 8);
+  auto userOffsSet = get_16bit(data, 10);
 }
 
 void Nilan::handleControlInputData(const std::vector<uint8_t>& data) {
@@ -767,6 +815,11 @@ void Nilan::loopRead()
     this->send(CMD_READ_INPUT_REG, 400, 10);
     break;
 
+  case Nilan::user_functions_holding:
+    ESP_LOGD(TAG, "Reading user function holding registers");
+    this->send(CMD_READ_HOLDING_REG, 600, 6);
+    break;
+
   case Nilan::control_input:
     // ESP_LOGD(TAG, "Reading control input registers");
     this->send(CMD_READ_INPUT_REG, 1000, 4);
@@ -788,7 +841,7 @@ void Nilan::loopRead()
     break;
 
   case Nilan::user_panel_input:
-    ESP_LOGD(TAG, "Reading user panel input registers");
+    // ESP_LOGD(TAG, "Reading user panel input registers");
     this->send(CMD_READ_INPUT_REG, 2000, 12);
     break;
 

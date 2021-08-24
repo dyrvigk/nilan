@@ -34,17 +34,5 @@ def to_code(config):
 
     if CONF_SET_USER_FUNCTION in config:
         conf = config[CONF_SET_USER_FUNCTION]
-        #sel = yield select.new_select(config=conf, options=conf[CONF_OPTIONS])
         yield cg.register_component(var, conf)
         yield select.register_select(var, conf, options=conf[CONF_OPTIONS])
-        
-        #cg.add(nilan.set_user_function_select(sel))
-        
-        
-        
-        
-        #sel = yield select.new_select(config=conf, options=conf[CONF_OPTIONS])
-        
-        #var = cg.new_Pvariable(conf)
-        #cg.register_component(var, conf)
-        #select.register_select(var, conf, options=conf[CONF_OPTIONS])

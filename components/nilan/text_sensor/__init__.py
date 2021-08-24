@@ -14,6 +14,7 @@ CONF_CONTROL_STATE = "control_state"
 CONF_VERSION_INFO = "version_info"
 CONF_DISPLAY_LINE1 = "display_line1"
 CONF_DISPLAY_LINE2 = "display_line2"
+CONF_ACTUAL_USER_FUNCTION = "actual_user_function"
 
 nilan_ns = cg.esphome_ns.namespace('nilan')
  
@@ -24,6 +25,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_VERSION_INFO): text_sensor.TEXT_SENSOR_SCHEMA.extend({cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}),
     cv.Optional(CONF_DISPLAY_LINE1): text_sensor.TEXT_SENSOR_SCHEMA.extend({cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}),
     cv.Optional(CONF_DISPLAY_LINE2): text_sensor.TEXT_SENSOR_SCHEMA.extend({cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}),
+    cv.Optional(CONF_ACTUAL_USER_FUNCTION): text_sensor.TEXT_SENSOR_SCHEMA.extend({cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}),
 }).extend(cv.COMPONENT_SCHEMA)
 
 def to_code(config):    
@@ -54,3 +56,8 @@ def to_code(config):
         var = cg.new_Pvariable(conf[CONF_ID])
         yield text_sensor.register_text_sensor(var, conf)
         cg.add(nilan.set_display_line2_sensor(var))
+    if CONF_ACTUAL_USER_FUNCTION in config:
+        conf = config[CONF_ACTUAL_USER_FUNCTION]
+        var = cg.new_Pvariable(conf[CONF_ID])
+        yield text_sensor.register_text_sensor(var, conf)
+        cg.add(nilan.set_user_function_actual_sensor(var))
