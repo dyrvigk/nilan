@@ -8,7 +8,6 @@ namespace esphome {
 namespace nilan {
 class NilanSelect : public select::Select, public Component {
 public:
-
   NilanSelect(Nilan *nilan) : nilan_(nilan) {}
 
 protected:

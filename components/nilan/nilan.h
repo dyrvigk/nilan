@@ -6,6 +6,7 @@
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/select/select.h"
+#include "esphome/components/number/number.h"
 #include "esphome/components/modbus/modbus.h"
 
 namespace esphome {
@@ -197,6 +198,16 @@ public:
     user_function_actual_sensor_ = user_function_actual_sensor;
   }
 
+  void set_user_time_number(number::Number *user_time_number) {
+    user_time_number_ = user_time_number;
+  }
+
+  void set_user_vent_number(number::Number *user_vent_number) {
+    user_vent_number_ = user_vent_number;
+  }
+
+  
+
   // void add_target_temp_callback(std::function<void(float)> &&callback);
   // void add_fan_speed_callback(std::function<void(int)> &&callback);
   // void add_operation_mode_callback(std::function<void(int)>&& callback);
@@ -344,6 +355,8 @@ protected:
   text_sensor::TextSensor *display_line2_sensor_;
   text_sensor::TextSensor *user_function_actual_sensor_;
   select::Select *user_function_select_;
+  number::Number *user_time_number_;
+  number::Number *user_vent_number_;
 
   CallbackManager<void(float)>target_temp_callback_;
   CallbackManager<void(int)>fan_speed_callback_;
