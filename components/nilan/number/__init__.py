@@ -23,6 +23,7 @@ NilanNumber = nilan_ns.class_('NilanNumber', number.Number, cg.Component)
 NilanNumberType = nilan_ns.enum("NilanNumberType", is_class=True)
 
 NUMBER_TYPES = {
+    0: NilanNumberType.UNKNOWN,
     1: NilanNumberType.USER_TEMP_SET,
     2: NilanNumberType.USER_VENT_SET,
     3: NilanNumberType.USER_TIME_SET,
@@ -72,9 +73,9 @@ CONFIG_SCHEMA = cv.Schema(
 )
 
 def to_code(config):
-    #nilan = yield cg.get_variable(config[CONF_NILAN_ID])
+    nilan = yield cg.get_variable(config[CONF_NILAN_ID])
     for conf in config[CONF_NUMBERS]:
-        var = cg.new_Pvariable(conf[CONF_ID])
+        var = cg.new_Pvariable(conf[CONF_ID], nilan)
         yield cg.register_component(var, conf)
         yield number.register_number(
             var,

@@ -8,18 +8,13 @@
 #include "esphome/components/select/select.h"
 #include "esphome/components/number/number.h"
 #include "esphome/components/modbus/modbus.h"
+#include "nilan_types.h"
 
 namespace esphome {
 namespace nilan {
-struct WriteableData
-{
-  uint16_t register_value;
-  uint16_t write_value;
-};
 
 class Nilan : public PollingComponent, public modbus::ModbusDevice {
 public:
-
   void set_temp_t0_sensor(sensor::Sensor *temp_t0_sensor) {
     temp_t0_sensor_ = temp_t0_sensor;
   }
@@ -161,8 +156,7 @@ public:
     door_open_sensor_ = door_open_sensor;
   }
 
-  void set_bypass_on_off_sensor(binary_sensor::BinarySensor *bypass_on_off_sensor)
-  {
+  void set_bypass_on_off_sensor(binary_sensor::BinarySensor *bypass_on_off_sensor) {
     bypass_on_off_sensor_ = bypass_on_off_sensor;
   }
 
@@ -206,7 +200,7 @@ public:
     user_vent_number_ = user_vent_number;
   }
 
-  
+  void on_number_changed(NilanNumberType type, float new_value);
 
   // void add_target_temp_callback(std::function<void(float)> &&callback);
   // void add_fan_speed_callback(std::function<void(int)> &&callback);
@@ -256,55 +250,31 @@ public:
   void writeFanMode(int new_fan_speed);
   void writeOperationMode(int new_mode);
   void writeRunset(int new_mode);
+  void writeData(uint16_t register_address, int write_data);
 
   void dump_config() override;
 
 protected:
-
-  enum ReadRegister {
-    device_input,
-    discrete_io_input,
-    analog_io_input,
-    alarm_input,
-    user_functions_holding,
-    control_input,
-    airflow_input,
-    airtemp_input,
-    central_heat_input,
-    user_panel_input,
-    time_holding,
-    airtemp_holding,
-    control_state_holding,
-    flaps_data,
-    fan_data
-  };
-
-  enum ReadWriteMode {
-    read,
-    write,
-    idle
-  };
-
   const std::vector<ReadRegister>enabled_read_registers_ = {
-    device_input,
-    discrete_io_input,
-    analog_io_input,
-    alarm_input,
-    user_functions_holding,
-    control_input,
-    // airflow_input,
-    airtemp_input,
-    // central_heat_input,
-    // user_panel_input,
-    // time_holding,
-    airtemp_holding,
-    control_state_holding,
-    flaps_data,
-    fan_data
+    ReadRegister::device_input,
+    ReadRegister::discrete_io_input,
+    ReadRegister::analog_io_input,
+    ReadRegister::alarm_input,
+    ReadRegister::user_functions_holding,
+    ReadRegister::control_input,
+    // ReadRegister::airflow_input,
+    ReadRegister::airtemp_input,
+    // ReadRegister::central_heat_input,
+    // ReadRegister::user_panel_input,
+    // ReadRegister::time_holding,
+    ReadRegister::airtemp_holding,
+    ReadRegister::control_state_holding,
+    ReadRegister::flaps_data,
+    ReadRegister::fan_data
   };
 
 
-  ReadWriteMode current_read_write_mode_                = { Nilan::read };
+  ReadWriteMode current_read_write_mode_                = { ReadWriteMode::read };
   std::vector<ReadRegister>::const_iterator read_state_ =
   { enabled_read_registers_.begin() };
   std::deque<WriteableData>writequeue_;

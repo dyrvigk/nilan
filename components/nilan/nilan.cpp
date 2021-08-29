@@ -39,63 +39,77 @@ uint16_t crc16(const uint8_t *data, uint8_t len) {
 // void Nilan::add_operation_mode_callback(std::function<void(int)>&& callback)
 // { operation_mode_callback_.add(std::move(callback)); }
 
+void on_number_changed(NilanNumberType type, float new_value)
+{
+  switch(type){
+    case NilanNumberType::USER_TEMP_SET:
+      break;
+    case NilanNumberType::USER_VENT_SET:
+      break;
+    case NilanNumberType::USER_TIME_SET:
+      break;
+    default:
+      break;
+  }
+}
+
 void Nilan::handleData(const std::vector<uint8_t>& data)
 {
   switch (*this->read_state_)
   {
-  case Nilan::device_input:
+  case ReadRegister::device_input:
     handleDeviceInputData(data);
     break;
 
-  case Nilan::discrete_io_input:
+  case ReadRegister::discrete_io_input:
     handleDiscreteIOInputData(data);
     break;
 
-  case Nilan::analog_io_input:
+  case ReadRegister::analog_io_input:
     handleAnalogIOInputData(data);
     break;
 
-  case Nilan::alarm_input:
+  case ReadRegister::alarm_input:
     handleAlarmInputData(data);
     break;
 
-  case Nilan::user_functions_holding:
+  case ReadRegister::user_functions_holding:
     handleUserFunctionsHoldingData(data);
     break;
 
-  case Nilan::control_input:
+  case ReadRegister::control_input:
     handleControlInputData(data);
     break;
 
-  case Nilan::airflow_input:
+  case ReadRegister::airflow_input:
     handleAirflowInputData(data);
     break;
 
-  case Nilan::airtemp_input:
+  case ReadRegister::airtemp_input:
     handleAirtempInputData(data);
     break;
 
-  case Nilan::central_heat_input:
+  case ReadRegister::central_heat_input:
     handleCentralHeatInputData(data);
     break;
 
-  case Nilan::user_panel_input:
+  case ReadRegister::user_panel_input:
     handleUserPanelInputData(data);
     break;
 
-  case Nilan::airtemp_holding:
+  case ReadRegister::airtemp_holding:
     handleAirtempHoldingData(data);
     break;
 
-  case Nilan::control_state_holding:
+  case ReadRegister::control_state_holding:
     handleControlStateHoldingData(data);
     break;
 
-  case Nilan::flaps_data:
+  case ReadRegister::flaps_data:
     handleFlapsData(data);
     break;
 
-  case Nilan::fan_data:
+  case ReadRegister::fan_data:
     handleFanData(data);
     break;
 
@@ -618,28 +632,28 @@ void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
   this->waiting_ = false;
 
   switch (this->current_read_write_mode_) {
-  case Nilan::read:
+  case ReadWriteMode::read:
     handleData(data);
     nextReadState(false);
     break;
 
-  case Nilan::write:
+  case ReadWriteMode::write:
     ESP_LOGD(TAG, "Write response: %s", hexencode(data).c_str());
 
     if (this->writequeue_.size() == 0) {
-      this->current_read_write_mode_ = Nilan::read;
+      this->current_read_write_mode_ = ReadWriteMode::read;
 
       // ESP_LOGD(TAG, "Resuming read sequence");
     }
     break;
 
-  case Nilan::idle:
+  case ReadWriteMode::idle:
   default:
     break;
   }
 
   if (this->writequeue_.size() > 0) {
-    this->current_read_write_mode_ = Nilan::write;
+    this->current_read_write_mode_ = ReadWriteMode::write;
     ESP_LOGD(TAG,
              "Write mode: Write queue size is now: %d",
              this->writequeue_.size());
@@ -661,16 +675,20 @@ void Nilan::loop() {
   this->waiting_   = true;
 
   switch (this->current_read_write_mode_) {
-  case Nilan::read:
+  case ReadWriteMode::read:
     loopRead();
     break;
 
-  case Nilan::write:
+  case ReadWriteMode::write:
     writeModbusRegister(this->writequeue_.front());
     this->writequeue_.pop_front();
+    if(writequeue_.size() > 0) {
+      writeModbusRegister(this->writequeue_.front());
+      this->writequeue_.pop_front();
+    }
     break;
 
-  case Nilan::idle:
+  case ReadWriteMode::idle:
     this->waiting_ = false;
     break;
 
@@ -681,14 +699,14 @@ void Nilan::loop() {
 
 void Nilan::update() {
   switch (this->current_read_write_mode_) {
-  case Nilan::idle:
-    this->current_read_write_mode_ = Nilan::read;
+  case ReadWriteMode::idle:
+    this->current_read_write_mode_ = ReadWriteMode::read;
     this->waiting_                 = false;
     ESP_LOGD(TAG, "No more idle");
     break;
 
-  case Nilan::read:
-  case Nilan::write:
+  case ReadWriteMode::read:
+  case ReadWriteMode::write:
   default:
     break;
   }
@@ -696,54 +714,38 @@ void Nilan::update() {
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-  WriteableData data;
-
-  data.write_value    = static_cast<uint16_t>(new_target_temp * 100);
-  data.register_value = TEMPSET;
-
-  writequeue_.emplace_back(data);
-  ESP_LOGD(TAG, "Target temp write pending.... (%i)", data.write_value);
-
-  idleToWriteMode();
+  ESP_LOGD(TAG, "Target temp write pending.... (%i)", (int)new_target_temp);
+  writeData(TEMPSET, new_target_temp);
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
 {
-  WriteableData data;
-
-  data.write_value    = static_cast<uint16_t>(new_fan_speed);
-  data.register_value = VENTSET;
-
-  writequeue_.emplace_back(data);
-  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", data.write_value);
-
-  idleToWriteMode();
+  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", new_fan_speed);
+  writeData(VENTSET, new_fan_speed);
 }
 
 void Nilan::writeOperationMode(int new_mode)
 {
-  WriteableData data;
-
-  data.write_value    = static_cast<uint16_t>(new_mode);
-  data.register_value = MODESET;
-
-  writequeue_.emplace_back(data);
-  ESP_LOGD(TAG, "Operation mode write pending.... (%i)", data.write_value);
-
-  idleToWriteMode();
+  ESP_LOGD(TAG, "Operation mode write pending.... (%i)", new_mode);
+  writeData(MODESET, new_mode);
 }
 
 void Nilan::writeRunset(int new_mode)
 {
+  ESP_LOGD(TAG, "Runset write pending.... (%i)", new_mode);
+  writeData(RUNSET, new_mode);
+}
+
+void Nilan::writeData(uint16_t register_address, int write_data)
+{
   WriteableData data;
 
-  data.write_value    = static_cast<uint16_t>(new_mode);
-  data.register_value = RUNSET;
+  data.write_value    = static_cast<uint16_t>(write_data);
+  data.register_value = register_address;
 
   writequeue_.emplace_back(data);
-  ESP_LOGD(TAG, "Runset write pending.... (%i)", data.write_value);
 
-  idleToWriteMode();
+  idleToWriteMode(); 
 }
 
 void Nilan::writeModbusRegister(WriteableData write_data)
@@ -783,11 +785,11 @@ void Nilan::nextReadState(bool rollover) {
 
     if (rollover) {
       // ESP_LOGD(TAG, "Rolling over....!");
-      this->current_read_write_mode_ = Nilan::read;
+      this->current_read_write_mode_ = ReadWriteMode::read;
     }
     else {
       ESP_LOGD(TAG, "Going to idle mode");
-      this->current_read_write_mode_ = Nilan::idle;
+      this->current_read_write_mode_ = ReadWriteMode::idle;
     }
   }
 }
@@ -795,72 +797,72 @@ void Nilan::nextReadState(bool rollover) {
 void Nilan::loopRead()
 {
   switch (*this->read_state_) {
-  case Nilan::device_input:
+  case ReadRegister::device_input:
     // ESP_LOGD(TAG, "Reading device input registers");
     this->send(CMD_READ_INPUT_REG, 0, 4);
     break;
 
-  case Nilan::discrete_io_input:
+  case ReadRegister::discrete_io_input:
     // ESP_LOGD(TAG, "Reading discrete io input registers");
     this->send(CMD_READ_INPUT_REG, 100, 16);
     break;
 
-  case Nilan::analog_io_input:
+  case ReadRegister::analog_io_input:
     // ESP_LOGD(TAG, "Reading analog io input registers");
     this->send(CMD_READ_INPUT_REG, 200, 23);
     break;
 
-  case Nilan::alarm_input:
+  case ReadRegister::alarm_input:
     // ESP_LOGD(TAG, "Reading alarm input registers");
     this->send(CMD_READ_INPUT_REG, 400, 10);
     break;
 
-  case Nilan::user_functions_holding:
+  case ReadRegister::user_functions_holding:
     ESP_LOGD(TAG, "Reading user function holding registers");
     this->send(CMD_READ_HOLDING_REG, 600, 6);
     break;
 
-  case Nilan::control_input:
+  case ReadRegister::control_input:
     // ESP_LOGD(TAG, "Reading control input registers");
     this->send(CMD_READ_INPUT_REG, 1000, 4);
     break;
 
-  case Nilan::airflow_input:
+  case ReadRegister::airflow_input:
     // ESP_LOGD(TAG, "Reading airflow input registers");
     this->send(CMD_READ_INPUT_REG, 1100, 5);
     break;
 
-  case Nilan::airtemp_input:
+  case ReadRegister::airtemp_input:
     // ESP_LOGD(TAG, "Reading airtemp input registers");
     this->send(CMD_READ_INPUT_REG, 1200, 7);
     break;
 
-  case Nilan::central_heat_input:
+  case ReadRegister::central_heat_input:
     // ESP_LOGD(TAG, "Reading airtemp input registers");
     this->send(CMD_READ_INPUT_REG, 1800, 1);
     break;
 
-  case Nilan::user_panel_input:
+  case ReadRegister::user_panel_input:
     // ESP_LOGD(TAG, "Reading user panel input registers");
     this->send(CMD_READ_INPUT_REG, 2000, 12);
     break;
 
-  case Nilan::airtemp_holding:
+  case ReadRegister::airtemp_holding:
     // ESP_LOGD(TAG, "Reading airtemp holding");
     this->send(CMD_READ_HOLDING_REG, 1200, 6);
     break;
 
-  case Nilan::control_state_holding:
+  case ReadRegister::control_state_holding:
     // ESP_LOGD(TAG, "Reading control state holding");
     this->send(CMD_READ_HOLDING_REG, 1000, 5);
     break;
 
-  case Nilan::flaps_data:
+  case ReadRegister::flaps_data:
     // ESP_LOGD(TAG, "Reading flaps data");
     this->send(CMD_READ_HOLDING_REG, 100, 4);
     break;
 
-  case Nilan::fan_data:
+  case ReadRegister::fan_data:
     // ESP_LOGD(TAG, "Reading fan data");
     this->send(CMD_READ_HOLDING_REG, 200, 2);
     break;
@@ -873,8 +875,8 @@ void Nilan::loopRead()
 
 void Nilan::idleToWriteMode()
 {
-  if (this->current_read_write_mode_ == Nilan::idle) {
-    this->current_read_write_mode_ = Nilan::write;
+  if (this->current_read_write_mode_ == ReadWriteMode::idle) {
+    this->current_read_write_mode_ = ReadWriteMode::write;
     loop();
   }
 }
