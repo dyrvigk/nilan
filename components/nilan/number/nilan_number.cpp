@@ -19,7 +19,18 @@ void NilanNumber::control(float value) {
       nilan_->writeDataIgnoreResponse(USER_TEMP, value);
       break;
     case NilanNumberType::USER_TIME_SET:
-      nilan_->writeDataIgnoreResponse(USER_TIME, value);
+      {
+      // 1 hour is written as '100' and not '60'
+      // 1:30 hours is written as '130' and not '90'
+      int intVal = value;
+      int firstDigit = (intVal / 60);
+      int lastDigits = (intVal % 60);
+
+      int totalValue = firstDigit*100 + lastDigits;
+      ESP_LOGD(TAG, "First digit: %d, last digits: %d - total: %d", firstDigit, lastDigits, totalValue);
+
+      nilan_->writeDataIgnoreResponse(USER_TIME, totalValue);
+      }
       break;
     case NilanNumberType::USER_VENT_SET:
       nilan_->writeDataIgnoreResponse(USER_VENT, value);
