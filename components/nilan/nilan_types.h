@@ -7,6 +7,7 @@ struct WriteableData
 {
   uint16_t register_value;
   uint16_t write_value;
+  bool ignore_response;
 };
 
 enum class ReadRegister {

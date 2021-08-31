@@ -639,12 +639,6 @@ void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
 
   case ReadWriteMode::write:
     ESP_LOGD(TAG, "Write response: %s", hexencode(data).c_str());
-
-    if (this->writequeue_.size() == 0) {
-      this->current_read_write_mode_ = ReadWriteMode::read;
-
-      // ESP_LOGD(TAG, "Resuming read sequence");
-    }
     break;
 
   case ReadWriteMode::idle:
@@ -667,12 +661,13 @@ void Nilan::loop() {
   if (this->waiting_ && (now - this->last_send_ > 15000)) {
     ESP_LOGW(TAG, "Timed out waiting for response");
     this->waiting_ = false;
+    this->current_read_write_mode_ = ReadWriteMode::read;
+    this->writequeue_.clear();
   }
 
   if (this->waiting_ || (now - this->last_send_ < 1000)) return;
 
   this->last_send_ = now;
-  this->waiting_   = true;
 
   switch (this->current_read_write_mode_) {
   case ReadWriteMode::read:
@@ -680,11 +675,13 @@ void Nilan::loop() {
     break;
 
   case ReadWriteMode::write:
-    writeModbusRegister(this->writequeue_.front());
-    this->writequeue_.pop_front();
-    if(writequeue_.size() > 0) {
+    if(this->writequeue_.size() > 0) {
       writeModbusRegister(this->writequeue_.front());
       this->writequeue_.pop_front();
+    }
+    else{
+      this->current_read_write_mode_ = ReadWriteMode::read;
+      ESP_LOGD(TAG, "Resuming read sequence");
     }
     break;
 
@@ -714,36 +711,68 @@ void Nilan::update() {
 
 void Nilan::writeTargetTemperature(float new_target_temp)
 {
-  ESP_LOGD(TAG, "Target temp write pending.... (%i)", (int)new_target_temp);
-  writeData(TEMPSET, new_target_temp);
+  WriteableData data;
+
+  data.write_value    = static_cast<uint16_t>(new_target_temp * 100);
+  data.register_value = TEMPSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Target temp write pending.... (%i)", data.write_value);
+
+  idleToWriteMode();
 }
 
 void Nilan::writeFanMode(int new_fan_speed)
 {
-  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", new_fan_speed);
-  writeData(VENTSET, new_fan_speed);
+  WriteableData data;
+
+  data.write_value    = static_cast<uint16_t>(new_fan_speed);
+  data.register_value = VENTSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Fan speed write pending.... (%i)", data.write_value);
+
+  idleToWriteMode();
 }
 
 void Nilan::writeOperationMode(int new_mode)
 {
-  ESP_LOGD(TAG, "Operation mode write pending.... (%i)", new_mode);
-  writeData(MODESET, new_mode);
+  WriteableData data;
+
+  data.ignore_response = false;
+  data.write_value    = static_cast<uint16_t>(new_mode);
+  data.register_value = MODESET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Operation mode write pending.... (%i)", data.write_value);
+
+  idleToWriteMode();
 }
 
 void Nilan::writeRunset(int new_mode)
 {
-  ESP_LOGD(TAG, "Runset write pending.... (%i)", new_mode);
-  writeData(RUNSET, new_mode);
+  WriteableData data;
+
+  data.ignore_response = false;
+  data.write_value    = static_cast<uint16_t>(new_mode);
+  data.register_value = RUNSET;
+
+  writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Runset write pending.... (%i)", data.write_value);
+
+  idleToWriteMode();
 }
 
-void Nilan::writeData(uint16_t register_address, int write_data)
+void Nilan::writeDataIgnoreResponse(uint16_t register_address, int write_data)
 {
   WriteableData data;
 
+  data.ignore_response = true;
   data.write_value    = static_cast<uint16_t>(write_data);
   data.register_value = register_address;
 
   writequeue_.emplace_back(data);
+  ESP_LOGD(TAG, "Data write pending.... (%i)", data.write_value);
 
   idleToWriteMode(); 
 }
@@ -760,10 +789,8 @@ void Nilan::writeModbusRegister(WriteableData write_data)
     CMD_WRITE_MULTIPLE_REG,
     (uint8_t)(write_data.register_value >> 8),   // VENTSET msb
     (uint8_t)(write_data.register_value & 0xff), // VENTSET lsb
-    0,                                           // Number of registers to write
-                                                 // msb
-    1,                                           // Number of registers to write
-                                                 // lsb
+    0,                                           // Number of registers to write msb
+    1,                                           // Number of registers to write lsb
     2,                                           // Number of bytes to come
     (uint8_t)(write_data.write_value >> 8),
     (uint8_t)(write_data.write_value & 0xff),
@@ -776,6 +803,8 @@ void Nilan::writeModbusRegister(WriteableData write_data)
   data[10] = (uint8_t)(crc >> 8);
   parent_->write_array(data, sizeof(data));
   parent_->flush();
+
+  this->waiting_ = !write_data.ignore_response;
 }
 
 void Nilan::nextReadState(bool rollover) {
@@ -796,6 +825,8 @@ void Nilan::nextReadState(bool rollover) {
 
 void Nilan::loopRead()
 {
+  this->waiting_   = true;
+
   switch (*this->read_state_) {
   case ReadRegister::device_input:
     // ESP_LOGD(TAG, "Reading device input registers");

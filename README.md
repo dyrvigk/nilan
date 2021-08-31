@@ -8,6 +8,7 @@ Add this repository to your ESPHome config yaml:
 ```yaml
 external_components:
   - source: github://Jopand/esphome_components
+    refresh: 0s
 ```
 
 ### Example of minimal configuration yaml
@@ -43,8 +44,6 @@ sensor:
       name: "Ventilation speed"
       id: nilan_ventilation_speed
 
-binary_sensor:
-
 text_sensor:
   - platform: nilan
     operation_mode:
@@ -58,6 +57,10 @@ climate:
     target_temp_sensor_id: nilan_target_temperature
     fan_speed_sensor_id: nilan_ventilation_speed
     mode_text_sensor_id: nilan_operation_mode
+    
+binary_sensor:
+number:
+select:
 ```
 
 ### Example of a yaml configuration with all available sensors
@@ -82,6 +85,21 @@ external_components:
 nilan:
   address: 30
   update_interval: 30s
+
+select:
+  - platform: nilan
+    set_user_function:
+      name: "Set user function"
+      id: nilan_set_user_function
+      icon: mdi:form-select
+      options:
+        - "0 : None"
+        - "1 : Extend"
+        - "2 : Inlet"
+        - "3 : Exhaust"
+        - "4 : External heater offset"
+        - "5 : Ventilate"
+        - "6 : Cooker Hood"
 
 sensor:
   - platform: nilan
@@ -211,6 +229,9 @@ text_sensor:
     version_info:
       name: "Software version"
       id: nilan_version_info
+
+number:
+  - platform: nilan
 
 climate:
   - platform: nilan

@@ -250,7 +250,7 @@ public:
   void writeFanMode(int new_fan_speed);
   void writeOperationMode(int new_mode);
   void writeRunset(int new_mode);
-  void writeData(uint16_t register_address, int write_data);
+  void writeDataIgnoreResponse(uint16_t register_address, int write_data);
 
   void dump_config() override;
 
