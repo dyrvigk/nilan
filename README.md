@@ -217,6 +217,54 @@ binary_sensor:
     door_open:
       name: "Door open"
       id: nilan_door_open
+    airflap:
+      name: "Airflap"
+      id: nilan_airflap
+    smokeflap:
+      name: "Smokeflap"
+      id: nilan_smokeflap
+    aircirculation_pump:
+      name: "Aircirculation pump"
+      id: nilan_aircirc_pump
+    airheat_allow:
+      name: "Airheat allow"
+      id: nilan_airheat_allow
+    airheat_1:
+      name: "Airheat 1"
+      id: nilan_airheat_1
+    airheat_2:
+      name: "Airheat 2"
+      id: nilan_airheat_2
+    airheat_3:
+      name: "Airheat 3"
+      id: nilan_airheat_3
+    compressor:
+      name: "Compressor"
+      id: nilan_compressor
+    compressor_2:
+      name: "Compressor 2"
+      id: nilan_compressor_2
+    four_way_cool:
+      name: "Four way cool"
+      id: nilan_four_way_cool
+    hotgas_heat:
+      name: "Hotgas heat"
+      id: nilan_hotgas_heat
+    hotgas_cool:
+      name: "Hotgas cool"
+      id: nilan_hotgas_cool
+    condenser_open:
+      name: "Condenser open"
+      id: nilan_condenser_open
+    condenser_close:
+      name: "Condenser close"
+      id: nilan_condenser_close
+    water_heat:
+      name: "Water heat"
+      id: nilan_water_heat
+    three_way_valve:
+      name: "Three way valve"
+      id: nilan_three_way_valve
 
 text_sensor:
   - platform: nilan

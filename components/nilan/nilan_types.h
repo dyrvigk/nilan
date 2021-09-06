@@ -13,6 +13,7 @@ struct WriteableData
 enum class ReadRegister {
   device_input,
   discrete_io_input,
+  discrete_io_holding,
   analog_io_input,
   alarm_input,
   user_functions_holding,
@@ -24,7 +25,6 @@ enum class ReadRegister {
   time_holding,
   airtemp_holding,
   control_state_holding,
-  flaps_data,
   fan_data
 };
 

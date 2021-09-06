@@ -65,6 +65,10 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     handleDiscreteIOInputData(data);
     break;
 
+  case ReadRegister::discrete_io_holding:
+    handleDiscreteIOHoldingData(data);
+    break;
+
   case ReadRegister::analog_io_input:
     handleAnalogIOInputData(data);
     break;
@@ -103,10 +107,6 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
 
   case ReadRegister::control_state_holding:
     handleControlStateHoldingData(data);
-    break;
-
-  case ReadRegister::flaps_data:
-    handleFlapsData(data);
     break;
 
   case ReadRegister::fan_data:
@@ -158,7 +158,7 @@ void Nilan::handleDeviceInputData(const std::vector<uint8_t>& data) {
 
 void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
   if (data.size() != 32) {
-    ESP_LOGD(TAG, "Discrete IO data has wrong size!!! %s",
+    ESP_LOGD(TAG, "Discrete IO input data has wrong size!!! %s",
              hexencode(data).c_str());
     return;
   }
@@ -589,14 +589,16 @@ void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
   publishState(this->target_temp_sensor_, scaleAndConvertToFloat(value));
 }
 
-void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
-  if (data.size() != 8) {
-    ESP_LOGD(TAG, "Flaps data has wrong size!!! %s", hexencode(data).c_str());
+void Nilan::handleDiscreteIOHoldingData(const std::vector<uint8_t>& data) {
+  if (data.size() != 56) {
+    ESP_LOGD(TAG, "Discrete IO holding data has wrong size!!! %s",
+             hexencode(data).c_str());
     return;
   }
 
-  // ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
+  // ESP_LOGD(TAG, "Discrete IO holding data: %s", hexencode(data).c_str());
 
+  // Bypass values need special treatment:
   auto bypass_open  = get_16bit(data, 4);
   auto bypass_close = get_16bit(data, 6);
 
@@ -608,6 +610,40 @@ void Nilan::handleFlapsData(const std::vector<uint8_t>& data) {
       publishState(this->bypass_on_off_sensor_, true);
     }
   }
+
+  // Simple values:
+  auto value = get_16bit(data, 0);
+  publishState(this->airflap_sensor_, value);
+  value = get_16bit(data, 2);
+  publishState(this->smokeflap_sensor_, value);
+  value = get_16bit(data, 8);
+  publishState(this->aircirc_pump_sensor_, value);
+  value = get_16bit(data, 10);
+  publishState(this->airheat_allow_sensor_, value);
+  value = get_16bit(data, 12);
+  publishState(this->airheat_1_sensor_, value);
+  value = get_16bit(data, 14);
+  publishState(this->airheat_2_sensor_, value);
+  value = get_16bit(data, 16);
+  publishState(this->airheat_3_sensor_, value);
+  value = get_16bit(data, 18);
+  publishState(this->compressor_sensor_, value);
+  value = get_16bit(data, 20);
+  publishState(this->compressor_2_sensor_, value);
+  value = get_16bit(data, 22);
+  publishState(this->four_way_cool_sensor_, value);
+  value = get_16bit(data, 24);
+  publishState(this->hotgas_heat_sensor_, value);
+  value = get_16bit(data, 26);
+  publishState(this->hotgas_cool_sensor_, value);
+  value = get_16bit(data, 28);
+  publishState(this->condenser_open_sensor_, value);
+  value = get_16bit(data, 30);
+  publishState(this->condenser_close_sensor_, value);
+  value = get_16bit(data, 32);
+  publishState(this->water_heat_sensor_, value);
+  value = get_16bit(data, 34);
+  publishState(this->three_way_valve_sensor_, value);
 }
 
 void Nilan::handleFanData(const std::vector<uint8_t>& data) {
@@ -838,6 +874,11 @@ void Nilan::loopRead()
     this->send(CMD_READ_INPUT_REG, 100, 16);
     break;
 
+  case ReadRegister::discrete_io_holding:
+    // ESP_LOGD(TAG, "Reading discrete io holding registers");
+    this->send(CMD_READ_HOLDING_REG, 100, 28);
+    break;
+
   case ReadRegister::analog_io_input:
     // ESP_LOGD(TAG, "Reading analog io input registers");
     this->send(CMD_READ_INPUT_REG, 200, 23);
@@ -886,11 +927,6 @@ void Nilan::loopRead()
   case ReadRegister::control_state_holding:
     // ESP_LOGD(TAG, "Reading control state holding");
     this->send(CMD_READ_HOLDING_REG, 1000, 5);
-    break;
-
-  case ReadRegister::flaps_data:
-    // ESP_LOGD(TAG, "Reading flaps data");
-    this->send(CMD_READ_HOLDING_REG, 100, 4);
     break;
 
   case ReadRegister::fan_data:
