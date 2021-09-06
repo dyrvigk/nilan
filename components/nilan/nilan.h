@@ -164,6 +164,70 @@ public:
     on_off_state_sensor_ = on_off_state_sensor;
   }
 
+  void set_airflap_sensor(binary_sensor::BinarySensor *airflap_sensor) {
+    airflap_sensor_ = airflap_sensor;
+  }
+
+  void set_smokeflap_sensor(binary_sensor::BinarySensor *smokeflap_sensor) {
+    smokeflap_sensor_ = smokeflap_sensor;
+  }
+
+  void set_aircirc_pump_sensor(binary_sensor::BinarySensor *aircirc_pump_sensor) {
+    aircirc_pump_sensor_ = aircirc_pump_sensor;
+  }
+
+  void set_airheat_allow_sensor(binary_sensor::BinarySensor *airheat_allow_sensor) {
+    airheat_allow_sensor_ = airheat_allow_sensor;
+  }
+
+  void set_airheat_1_sensor(binary_sensor::BinarySensor *airheat_1_sensor) {
+    airheat_1_sensor_ = airheat_1_sensor;
+  }
+
+  void set_airheat_2_sensor(binary_sensor::BinarySensor *airheat_2_sensor) {
+    airheat_2_sensor_ = airheat_2_sensor;
+  }
+
+  void set_airheat_3_sensor(binary_sensor::BinarySensor *airheat_3_sensor) {
+    airheat_3_sensor_ = airheat_3_sensor;
+  }
+
+  void set_compressor_sensor(binary_sensor::BinarySensor *compressor_sensor) {
+    compressor_sensor_ = compressor_sensor;
+  }
+
+  void set_compressor_2_sensor(binary_sensor::BinarySensor *compressor_2_sensor) {
+    compressor_2_sensor_ = compressor_2_sensor;
+  }
+
+  void set_four_way_cool_sensor(binary_sensor::BinarySensor *four_way_cool_sensor) {
+    four_way_cool_sensor_ = four_way_cool_sensor;
+  }
+
+  void set_hotgas_heat_sensor(binary_sensor::BinarySensor *hotgas_heat_sensor) {
+    hotgas_heat_sensor_ = hotgas_heat_sensor;
+  }
+
+  void set_hotgas_cool_sensor(binary_sensor::BinarySensor *hotgas_cool_sensor) {
+    hotgas_cool_sensor_ = hotgas_cool_sensor;
+  }
+
+  void set_condenser_open_sensor(binary_sensor::BinarySensor *condenser_open_sensor) {
+    condenser_open_sensor_ = condenser_open_sensor;
+  }
+
+  void set_condenser_close_sensor(binary_sensor::BinarySensor *condenser_close_sensor) {
+    condenser_close_sensor_ = condenser_close_sensor;
+  }
+
+  void set_water_heat_sensor(binary_sensor::BinarySensor *water_heat_sensor) {
+    water_heat_sensor_ = water_heat_sensor;
+  }
+
+  void set_three_way_valve_sensor(binary_sensor::BinarySensor *three_way_valve_sensor) {
+    three_way_valve_sensor_ = three_way_valve_sensor;
+  }
+
   void set_operation_mode_sensor(text_sensor::TextSensor *operation_mode_sensor) {
     operation_mode_sensor_ = operation_mode_sensor;
   }
@@ -225,7 +289,7 @@ public:
   
   void handleAirtempHoldingData(const std::vector<uint8_t>& data);
   void handleControlStateHoldingData(const std::vector<uint8_t>& data);
-  void handleFlapsData(const std::vector<uint8_t>& data);
+  void handleDiscreteIOHoldingData(const std::vector<uint8_t>& data);
   void handleFanData(const std::vector<uint8_t>& data);
 
   void publishState(sensor::Sensor *sensor, float value) {
@@ -258,6 +322,7 @@ protected:
   const std::vector<ReadRegister>enabled_read_registers_ = {
     ReadRegister::device_input,
     ReadRegister::discrete_io_input,
+    ReadRegister::discrete_io_holding,
     ReadRegister::analog_io_input,
     ReadRegister::alarm_input,
     ReadRegister::user_functions_holding,
@@ -269,7 +334,6 @@ protected:
     // ReadRegister::time_holding,
     ReadRegister::airtemp_holding,
     ReadRegister::control_state_holding,
-    ReadRegister::flaps_data,
     ReadRegister::fan_data
   };
 
@@ -318,6 +382,23 @@ protected:
   binary_sensor::BinarySensor *filter_ok_sensor_;
   binary_sensor::BinarySensor *door_open_sensor_;
   binary_sensor::BinarySensor *bypass_on_off_sensor_;
+  binary_sensor::BinarySensor *airflap_sensor_;
+  binary_sensor::BinarySensor *smokeflap_sensor_;
+  binary_sensor::BinarySensor *aircirc_pump_sensor_;
+  binary_sensor::BinarySensor *airheat_allow_sensor_;
+  binary_sensor::BinarySensor *airheat_1_sensor_;
+  binary_sensor::BinarySensor *airheat_2_sensor_;
+  binary_sensor::BinarySensor *airheat_3_sensor_;
+  binary_sensor::BinarySensor *compressor_sensor_;
+  binary_sensor::BinarySensor *compressor_2_sensor_;
+  binary_sensor::BinarySensor *four_way_cool_sensor_;
+  binary_sensor::BinarySensor *hotgas_heat_sensor_;
+  binary_sensor::BinarySensor *hotgas_cool_sensor_;
+  binary_sensor::BinarySensor *condenser_open_sensor_;
+  binary_sensor::BinarySensor *condenser_close_sensor_;
+  binary_sensor::BinarySensor *water_heat_sensor_;
+  binary_sensor::BinarySensor *three_way_valve_sensor_;
+
   text_sensor::TextSensor *version_info_sensor_;
   text_sensor::TextSensor *control_state_sensor_;
   text_sensor::TextSensor *operation_mode_sensor_;
