@@ -14,82 +14,9 @@ namespace esphome {
 namespace nilan {
 
 class Nilan : public PollingComponent, public modbus::ModbusDevice {
+
 public:
-  void set_temp_t0_sensor(sensor::Sensor *temp_t0_sensor) {
-    temp_t0_sensor_ = temp_t0_sensor;
-  }
-
-  void set_temp_t1_sensor(sensor::Sensor* temp_t1_sensor) {
-    temp_t1_sensor_ = temp_t1_sensor;
-  }
-
-  void set_temp_t2_sensor(sensor::Sensor* temp_t2_sensor) {
-    temp_t2_sensor_ = temp_t2_sensor;
-  }
-
-  void set_temp_t3_sensor(sensor::Sensor *temp_t3_sensor) {
-    temp_t3_sensor_ = temp_t3_sensor;
-  }
-
-  void set_temp_t4_sensor(sensor::Sensor *temp_t4_sensor) {
-    temp_t4_sensor_ = temp_t4_sensor;
-  }
-
-  void set_temp_t5_sensor(sensor::Sensor* temp_t5_sensor) {
-    temp_t5_sensor_ = temp_t5_sensor;
-  }
-
-  void set_temp_t6_sensor(sensor::Sensor* temp_t6_sensor) {
-    temp_t6_sensor_ = temp_t6_sensor;
-  }
-
-  void set_temp_t7_sensor(sensor::Sensor *temp_t7_sensor) {
-    temp_t7_sensor_ = temp_t7_sensor;
-  }
-
-  void set_temp_t8_sensor(sensor::Sensor *temp_t8_sensor) {
-    temp_t8_sensor_ = temp_t8_sensor;
-  }
-
-  void set_temp_t9_sensor(sensor::Sensor* temp_t9_sensor) {
-    temp_t9_sensor_ = temp_t9_sensor;
-  }
-
-  void set_temp_t10_sensor(sensor::Sensor* temp_t10_sensor) {
-    temp_t10_sensor_ = temp_t10_sensor;
-  }
-
-  void set_temp_t11_sensor(sensor::Sensor* temp_t11_sensor) {
-    temp_t11_sensor_ = temp_t11_sensor;
-  }
-
-  void set_temp_t12_sensor(sensor::Sensor* temp_t12_sensor) {
-    temp_t12_sensor_ = temp_t12_sensor;
-  }
-
-  void set_temp_t13_sensor(sensor::Sensor* temp_t13_sensor) {
-    temp_t13_sensor_ = temp_t13_sensor;
-  }
-
-  void set_temp_t14_sensor(sensor::Sensor* temp_t14_sensor) {
-    temp_t14_sensor_ = temp_t14_sensor;
-  }
-
-  void set_temp_t15_sensor(sensor::Sensor *temp_t15_sensor) {
-    temp_t15_sensor_ = temp_t15_sensor;
-  }
-
-  void set_temp_t16_sensor(sensor::Sensor* temp_t16_sensor) {
-    temp_t16_sensor_ = temp_t16_sensor;
-  }
-
-  void set_temp_t17_sensor(sensor::Sensor* temp_t17_sensor) {
-    temp_t17_sensor_ = temp_t17_sensor;
-  }
-
-  void set_temp_t18_sensor(sensor::Sensor* temp_t18_sensor) {
-    temp_t18_sensor_ = temp_t18_sensor;
-  }
+  void set_sensor(sensor::Sensor *sensor, uint8_t function, uint16_t register_address);
 
   void set_measured_humidity_sensor(sensor::Sensor *measured_humidity_sensor) {
     measured_humidity_sensor_ = measured_humidity_sensor;
@@ -276,9 +203,12 @@ public:
   void on_modbus_data(const std::vector<uint8_t>& data) override;
 
   void handleData(const std::vector<uint8_t>& data);
+
+  void handleSingleData(const std::vector<uint8_t>& data, const ReadInfo read_info);
+
   void handleDeviceInputData(const std::vector<uint8_t>& data);
   void handleDiscreteIOInputData(const std::vector<uint8_t>& data);
-  void handleAnalogIOInputData(const std::vector<uint8_t>& data);
+  //void handleAnalogIOInputData(const std::vector<uint8_t>& data);
   void handleAlarmInputData(const std::vector<uint8_t>& data);
   void handleUserFunctionsHoldingData(const std::vector<uint8_t>& data);  
   void handleControlInputData(const std::vector<uint8_t>& data);
@@ -337,33 +267,15 @@ protected:
     ReadRegister::fan_data
   };
 
+  std::vector<ReadInfo> read_vector_;
 
-  ReadWriteMode current_read_write_mode_                = { ReadWriteMode::read };
-  std::vector<ReadRegister>::const_iterator read_state_ =
-  { enabled_read_registers_.begin() };
-  std::deque<WriteableData>writequeue_;
+
+  ReadWriteMode current_read_write_mode_ = { ReadWriteMode::read };
+  std::vector<ReadInfo>::const_iterator read_state_ = { read_vector_.begin() };
+  std::deque<WriteableData> writequeue_;
   bool waiting_{ false };
   long last_send_{ 0 };
 
-  sensor::Sensor *temp_t0_sensor_;
-  sensor::Sensor *temp_t1_sensor_;
-  sensor::Sensor *temp_t2_sensor_;
-  sensor::Sensor *temp_t3_sensor_;
-  sensor::Sensor *temp_t4_sensor_;
-  sensor::Sensor *temp_t5_sensor_;
-  sensor::Sensor *temp_t6_sensor_;
-  sensor::Sensor *temp_t7_sensor_;
-  sensor::Sensor *temp_t8_sensor_;
-  sensor::Sensor *temp_t9_sensor_;
-  sensor::Sensor *temp_t10_sensor_;
-  sensor::Sensor *temp_t11_sensor_;
-  sensor::Sensor *temp_t12_sensor_;
-  sensor::Sensor *temp_t13_sensor_;
-  sensor::Sensor *temp_t14_sensor_;
-  sensor::Sensor *temp_t15_sensor_;
-  sensor::Sensor *temp_t16_sensor_;
-  sensor::Sensor *temp_t17_sensor_;
-  sensor::Sensor *temp_t18_sensor_;
   sensor::Sensor *measured_humidity_sensor_;
   sensor::Sensor *active_alarms_sensor_;
   sensor::Sensor *cool_target_temp_sensor_;

@@ -53,9 +53,15 @@ void on_number_changed(NilanNumberType type, float new_value)
   }
 }
 
+void Nilan::set_sensor(sensor::Sensor *sensor, uint8_t function, uint16_t register_address) {
+  ReadInfo info{ CMD_READ_INPUT_REG, 200, sensor, nullptr, nullptr };
+  read_vector_.emplace_back(info);
+}
+
 void Nilan::handleData(const std::vector<uint8_t>& data)
 {
-  switch (*this->read_state_)
+  handleSingleData(data, *this->read_state_);
+  /*switch (*this->read_state_)
   {
   case ReadRegister::device_input:
     handleDeviceInputData(data);
@@ -116,7 +122,7 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
   default:
     ESP_LOGW(TAG, "Received data, in unhandled mode. Should not happen");
     break;
-  }
+  }*/
 }
 
 void Nilan::handleDeviceInputData(const std::vector<uint8_t>& data) {
@@ -174,7 +180,20 @@ void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
   publishState(this->door_open_sensor_, door_open);
 }
 
-void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
+
+void Nilan::handleSingleData(const std::vector<uint8_t>& data, const ReadInfo read_info)
+{
+  if (data.size() != 2) {
+    ESP_LOGD(TAG, "Single data has wrong size!!! %s", hexencode(data).c_str());
+    return;
+  }
+  
+  auto  raw_16 = get_16bit(data, 0);
+  float value = scaleAndConvertToFloat(raw_16);
+  publishState(read_info.sensor, value);
+}
+
+/*void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
   if (data.size() != 46) {
     ESP_LOGD(TAG, "Analog IO data has wrong size!!! %s", hexencode(data).c_str());
     return;
@@ -266,7 +285,7 @@ void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
   publishState(this->temp_t18_sensor_,          t18);
   publishState(this->measured_humidity_sensor_, humidity);
   publishState(this->co2_sensor_,               co2_level);
-}
+}*/
 
 void Nilan::handleAlarmInputData(const std::vector<uint8_t>& data) {
   if (data.size() != 20) {
@@ -695,9 +714,12 @@ void Nilan::loop() {
 
   // timeout after 15 seconds
   if (this->waiting_ && (now - this->last_send_ > 15000)) {
-    ESP_LOGW(TAG, "Timed out waiting for response");
+    ESP_LOGW(TAG, "Timed out waiting for response. Read_write_mode: %d - ", this->read_state_ );
     this->waiting_ = false;
+
+    // If we were in idle mode - get out of it
     this->current_read_write_mode_ = ReadWriteMode::read;
+
     this->writequeue_.clear();
   }
 
@@ -844,9 +866,9 @@ void Nilan::writeModbusRegister(WriteableData write_data)
 }
 
 void Nilan::nextReadState(bool rollover) {
-  if (++this->read_state_ == this->enabled_read_registers_.end()) {
+  if (++this->read_state_ == this->read_vector_.end()) {
     this->ignore_previous_state_ = false;
-    this->read_state_            = this->enabled_read_registers_.begin();
+    this->read_state_            = this->read_vector_.begin();
 
     if (rollover) {
       // ESP_LOGD(TAG, "Rolling over....!");
@@ -862,8 +884,10 @@ void Nilan::nextReadState(bool rollover) {
 void Nilan::loopRead()
 {
   this->waiting_   = true;
+  auto current_read = *this->read_state_;
+  this->send(current_read.function, current_read.register_address, 2);
 
-  switch (*this->read_state_) {
+  /*switch (*this->read_state_) {
   case ReadRegister::device_input:
     // ESP_LOGD(TAG, "Reading device input registers");
     this->send(CMD_READ_INPUT_REG, 0, 4);
@@ -937,7 +961,7 @@ void Nilan::loopRead()
   default:
     this->waiting_ = false;
     break;
-  }
+  }*/
 }
 
 void Nilan::idleToWriteMode()
@@ -952,12 +976,12 @@ void Nilan::dump_config() {
   ESP_LOGCONFIG(TAG, "NILAN:");
   ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
 
-  LOG_SENSOR("", "Temp_t0",           this->temp_t0_sensor_);
+  /*LOG_SENSOR("", "Temp_t0",           this->temp_t0_sensor_);
   LOG_SENSOR("", "Temp_t3",           this->temp_t3_sensor_);
   LOG_SENSOR("", "Temp_t4",           this->temp_t4_sensor_);
   LOG_SENSOR("", "Temp_t7",           this->temp_t7_sensor_);
   LOG_SENSOR("", "Temp_t8",           this->temp_t8_sensor_);
-  LOG_SENSOR("", "Temp_t15",          this->temp_t15_sensor_);
+  LOG_SENSOR("", "Temp_t15",          this->temp_t15_sensor_);*/
   LOG_SENSOR("", "Measured_Humidity", this->measured_humidity_sensor_);
   LOG_SENSOR("", "ActiveAlarms",      this->active_alarms_sensor_);
   LOG_SENSOR("", "CoolSetTemp",       this->cool_target_temp_sensor_);

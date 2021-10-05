@@ -41,5 +41,13 @@ enum class NilanNumberType {
   USER_TIME_SET,
 };
 
+struct ReadInfo {
+  uint8_t function;
+  uint16_t register_address;
+  sensor::Sensor* sensor;
+  binary_sensor::BinarySensor* binary_sensor;
+  text_sensor::TextSensor* text_sensor;
+};
+
 } // namespace nilan
 } // namespace esphome

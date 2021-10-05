@@ -104,83 +104,85 @@ CONFIG_SCHEMA = cv.Schema({
 
 def to_code(config):
     nilan = yield cg.get_variable(config[CONF_NILAN_ID])
+    CMD_READ_INPUT_REG = 4
+    CMD_READ_HOLDING_REG = 3
 
     if CONF_TEMP_T0 in config:
         conf = config[CONF_TEMP_T0]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t0_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 200))
     if CONF_TEMP_T1 in config:
         conf = config[CONF_TEMP_T1]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t1_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 201))
     if CONF_TEMP_T2 in config:
         conf = config[CONF_TEMP_T2]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t2_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 202))
     if CONF_TEMP_T3 in config:
         conf = config[CONF_TEMP_T3]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t3_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 203))
     if CONF_TEMP_T4 in config:
         conf = config[CONF_TEMP_T4]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t4_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 204))
     if CONF_TEMP_T5 in config:
         conf = config[CONF_TEMP_T5]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t5_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 205))
     if CONF_TEMP_T6 in config:
         conf = config[CONF_TEMP_T6]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t6_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 206))
     if CONF_TEMP_T7 in config:
         conf = config[CONF_TEMP_T7]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t7_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 207))
     if CONF_TEMP_T8 in config:
         conf = config[CONF_TEMP_T8]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t8_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 208))
     if CONF_TEMP_T9 in config:
         conf = config[CONF_TEMP_T9]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t9_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 209))
     if CONF_TEMP_T10 in config:
         conf = config[CONF_TEMP_T10]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t10_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 210))
     if CONF_TEMP_T11 in config:
         conf = config[CONF_TEMP_T11]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t11_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 211))
     if CONF_TEMP_T12 in config:
         conf = config[CONF_TEMP_T12]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t12_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 212))
     if CONF_TEMP_T13 in config:
         conf = config[CONF_TEMP_T13]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t13_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 213))
     if CONF_TEMP_T14 in config:
         conf = config[CONF_TEMP_T14]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t14_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 214))
     if CONF_TEMP_T15 in config:
         conf = config[CONF_TEMP_T15]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t15_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 215))
     if CONF_TEMP_T16 in config:
         conf = config[CONF_TEMP_T16]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t16_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 216))
     if CONF_TEMP_T17 in config:
         conf = config[CONF_TEMP_T17]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t17_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 217))
     if CONF_TEMP_T18 in config:
         conf = config[CONF_TEMP_T18]
         sens = yield sensor.new_sensor(conf)
-        cg.add(nilan.set_temp_t18_sensor(sens))
+        cg.add(nilan.set_sensor(sens, CMD_READ_INPUT_REG, 218))
     if CONF_MEASURED_HUMIDITY in config:
         conf = config[CONF_MEASURED_HUMIDITY]
         sens = yield sensor.new_sensor(conf)
