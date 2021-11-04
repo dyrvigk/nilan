@@ -69,14 +69,6 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
     handleDiscreteIOHoldingData(data);
     break;
 
-  case ReadRegister::analog_io_input:
-    handleAnalogIOInputData(data);
-    break;
-
-  case ReadRegister::alarm_input:
-    handleAlarmInputData(data);
-    break;
-
   case ReadRegister::user_functions_holding:
     handleUserFunctionsHoldingData(data);
     break;
@@ -99,18 +91,6 @@ void Nilan::handleData(const std::vector<uint8_t>& data)
 
   case ReadRegister::user_panel_input:
     handleUserPanelInputData(data);
-    break;
-
-  case ReadRegister::airtemp_holding:
-    handleAirtempHoldingData(data);
-    break;
-
-  case ReadRegister::control_state_holding:
-    handleControlStateHoldingData(data);
-    break;
-
-  case ReadRegister::fan_data:
-    handleFanData(data);
     break;
 
   default:
@@ -172,114 +152,6 @@ void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
   auto door_open = get_16bit(data, 4);
 
   publishState(this->door_open_sensor_, door_open);
-}
-
-void Nilan::handleAnalogIOInputData(const std::vector<uint8_t>& data) {
-  if (data.size() != 46) {
-    ESP_LOGD(TAG, "Analog IO data has wrong size!!! %s", hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Analog IO data: %s", hexencode(data).c_str());
-
-  // Temperatures
-  auto  raw_16 = get_16bit(data, 0);
-  float t0     = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 2);
-  float t1 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 4);
-  float t2 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 6);
-  float t3 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 8);
-  float t4 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 10);
-  float t5 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 12);
-  float t6 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 14);
-  float t7 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 16);
-  float t8 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 18);
-  float t9 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 20);
-  float t10 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 22);
-  float t11 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 24);
-  float t12 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 26);
-  float t13 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 28);
-  float t14 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 30);
-  float t15 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 32);
-  float t16 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 34);
-  float t17 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 36);
-  float t18 = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 42);
-  float humidity  = scaleAndConvertToFloat(raw_16);
-  auto  co2_level = get_16bit(data, 44);
-
-  // Temperatures
-  publishState(this->temp_t0_sensor_,           t0);
-  publishState(this->temp_t1_sensor_,           t1);
-  publishState(this->temp_t2_sensor_,           t2);
-  publishState(this->temp_t3_sensor_,           t3);
-  publishState(this->temp_t4_sensor_,           t4);
-  publishState(this->temp_t5_sensor_,           t5);
-  publishState(this->temp_t6_sensor_,           t6);
-  publishState(this->temp_t7_sensor_,           t7);
-  publishState(this->temp_t8_sensor_,           t8);
-  publishState(this->temp_t9_sensor_,           t9);
-  publishState(this->temp_t10_sensor_,          t10);
-  publishState(this->temp_t11_sensor_,          t11);
-  publishState(this->temp_t12_sensor_,          t12);
-  publishState(this->temp_t13_sensor_,          t13);
-  publishState(this->temp_t14_sensor_,          t14);
-  publishState(this->temp_t15_sensor_,          t15);
-  publishState(this->temp_t16_sensor_,          t16);
-  publishState(this->temp_t17_sensor_,          t17);
-  publishState(this->temp_t18_sensor_,          t18);
-  publishState(this->measured_humidity_sensor_, humidity);
-  publishState(this->co2_sensor_,               co2_level);
-}
-
-void Nilan::handleAlarmInputData(const std::vector<uint8_t>& data) {
-  if (data.size() != 20) {
-    ESP_LOGD(TAG, "Alarm input data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Alarm data: %s", hexencode(data).c_str());
-
-  auto alarm_count = get_16bit(data, 0);
-
-  publishState(this->active_alarms_sensor_, alarm_count);
 }
 
 void Nilan::handleUserFunctionsHoldingData(const std::vector<uint8_t>& data) {
@@ -473,11 +345,6 @@ void Nilan::handleAirtempInputData(const std::vector<uint8_t>& data) {
   auto value = get_16bit(data, 0);
 
   publishState(this->is_summer_sensor_, value);
-
-  value = get_16bit(data, 8);
-  auto efficiency = scaleAndConvertToFloat(value);
-
-  publishState(this->heat_exchange_efficiency_sensor_, efficiency);
 }
 
 void Nilan::handleCentralHeatInputData(const std::vector<uint8_t>& data) {
@@ -531,62 +398,6 @@ void Nilan::handleUserPanelInputData(const std::vector<uint8_t>& data) {
   */
   // ESP_LOGD(TAG, "User panel first line: %s", first_line.c_str());
   // ESP_LOGD(TAG, "User panel second line: %s", second_line.c_str());
-}
-
-void Nilan::handleAirtempHoldingData(const std::vector<uint8_t>& data) {
-  if (data.size() != 12) {
-    ESP_LOGD(TAG,
-             "Airtemp holding data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Airtemp Holding data: %s", hexencode(data).c_str());
-
-  auto value = get_16bit(data, 0);
-
-  publishState(this->cool_target_temp_sensor_, scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 2);
-  publishState(this->min_summer_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 4);
-  publishState(this->min_winter_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 6);
-  publishState(this->max_summer_temp_sensor_,  scaleAndConvertToFloat(value));
-
-  value = get_16bit(data, 8);
-  publishState(this->max_winter_temp_sensor_,  scaleAndConvertToFloat(value));
-}
-
-void Nilan::handleControlStateHoldingData(const std::vector<uint8_t>& data) {
-  if (data.size() != 10) {
-    ESP_LOGD(TAG, "Control state holding data has wrong size!!! %s",
-             hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Control state holding data: %s", hexencode(data).c_str());
-
-  auto value = get_16bit(data, 2);
-
-  // ESP_LOGD(TAG, "User on/off is set to %d", value);
-
-  value = get_16bit(data, 4);
-
-  // ESP_LOGD(TAG, "Operation mode is set to %d", value);
-
-  value = get_16bit(data, 6);
-
-  // ESP_LOGD(TAG, "Ventilation step is set to %d", value);
-  publishState(this->ventilation_speed_sensor_, value);
-
-  value = get_16bit(data, 8);
-
-  // ESP_LOGD(TAG, "User temperature setpoint is %f",
-  // scaleAndConvertToFloat(value));
-  publishState(this->target_temp_sensor_, scaleAndConvertToFloat(value));
 }
 
 void Nilan::handleDiscreteIOHoldingData(const std::vector<uint8_t>& data) {
@@ -646,25 +457,7 @@ void Nilan::handleDiscreteIOHoldingData(const std::vector<uint8_t>& data) {
   publishState(this->three_way_valve_sensor_, value);
 }
 
-void Nilan::handleFanData(const std::vector<uint8_t>& data) {
-  if (data.size() != 4) {
-    ESP_LOGD(TAG, "Fan data has wrong size!!! %s", hexencode(data).c_str());
-    return;
-  }
-
-  // ESP_LOGD(TAG, "Flaps data: %s", hexencode(data).c_str());
-
-  auto  raw_16  = get_16bit(data, 0);
-  float exhaust = scaleAndConvertToFloat(raw_16);
-
-  raw_16 = get_16bit(data, 2);
-  float inlet = scaleAndConvertToFloat(raw_16);
-
-  publishState(this->exhaust_fan_sensor_, exhaust);
-  publishState(this->inlet_fan_sensor_,   inlet);
-}
-
-void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
+/*void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
   this->waiting_ = false;
 
   switch (this->current_read_write_mode_) {
@@ -688,7 +481,7 @@ void Nilan::on_modbus_data(const std::vector<uint8_t>& data) {
              "Write mode: Write queue size is now: %d",
              this->writequeue_.size());
   }
-}
+}*/
 
 void Nilan::loop() {
   long now = millis();
@@ -879,16 +672,6 @@ void Nilan::loopRead()
     this->send(CMD_READ_HOLDING_REG, 100, 28);
     break;
 
-  case ReadRegister::analog_io_input:
-    // ESP_LOGD(TAG, "Reading analog io input registers");
-    this->send(CMD_READ_INPUT_REG, 200, 23);
-    break;
-
-  case ReadRegister::alarm_input:
-    // ESP_LOGD(TAG, "Reading alarm input registers");
-    this->send(CMD_READ_INPUT_REG, 400, 10);
-    break;
-
   case ReadRegister::user_functions_holding:
     ESP_LOGD(TAG, "Reading user function holding registers");
     this->send(CMD_READ_HOLDING_REG, 600, 6);
@@ -919,21 +702,6 @@ void Nilan::loopRead()
     this->send(CMD_READ_INPUT_REG, 2000, 12);
     break;
 
-  case ReadRegister::airtemp_holding:
-    // ESP_LOGD(TAG, "Reading airtemp holding");
-    this->send(CMD_READ_HOLDING_REG, 1200, 6);
-    break;
-
-  case ReadRegister::control_state_holding:
-    // ESP_LOGD(TAG, "Reading control state holding");
-    this->send(CMD_READ_HOLDING_REG, 1000, 5);
-    break;
-
-  case ReadRegister::fan_data:
-    // ESP_LOGD(TAG, "Reading fan data");
-    this->send(CMD_READ_HOLDING_REG, 200, 2);
-    break;
-
   default:
     this->waiting_ = false;
     break;
@@ -951,24 +719,6 @@ void Nilan::idleToWriteMode()
 void Nilan::dump_config() {
   ESP_LOGCONFIG(TAG, "NILAN:");
   ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
-
-  LOG_SENSOR("", "Temp_t0",           this->temp_t0_sensor_);
-  LOG_SENSOR("", "Temp_t3",           this->temp_t3_sensor_);
-  LOG_SENSOR("", "Temp_t4",           this->temp_t4_sensor_);
-  LOG_SENSOR("", "Temp_t7",           this->temp_t7_sensor_);
-  LOG_SENSOR("", "Temp_t8",           this->temp_t8_sensor_);
-  LOG_SENSOR("", "Temp_t15",          this->temp_t15_sensor_);
-  LOG_SENSOR("", "Measured_Humidity", this->measured_humidity_sensor_);
-  LOG_SENSOR("", "ActiveAlarms",      this->active_alarms_sensor_);
-  LOG_SENSOR("", "CoolSetTemp",       this->cool_target_temp_sensor_);
-  LOG_SENSOR("", "Inlet_Fan",         this->inlet_fan_sensor_);
-  LOG_SENSOR("", "Extract_Fan",       this->exhaust_fan_sensor_);
-  LOG_SENSOR("", "Target_Temp",       this->target_temp_sensor_);
-
-  /*
-     LOG_SENSOR("", "Bypass", this->bypass_on_off_sensor_);
-     LOG_SENSOR("", "Summer mode", this->is_summer_sensor_);
-   */
 }
 } // namespace nilan
 } // namespace esphome
