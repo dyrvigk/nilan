@@ -5,7 +5,6 @@
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/select/select.h"
-#include "esphome/components/number/number.h"
 #include "esphome/components/modbus_controller/modbus_controller.h"
 #include "nilan_types.h"
 
@@ -126,22 +125,12 @@ public:
     user_function_actual_sensor_ = user_function_actual_sensor;
   }
 
-  void set_user_time_number(number::Number *user_time_number) {
-    user_time_number_ = user_time_number;
-  }
-
-  void set_user_vent_number(number::Number *user_vent_number) {
-    user_vent_number_ = user_vent_number;
-  }
-
-  void on_number_changed(NilanNumberType type, float new_value);
-
   // void add_target_temp_callback(std::function<void(float)> &&callback);
   // void add_fan_speed_callback(std::function<void(int)> &&callback);
   // void add_operation_mode_callback(std::function<void(int)>&& callback);
 
-  void loop() override;
-  void update() override;
+  //void loop() override;
+  //void update() override;
 
   void handleData(const std::vector<uint8_t>& data);
   void handleDeviceInputData(const std::vector<uint8_t>& data);
@@ -222,8 +211,6 @@ protected:
   text_sensor::TextSensor *display_line2_sensor_;
   text_sensor::TextSensor *user_function_actual_sensor_;
   select::Select *user_function_select_;
-  number::Number *user_time_number_;
-  number::Number *user_vent_number_;
 
   CallbackManager<void(float)>target_temp_callback_;
   CallbackManager<void(int)>fan_speed_callback_;
@@ -238,10 +225,6 @@ private:
   float scaleAndConvertToFloat(uint16_t rawValue) {
     return static_cast<int16_t>(rawValue) / 100.0;
   }
-
-  void nextReadState(bool rollover);
-  void loopRead();
-  void idleToWriteMode();
 
   bool ignore_previous_state_ = true;
 };
