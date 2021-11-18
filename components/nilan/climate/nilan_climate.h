@@ -4,6 +4,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/number/number.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 
 namespace esphome {
@@ -20,12 +21,12 @@ public:
     this->current_temp_sensor_ = sensor;
   }
 
-  void set_temp_setpoint_sensor(sensor::Sensor *sensor) {
-    this->temp_setpoint_sensor_ = sensor;
+  void set_temp_setpoint_number(number::Number *sensor) {
+    this->temp_setpoint_number_ = sensor;
   }
 
-  void set_fan_speed_sensor(sensor::Sensor *sensor) {
-    this->fan_speed_sensor_ = sensor;
+  void set_fan_speed_number(number::Number *sensor) {
+    this->fan_speed_number_ = sensor;
   }
 
   void set_mode_sensor(text_sensor::TextSensor *sensor) {
@@ -37,7 +38,7 @@ protected:
   Nilan *nilan_;
 
   /// Override control to change settings of the climate device.
-  void                   control(const climate::ClimateCall& call) override;
+  void control(const climate::ClimateCall& call) override;
 
   /// Return the traits of this controller.
   climate::ClimateTraits traits() override;
@@ -46,10 +47,10 @@ protected:
   sensor::Sensor *current_temp_sensor_{ nullptr };
 
   /// The sensor used for getting the temperature setpoint
-  sensor::Sensor *temp_setpoint_sensor_{ nullptr };
+  number::Number *temp_setpoint_number_{ nullptr };
 
   /// The sensor used for getting fan speed
-  sensor::Sensor *fan_speed_sensor_{ nullptr };
+  number::Number *fan_speed_number_{ nullptr };
 
   /// The text sensor used for getting the operation mode
   text_sensor::TextSensor *mode_sensor_{ nullptr };

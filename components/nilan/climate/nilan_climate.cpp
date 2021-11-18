@@ -12,7 +12,7 @@ void NilanClimate::setup() {
         current_temperature = state;
         publish_state();
       });
-  temp_setpoint_sensor_->add_on_state_callback([this](float state) {
+  temp_setpoint_number_->add_on_state_callback([this](float state) {
         // ESP_LOGD(TAG, "TEMP SETPOINT SENSOR CALLBACK: %f", state);
         target_temperature = state;
         publish_state();
@@ -22,16 +22,16 @@ void NilanClimate::setup() {
         nilanmodetext_to_climatemode(state);
         publish_state();
       });
-  fan_speed_sensor_->add_on_state_callback([this](float state) {
+  fan_speed_number_->add_on_state_callback([this](float state) {
         // ESP_LOGD(TAG, "FAN SPEED SENSOR CALLBACK: %f", state);
         nilanfanspeed_to_fanmode(state);
         publish_state();
       });
 
   current_temperature = current_temp_sensor_->state;
-  target_temperature  = temp_setpoint_sensor_->state;
+  target_temperature  = temp_setpoint_number_->state;
   nilanmodetext_to_climatemode(mode_sensor_->state);
-  nilanfanspeed_to_fanmode(fan_speed_sensor_->state); // Will update either fan_mode or custom_fan_mode
+  nilanfanspeed_to_fanmode(fan_speed_number_->state); // Will update either fan_mode or custom_fan_mode
 }
 
 void NilanClimate::control(const climate::ClimateCall& call) {
@@ -40,7 +40,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     this->target_temperature = *call.get_target_temperature();
     float target = target_temperature;
     ESP_LOGD(TAG, "Target temperature changed to: %f", target);
-    nilan_->writeTargetTemperature(target);
+    temp_setpoint_number_->set(target);
   }
 
   if (call.get_mode().has_value())
@@ -76,7 +76,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
         break;
     }
     ESP_LOGD(TAG, "Fan mode set to: %i", nilan_fan_mode);
-    nilan_->writeFanMode(nilan_fan_mode);
+    fan_speed_number_->set(nilan_fan_mode);
   }
   if (call.get_custom_fan_mode().has_value())
   {
@@ -88,7 +88,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     {
       auto nilan_fan_mode = optional_nilan_fan_mode.value();
       ESP_LOGD(TAG, "Custom Fan mode set to: %i", nilan_fan_mode);
-      nilan_->writeFanMode(nilan_fan_mode);
+      fan_speed_number_->set(nilan_fan_mode);
     }
   }
   this->publish_state();

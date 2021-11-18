@@ -14,7 +14,6 @@ from esphome.const import (
  
 CONF_IS_SUMMER = "is_summer"
 CONF_FILTER_OK = "filter_ok"
-CONF_ON_OFF_STATE = "on_off_state"
 CONF_BYPASS_ON_OFF = "bypass_on_off"
 CONF_DOOR_OPEN = "door_open"
 CONF_AIRFLAP = "airflap"
@@ -38,9 +37,6 @@ nilan_ns = cg.esphome_ns.namespace('nilan')
  
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(CONF_NILAN_ID): cv.use_id(Nilan),
-    cv.Required(CONF_ON_OFF_STATE): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
-        cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
-    }),
     cv.Optional(CONF_IS_SUMMER): binary_sensor.BINARY_SENSOR_SCHEMA.extend({
         cv.Optional(CONF_DEVICE_CLASS, default=DEVICE_CLASS_EMPTY): binary_sensor.device_class
     }),
@@ -114,10 +110,6 @@ def to_code(config):
         conf = config[CONF_FILTER_OK]        
         sens = yield binary_sensor.new_binary_sensor(conf)
         cg.add(nilan.set_filter_ok_sensor(sens))
-    if CONF_ON_OFF_STATE in config:
-        conf = config[CONF_ON_OFF_STATE]        
-        sens = yield binary_sensor.new_binary_sensor(conf)
-        cg.add(nilan.set_on_off_state_sensor(sens))
     if CONF_BYPASS_ON_OFF in config:
         conf = config[CONF_BYPASS_ON_OFF]        
         sens = yield binary_sensor.new_binary_sensor(conf)
