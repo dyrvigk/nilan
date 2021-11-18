@@ -52,11 +52,11 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     ESP_LOGD(TAG, "Operation mode changed to: %d", operation_mode);
 
     if (operation_mode > 0) {
-      nilan_->writeRunset(1);
-      nilan_->writeOperationMode(operation_mode);
+      //nilan_->writeRunset(1);
+      //nilan_->writeOperationMode(operation_mode);
     }
     else {
-      nilan_->writeRunset(0);
+      //nilan_->writeRunset(0);
     }
   }
 

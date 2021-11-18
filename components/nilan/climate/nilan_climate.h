@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../nilan.h"
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/sensor/sensor.h"
@@ -12,7 +11,7 @@ namespace nilan {
 class NilanClimate : public climate::Climate, public Component {
 public:
 
-  NilanClimate(Nilan *nilan) : nilan_(nilan) {}
+  NilanClimate() {}
 
   void setup() override;
   void dump_config() override;
@@ -34,9 +33,6 @@ public:
   }
 
 protected:
-
-  Nilan *nilan_;
-
   /// Override control to change settings of the climate device.
   void control(const climate::ClimateCall& call) override;
 
