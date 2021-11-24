@@ -37,6 +37,34 @@ external_components:
  
 nilan:
 
+select:
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set user function"
+    id: nilan_set_user_function
+    address: 601
+    force_new_range: true
+    options:
+      - "None"
+      - "Extend"
+      - "Inlet"
+      - "Exhaust"
+      - "External heater offset"
+      - "Ventilate"
+      - "Cooker Hood"
+      
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set operation mode"
+    id: nilan_set_operation_mode
+    address: 1002
+    force_new_range: true
+    options:
+      - "Off"
+      - "Heat"
+      - "Cool"
+      - "Auto"
+
 sensor:
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -100,7 +128,7 @@ climate:
     current_temp_sensor_id: nilan_inlet_temp_t7
     target_temp_sensor_id: nilan_target_temperature_set
     fan_speed_sensor_id: nilan_ventilation_speed_set
-    mode_text_sensor_id: nilan_operation_mode
+    mode_select_id: nilan_set_operation_mode
 ```
 
 ### Example of a yaml configuration with all available sensors
@@ -130,7 +158,35 @@ external_components:
     components: ["modbus_controller"]
  
 nilan:
- 
+
+select:
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set user function"
+    id: nilan_set_user_function
+    address: 601
+    force_new_range: true
+    options:
+      - "None"
+      - "Extend"
+      - "Inlet"
+      - "Exhaust"
+      - "External heater offset"
+      - "Ventilate"
+      - "Cooker Hood"
+      
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set operation mode"
+    id: nilan_set_operation_mode
+    address: 1002
+    force_new_range: true
+    options:
+      - "Off"
+      - "Heat"
+      - "Cool"
+      - "Auto"
+
 sensor:
 #########################
 #### INPUT REGISTERS ####
@@ -402,12 +458,146 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 1 id"
+    id: nilan_alarm_list_1_id
+    accuracy_decimals: 0
+    register_type: read
+    address: 401
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 1 date"
+    id: nilan_alarm_list_1_date
+    accuracy_decimals: 0
+    register_type: read
+    address: 402
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 1 time"
+    id: nilan_alarm_list_1_time
+    accuracy_decimals: 0
+    register_type: read
+    address: 403
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 2 id"
+    id: nilan_alarm_list_2_id
+    accuracy_decimals: 0
+    register_type: read
+    address: 404
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 2 date"
+    id: nilan_alarm_list_2_date
+    accuracy_decimals: 0
+    register_type: read
+    address: 405
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 2 time"
+    id: nilan_alarm_list_2_time
+    accuracy_decimals: 0
+    register_type: read
+    address: 406
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 3 id"
+    id: nilan_alarm_list_3_id
+    accuracy_decimals: 0
+    register_type: read
+    address: 407
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 3 date"
+    id: nilan_alarm_list_3_date
+    accuracy_decimals: 0
+    register_type: read
+    address: 408
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Alarm list 3 time"
+    id: nilan_alarm_list_3_time
+    accuracy_decimals: 0
+    register_type: read
+    address: 409
+
+# NOT WORKING ON COMFORT MODEL
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Actual inlet fan step"
+#    id: nilan_actual_inlet_fan_step
+#    unit_of_measurement: 'days'
+#    accuracy_decimals: 0
+#    register_type: read
+#    address: 1101
+
+# NOT WORKING ON COMFORT MODEL
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Actual exhaust fan step"
+#    id: nilan_actual_exhaust_fan_step
+#    unit_of_measurement: 'days'
+#    accuracy_decimals: 0
+#    register_type: read
+#    address: 1102
+
+# NOT WORKING ON COMFORT MODEL
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Days since last filter change alarm"
+#    id: nilan_days_since_last_filter_alarm
+#    unit_of_measurement: 'days'
+#    accuracy_decimals: 0
+#    register_type: read
+#    address: 1103
+
+# NOT WORKING ON COMFORT MODEL
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Days to next filter change alarm"
+#    id: nilan_days_to_next_filter_alarm
+#    unit_of_measurement: 'days'
+#    accuracy_decimals: 0
+#    register_type: read
+#    address: 1104
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     name: "Heat exchange efficiency"
     id: nilan_heat_exchange_efficiency
     unit_of_measurement: '%'
     accuracy_decimals: 1
     register_type: read
     address: 1204
+    filters:
+      - multiply: 0.01
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Requested capacity"
+    id: nilan_requested_capacity
+    unit_of_measurement: '%'
+    accuracy_decimals: 0
+    register_type: read
+    address: 1205
+    filters:
+      - multiply: 0.01
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Actual capacity"
+    id: nilan_actual_capacity
+    unit_of_measurement: '%'
+    accuracy_decimals: 0
+    register_type: read
+    address: 1206
     filters:
       - multiply: 0.01
       
@@ -497,6 +687,158 @@ sensor:
     address: 1204
     filters:
       - multiply: 0.01 
+
+binary_sensor:
+#########################
+#### INPUT REGISTERS ####
+#########################
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "User function"
+    id: nilan_user_function
+    register_type: read
+    address: 100
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air filter alarm"
+    id: nilan_filter_alarm
+    register_type: read
+    address: 101
+    bitmask: 1
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Door open"
+    id: nilan_door_open
+    register_type: read
+    address: 102
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Smoke alarm"
+    id: nilan_smoke_alarm
+    register_type: read
+    address: 103
+    bitmask: 1
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Motor thermo fuse"
+    id: nilan_motor_thermo_fuse
+    register_type: read
+    address: 104
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Heating surface frost/overheat"
+    id: nilan_heating_surface_frost_oerheat
+    register_type: read
+    address: 105
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Airflow monitor"
+    id: nilan_airflow_monitor
+    register_type: read
+    address: 106
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "High pressure switch"
+    id: nilan_high_pressure
+    register_type: read
+    address: 107
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Low pressure switch"
+    id: nilan_low_pressure
+    register_type: read
+    address: 108
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Hot water boiling"
+    id: nilan_hot_water_boiling
+    register_type: read
+    address: 109
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Hot water 3-way valve position"
+    id: nilan_3_way_position
+    register_type: read
+    address: 110
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Hotgas defrost"
+    id: nilan_hotgas_defrost
+    register_type: read
+    address: 111
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Defrost termostat"
+    id: nilan_defrost_termostat
+    register_type: read
+    address: 112
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "User function 2"
+    id: nilan_user_function_2
+    register_type: read
+    address: 113
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air damper closed"
+    id: nilan_damper_closed
+    register_type: read
+    address: 114
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air damper opened"
+    id: nilan_damper_opened
+    register_type: read
+    address: 115
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Summer mode"
+    id: nilan_is_summer
+    register_type: read
+    address: 1200
+    bitmask: 1
+
+###########################
+#### HOLDING REGISTERS ####
+###########################
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Bypass open request"
+#    id: nilan_bypass_open_request
+#    register_type: holding
+#    address: 102
+#    bitmask: 1
+
 
 text_sensor:
   - platform: modbus_controller
@@ -708,5 +1050,5 @@ climate:
     current_temp_sensor_id: nilan_inlet_temp_t7
     target_temp_sensor_id: nilan_target_temperature_set
     fan_speed_sensor_id: nilan_ventilation_speed_set
-    mode_text_sensor_id: nilan_operation_mode
+    mode_select_id: nilan_set_operation_mode
 ```
