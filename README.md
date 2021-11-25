@@ -1042,7 +1042,7 @@ switch:
     bitmask: 1
     force_new_range: true
     use_write_multiple: true
-    address: 100
+    address: 1001
     
 climate:
   - platform: nilan

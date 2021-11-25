@@ -119,6 +119,9 @@ void NilanClimate::nilanfanspeed_to_fanmode(const int state)
 {
   climate::ClimateFanMode return_value;
 
+  this->custom_fan_mode.reset();
+  this->fan_mode.reset();
+
   switch (state) {
   case 1:
   case 2:
