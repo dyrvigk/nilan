@@ -1331,7 +1331,6 @@ binary_sensor:
     id: nilan_user_function
     register_type: read
     address: 100
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1339,7 +1338,6 @@ binary_sensor:
     id: nilan_filter_alarm
     register_type: read
     address: 101
-    bitmask: 1
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1347,7 +1345,6 @@ binary_sensor:
     id: nilan_door_open
     register_type: read
     address: 102
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1355,7 +1352,6 @@ binary_sensor:
     id: nilan_smoke_alarm
     register_type: read
     address: 103
-    bitmask: 1
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1363,7 +1359,6 @@ binary_sensor:
     id: nilan_motor_thermo_fuse
     register_type: read
     address: 104
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1371,7 +1366,6 @@ binary_sensor:
     id: nilan_heating_surface_frost_oerheat
     register_type: read
     address: 105
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1379,7 +1373,6 @@ binary_sensor:
     id: nilan_airflow_monitor
     register_type: read
     address: 106
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1387,7 +1380,6 @@ binary_sensor:
     id: nilan_high_pressure
     register_type: read
     address: 107
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1395,7 +1387,6 @@ binary_sensor:
     id: nilan_low_pressure
     register_type: read
     address: 108
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1403,7 +1394,6 @@ binary_sensor:
     id: nilan_hot_water_boiling
     register_type: read
     address: 109
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1411,7 +1401,6 @@ binary_sensor:
     id: nilan_3_way_position
     register_type: read
     address: 110
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1419,7 +1408,6 @@ binary_sensor:
     id: nilan_hotgas_defrost
     register_type: read
     address: 111
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1427,7 +1415,6 @@ binary_sensor:
     id: nilan_defrost_termostat
     register_type: read
     address: 112
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1435,7 +1422,6 @@ binary_sensor:
     id: nilan_user_function_2
     register_type: read
     address: 113
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1443,7 +1429,6 @@ binary_sensor:
     id: nilan_damper_closed
     register_type: read
     address: 114
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1451,7 +1436,6 @@ binary_sensor:
     id: nilan_damper_opened
     register_type: read
     address: 115
-    bitmask: 1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -1459,19 +1443,65 @@ binary_sensor:
     id: nilan_is_summer
     register_type: read
     address: 1200
-    bitmask: 1
 
 ###########################
 #### HOLDING REGISTERS ####
 ###########################
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Bypass open request"
-#    id: nilan_bypass_open_request
-#    register_type: holding
-#    address: 102
-#    bitmask: 1
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air flap"
+    id: nilan_air_flap
+    register_type: holding
+    address: 100
 
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Smoke flap"
+    id: nilan_smoke_flap
+    register_type: holding
+    address: 101
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Bypass open request"
+    id: nilan_bypass_open_request
+    register_type: holding
+    address: 102
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Bypass close request"
+    id: nilan_bypass_close_request
+    register_type: holding
+    address: 103
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air heat circulation pump"
+    id: nilan_air_heat_circulation_pump
+    register_type: holding
+    address: 104
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air heating selected"
+    id: nilan_air_heat_selected
+    register_type: holding
+    address: 105
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Compressor"
+    id: nilan_compressor
+    register_type: holding
+    address: 109
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Compressor 2"
+    id: nilan_compressor_2
+    register_type: holding
+    address: 110 
 
 text_sensor:
   - platform: modbus_controller
