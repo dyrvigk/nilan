@@ -9,6 +9,9 @@ Add this repository to your ESPHome config yaml:
 external_components:
   - source: github://Jopand/esphome_components@use_modbus_controller
     refresh: 0s
+  - source: github://esphome/esphome@dev
+    refresh: 0s
+    components: [ modbus, modbus_controller ]
 ```
 
 ### Example of minimal configuration yaml
@@ -34,6 +37,9 @@ modbus_controller:
 external_components:
   - source: github://Jopand/esphome_components@use_modbus_controller
     refresh: 0s
+  - source: github://esphome/esphome@dev
+    refresh: 0s
+    components: [ modbus, modbus_controller ]
  
 nilan:
 
@@ -154,8 +160,9 @@ modbus_controller:
 external_components:
   - source: github://Jopand/esphome_components@use_modbus_controller
     refresh: 0s
-  - source: github://martgras/esphome@test-multiplecoil
-    components: ["modbus_controller"]
+  - source: github://esphome/esphome@dev
+    refresh: 0s
+    components: [ modbus, modbus_controller ]
  
 nilan:
 
