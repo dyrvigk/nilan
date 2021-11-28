@@ -170,6 +170,19 @@ nilan:
 select:
   - platform: nilan
     modbus_controller_id: nilan_modbus_controller
+    name: "Week program select"
+    id: nilan_week_program_select
+    address: 500
+    force_new_range: true
+    options:
+      - "None"
+      - "Program 1"
+      - "Program 2"
+      - "Program 3"
+      - "Erase"
+
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
     name: "Set user function"
     id: nilan_set_user_function
     address: 601
@@ -793,6 +806,19 @@ external_components:
 nilan:
 
 select:
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Week program select"
+    id: nilan_week_program_select
+    address: 500
+    force_new_range: true
+    options:
+      - "None"
+      - "Program 1"
+      - "Program 2"
+      - "Program 3"
+      - "Erase"
+
   - platform: nilan
     modbus_controller_id: nilan_modbus_controller
     name: "Set user function"
