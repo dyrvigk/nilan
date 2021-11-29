@@ -1,8 +1,8 @@
-  remote_package:
-    url: https://github.com/Jopand/esphome_components
-    ref: develop
-    files: [components/nilan/basic.yaml]
-    refresh: 0s
+remote_package:
+  url: https://github.com/Jopand/esphome_components
+  ref: develop
+  files: [components/nilan/basic.yaml]
+  refresh: 0s
 
 select:
   - platform: nilan
@@ -558,8 +558,7 @@ text_sensor:
         default: mode_str = "Unknown"; break;
       }
       return mode_str;
-      
-      
+           
 number:
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
