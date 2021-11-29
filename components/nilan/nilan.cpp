@@ -169,7 +169,7 @@ void Nilan::handleDiscreteIOInputData(const std::vector<uint8_t>& data) {
     return;
   }
 
-  // ESP_LOGD(TAG, "Discrete IO data: %s", hexencode(data).c_str());
+  ESP_LOGD(TAG, "Discrete IO data: %s", hexencode(data).c_str());
 
   auto filter_alarm = get_16bit(data, 2);
 
