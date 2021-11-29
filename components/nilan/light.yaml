@@ -399,17 +399,6 @@ binary_sensor:
     address: 1200
     bitmask: 1
 
-###########################
-#### HOLDING REGISTERS ####
-###########################
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Bypass open request"
-#    id: nilan_bypass_open_request
-#    register_type: holding
-#    address: 102
-#    bitmask: 1
-
 text_sensor:
   - platform: template
     name: "Air filter alarm status"
