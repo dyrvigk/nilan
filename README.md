@@ -207,7 +207,7 @@ select:
       - "Heat"
       - "Cool"
       - "Auto"
-      
+
 sensor:
 #########################
 #### INPUT REGISTERS ####
@@ -283,6 +283,18 @@ sensor:
     address: 221
     filters:
       - multiply: 0.01
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "CO2"
+    id: nilan_co2_level
+    unit_of_measurement: "ppm"
+    icon: "mdi:molecule-co2"
+    accuracy_decimals: 0
+    register_type: read
+    address: 222
+    filters:
+      - multiply: 0.01        
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -363,26 +375,32 @@ sensor:
     accuracy_decimals: 0
     register_type: read
     address: 409
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Actual fan step"
+    id: nilan_actual_fan_step
+    accuracy_decimals: 0
+    register_type: read
+    address: 1100    
 
-# NOT WORKING ON COMFORT MODEL
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Days since last filter change alarm"
-#    id: nilan_days_since_last_filter_alarm
-#    unit_of_measurement: 'days'
-#    accuracy_decimals: 0
-#    register_type: read
-#    address: 1103
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Days since last filter change alarm"
+    id: nilan_days_since_last_filter_alarm
+    unit_of_measurement: 'days'
+    accuracy_decimals: 0
+    register_type: read
+    address: 1103
 
-# NOT WORKING ON COMFORT MODEL
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Days to next filter change alarm"
-#    id: nilan_days_to_next_filter_alarm
-#    unit_of_measurement: 'days'
-#    accuracy_decimals: 0
-#    register_type: read
-#    address: 1104
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Days to next filter change alarm"
+    id: nilan_days_to_next_filter_alarm
+    unit_of_measurement: 'days'
+    accuracy_decimals: 0
+    register_type: read
+    address: 1104    
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -589,8 +607,78 @@ binary_sensor:
     register_type: read
     address: 1200
     bitmask: 1
-    
+
+###########################
+#### HOLDING REGISTERS ####
+###########################
+#  - platform: modbus_controller
+#    modbus_controller_id: nilan_modbus_controller
+#    name: "Bypass open request"
+#    id: nilan_bypass_open_request
+#    register_type: holding
+#    address: 102
+#    bitmask: 1
+
 text_sensor:
+  - platform: template
+    name: "Air filter alarm status"
+    lambda: |-
+      if (id(nilan_filter_alarm).state) {
+        return {"Skift filter"};
+      } else {
+        return {"Filter OK"};
+      }  
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Aggregate type"
+    id: nilan_platform_id
+    register_type: holding
+    address: 1000
+    lambda: !lambda |-
+      uint16_t int_type = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed aggregate type int : %d", int_type);
+      std::string type_str;
+      switch (int_type) {
+        case 0: type_str = "None"; break;
+        case 1: type_str = "Test"; break;
+        case 2: type_str = "VPL 10 uden køl"; break;
+        case 3: type_str = "VPL 15 uden køl"; break;
+        case 4: type_str = "VPL 15 med køl"; break;
+        case 5: type_str = "VPL 25 med 3 hastigheder uden køl"; break;
+        case 6: type_str = "VPL 25 med 3 hastigheder med køl"; break;
+        case 7: type_str = "VPL 28 2 hastigheder uden køl"; break;
+        case 8: type_str = "VPL 28 med 2 hastigheder med køl"; break;
+        case 9: type_str = "VP 18 med kryds monteret oven på anlæg uden køl"; break;
+        case 10: type_str = "VP 18 med kryds monteret oven på anlæg med køl"; break;
+        case 11: type_str = "Vp 18 Compact og Compact p uden køl"; break;
+        case 12: type_str = "VP 18 Compact og Compact P med køl"; break;
+        case 13: type_str = "Comfort anlæg (Comfort 300 LR)"; break;
+        case 14: type_str = "CT 150 anlæg med 1-2-3 omskifter"; break;
+        case 15: type_str = "VLX som kører VAV"; break;
+        case 16: type_str = "VLX med 2 trin"; break;
+        case 17: type_str = "VLX med 3 trin"; break;
+        case 18: type_str = "VP 18 uden køl"; break;
+        case 19: type_str = "VP 18 med køl"; break;
+        case 20: type_str = "VP 18 med elkedel uden køl"; break;
+        case 21: type_str = "VP 18 med elkedel og køl"; break;
+        case 22: type_str = "VGU 250 brugsvands varmepumpe"; break;
+        case 23: type_str = "VGU 250 brugsvands varmepumpe med elkedel"; break;
+        case 24: type_str = "VPL 25 uden køl"; break;
+        case 25: type_str = "VPL 25 med køl"; break;
+        case 26: type_str = "VPM 120-560"; break;
+        case 27: type_str = "Comfort 1200 - 4000"; break;
+        case 28: type_str = "VP 20 Compact gorona"; break;
+        case 29: type_str = "VLX med CTS 602 print"; break;
+        case 30: type_str = "Compact P Nordic"; break;
+        case 31: type_str = "Comfort Nordic"; break;
+        case 32: type_str = "VP 18 Version 1"; break;
+        case 33: type_str = "Combi 300"; break;
+        case 34: type_str = "Compact med 4-vejsventil uden køl"; break;
+        default: type_str = "Unknown"; break;
+      }
+      return type_str;
+
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Software version"
@@ -1556,6 +1644,65 @@ binary_sensor:
     address: 110 
 
 text_sensor:
+  - platform: template
+    name: "Air filter alarm status"
+    lambda: |-
+      if (id(nilan_filter_alarm).state) {
+        return {"Skift filter"};
+      } else {
+        return {"Filter OK"};
+      }  
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Aggregate type"
+    id: nilan_platform_id
+    register_type: holding
+    address: 1000
+    lambda: !lambda |-
+      uint16_t int_type = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed aggregate type int : %d", int_type);
+      std::string type_str;
+      switch (int_type) {
+        case 0: type_str = "None"; break;
+        case 1: type_str = "Test"; break;
+        case 2: type_str = "VPL 10 uden køl"; break;
+        case 3: type_str = "VPL 15 uden køl"; break;
+        case 4: type_str = "VPL 15 med køl"; break;
+        case 5: type_str = "VPL 25 med 3 hastigheder uden køl"; break;
+        case 6: type_str = "VPL 25 med 3 hastigheder med køl"; break;
+        case 7: type_str = "VPL 28 2 hastigheder uden køl"; break;
+        case 8: type_str = "VPL 28 med 2 hastigheder med køl"; break;
+        case 9: type_str = "VP 18 med kryds monteret oven på anlæg uden køl"; break;
+        case 10: type_str = "VP 18 med kryds monteret oven på anlæg med køl"; break;
+        case 11: type_str = "Vp 18 Compact og Compact p uden køl"; break;
+        case 12: type_str = "VP 18 Compact og Compact P med køl"; break;
+        case 13: type_str = "Comfort anlæg (Comfort 300 LR)"; break;
+        case 14: type_str = "CT 150 anlæg med 1-2-3 omskifter"; break;
+        case 15: type_str = "VLX som kører VAV"; break;
+        case 16: type_str = "VLX med 2 trin"; break;
+        case 17: type_str = "VLX med 3 trin"; break;
+        case 18: type_str = "VP 18 uden køl"; break;
+        case 19: type_str = "VP 18 med køl"; break;
+        case 20: type_str = "VP 18 med elkedel uden køl"; break;
+        case 21: type_str = "VP 18 med elkedel og køl"; break;
+        case 22: type_str = "VGU 250 brugsvands varmepumpe"; break;
+        case 23: type_str = "VGU 250 brugsvands varmepumpe med elkedel"; break;
+        case 24: type_str = "VPL 25 uden køl"; break;
+        case 25: type_str = "VPL 25 med køl"; break;
+        case 26: type_str = "VPM 120-560"; break;
+        case 27: type_str = "Comfort 1200 - 4000"; break;
+        case 28: type_str = "VP 20 Compact gorona"; break;
+        case 29: type_str = "VLX med CTS 602 print"; break;
+        case 30: type_str = "Compact P Nordic"; break;
+        case 31: type_str = "Comfort Nordic"; break;
+        case 32: type_str = "VP 18 Version 1"; break;
+        case 33: type_str = "Combi 300"; break;
+        case 34: type_str = "Compact med 4-vejsventil uden køl"; break;
+        default: type_str = "Unknown"; break;
+      }
+      return type_str;
+
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Software version"

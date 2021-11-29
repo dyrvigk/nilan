@@ -1,0 +1,94 @@
+nilan:
+
+select:
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set user function"
+    id: nilan_set_user_function
+    address: 601
+    force_new_range: true
+    options:
+      - "None"
+      - "Extend"
+      - "Inlet"
+      - "Exhaust"
+      - "External heater offset"
+      - "Ventilate"
+      - "Cooker Hood"
+      
+  - platform: nilan
+    modbus_controller_id: nilan_modbus_controller
+    name: "Set operation mode"
+    id: nilan_set_operation_mode
+    address: 1002
+    force_new_range: true
+    options:
+      - "Off"
+      - "Heat"
+      - "Cool"
+      - "Auto"
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Inlet (after heater) temperature"
+    id: nilan_inlet_temp_t7
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    register_type: read
+    address: 207
+    filters:
+      - multiply: 0.01
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Ventilation speed set"
+    id: nilan_ventilation_speed_set
+    min_value: 0
+    max_value: 4
+    step: 1.0
+    address: 1003
+    force_new_range: true
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Temperature set"
+    id: nilan_target_temperature_set
+    min_value: 15
+    max_value: 30
+    step: 1.0
+    address: 1004
+    force_new_range: true
+    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
+    lambda: "return x*0.01;"
+
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Operation mode"
+    id: nilan_operation_mode
+    register_type: read
+    address: 1001
+    lambda: !lambda |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0: mode_str = "Off"; break;
+        case 1: mode_str = "Heat"; break;
+        case 2: mode_str = "Cool"; break;
+        case 3: mode_str = "Auto"; break;
+        case 4: mode_str = "Service"; break;
+        default: mode_str = "Unknown"; break;
+      }
+      return mode_str;
+
+climate:
+  - platform: nilan
+    name: Nilan
+    current_temp_sensor_id: nilan_inlet_temp_t7
+    target_temp_sensor_id: nilan_target_temperature_set
+    fan_speed_sensor_id: nilan_ventilation_speed_set
+    mode_select_id: nilan_set_operation_mode
