@@ -227,6 +227,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 203
     filters:
@@ -238,6 +239,8 @@ sensor:
     id: nilan_outlet_temp_t4
     unit_of_measurement: °C
     accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 204
     filters:
@@ -250,6 +253,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 207
     filters:
@@ -262,6 +266,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 208
     filters:
@@ -877,6 +882,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 201
     filters:
@@ -889,6 +895,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 202
     filters:
@@ -901,6 +908,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 203
     filters:
@@ -912,6 +920,8 @@ sensor:
     id: nilan_outlet_temp_t4
     unit_of_measurement: °C
     accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 204
     filters:
@@ -923,6 +933,8 @@ sensor:
     id: nilan_condenser_temp_t5
     unit_of_measurement: °C
     accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 205
     filters:
@@ -934,6 +946,8 @@ sensor:
     id: nilan_evap_temp_t6
     unit_of_measurement: °C
     accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 206
     filters:
@@ -946,6 +960,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 207
     filters:
@@ -958,6 +973,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 208
     filters:
@@ -970,6 +986,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 209
     filters:
@@ -982,6 +999,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 210
     filters:
@@ -994,6 +1012,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 211
     filters:
@@ -1006,6 +1025,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 212
     filters:
@@ -1018,6 +1038,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 213
     filters:
@@ -1030,6 +1051,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 214
     filters:
@@ -1042,6 +1064,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 215
     filters:
@@ -1054,6 +1077,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 216
     filters:
@@ -1066,6 +1090,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 217
     filters:
@@ -1078,6 +1103,7 @@ sensor:
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
+    value_type: S_WORD
     register_type: read
     address: 218
     filters:
