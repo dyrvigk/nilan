@@ -1,8 +1,5 @@
-remote_package:
-  url: https://github.com/Jopand/esphome_components
-  ref: develop
-  files: [components/nilan/basic.yaml]
-  refresh: 0s
+packages:
+  nilan_base: !include common/base.yaml
 
 select:
   - platform: nilan
