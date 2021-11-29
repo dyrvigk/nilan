@@ -1,6 +1,3 @@
-packages:
-  nilan_base: !include basic.yaml
-
 select:
   - platform: nilan
     modbus_controller_id: nilan_modbus_controller
