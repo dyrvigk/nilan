@@ -1,5 +1,5 @@
 packages:
-  nilan_base: !include base.yaml
+  nilan_base: !include basic.yaml
 
 select:
   - platform: nilan
