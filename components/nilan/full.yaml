@@ -4,18 +4,6 @@ sensor:
 #########################
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Controller temperature"
-    id: nilan_controller_temp_t0
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    register_type: read
-    address: 200
-    filters:
-      - multiply: 0.01
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
     name: "Fresh air intake temperature"
     id: nilan_intake_temp_t1
     unit_of_measurement: °C
@@ -81,19 +69,6 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "External room temperature"
-    id: nilan_extern_temp_t10
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 210
-    filters:
-      - multiply: 0.01
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
     name: "Hot weater top temperature"
     id: nilan_top_temp_t11
     unit_of_measurement: °C
@@ -141,19 +116,6 @@ sensor:
     value_type: S_WORD
     register_type: read
     address: 214
-    filters:
-      - multiply: 0.01
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Room temperature"
-    id: nilan_room_temp_t15
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 215
     filters:
       - multiply: 0.01
 
@@ -215,28 +177,6 @@ sensor:
 #    accuracy_decimals: 0
 #    register_type: read
 #    address: 1102
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Requested capacity"
-    id: nilan_requested_capacity
-    unit_of_measurement: '%'
-    accuracy_decimals: 0
-    register_type: read
-    address: 1205
-    filters:
-      - multiply: 0.01
-      
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Actual capacity"
-    id: nilan_actual_capacity
-    unit_of_measurement: '%'
-    accuracy_decimals: 0
-    register_type: read
-    address: 1206
-    filters:
-      - multiply: 0.01
       
 ###########################
 #### HOLDING REGISTERS ####

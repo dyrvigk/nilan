@@ -1,29 +1,7 @@
-select:
-  - platform: nilan
-    modbus_controller_id: nilan_modbus_controller
-    name: "Week program select"
-    id: nilan_week_program_select
-    address: 500
-    force_new_range: true
-    options:
-      - "None"
-      - "Program 1"
-      - "Program 2"
-      - "Program 3"
-      - "Erase"
-
 sensor:
 #########################
 #### INPUT REGISTERS ####
 #########################
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Bus version"
-    id: nilan_bus_version
-    accuracy_decimals: 0
-    register_type: read
-    address: 0
-
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Exhaust temperature"
@@ -61,111 +39,7 @@ sensor:
     register_type: read
     address: 208
     filters:
-      - multiply: 0.01
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Humidity"
-    id: nilan_humidity
-    unit_of_measurement: '%'
-    accuracy_decimals: 1
-    device_class: humidity
-    register_type: read
-    address: 221
-    filters:
-      - multiply: 0.01
-      
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "CO2"
-    id: nilan_co2_level
-    unit_of_measurement: "ppm"
-    icon: "mdi:molecule-co2"
-    accuracy_decimals: 0
-    register_type: read
-    address: 222
-    filters:
-      - multiply: 0.01        
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Active alarms"
-    id: nilan_active_alarms
-    accuracy_decimals: 0
-    register_type: read
-    address: 400
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 1 id"
-    id: nilan_alarm_list_1_id
-    accuracy_decimals: 0
-    register_type: read
-    address: 401
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 1 date"
-    id: nilan_alarm_list_1_date
-    accuracy_decimals: 0
-    register_type: read
-    address: 402
-    
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 1 time"
-    id: nilan_alarm_list_1_time
-    accuracy_decimals: 0
-    register_type: read
-    address: 403
-    
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 2 id"
-    id: nilan_alarm_list_2_id
-    accuracy_decimals: 0
-    register_type: read
-    address: 404
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 2 date"
-    id: nilan_alarm_list_2_date
-    accuracy_decimals: 0
-    register_type: read
-    address: 405
-    
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 2 time"
-    id: nilan_alarm_list_2_time
-    accuracy_decimals: 0
-    register_type: read
-    address: 406
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 3 id"
-    id: nilan_alarm_list_3_id
-    accuracy_decimals: 0
-    register_type: read
-    address: 407
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 3 date"
-    id: nilan_alarm_list_3_date
-    accuracy_decimals: 0
-    register_type: read
-    address: 408
-    
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 3 time"
-    id: nilan_alarm_list_3_time
-    accuracy_decimals: 0
-    register_type: read
-    address: 409
+      - multiply: 0.01       
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -206,19 +80,7 @@ sensor:
       
 ###########################
 #### HOLDING REGISTERS ####
-###########################
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Exhaust fan speed"
-    id: nilan_exhaust_fan_speed
-    unit_of_measurement: '%'
-    icon: "mdi:percent"
-    accuracy_decimals: 0
-    register_type: holding
-    address: 200
-    filters:
-      - multiply: 0.01
-    
+###########################    
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Inlet fan speed"
@@ -297,14 +159,6 @@ binary_sensor:
 #########################
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "User function"
-    id: nilan_user_function
-    register_type: read
-    address: 100
-    bitmask: 1
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
     name: "Air filter alarm"
     id: nilan_filter_alarm
     register_type: read
@@ -317,14 +171,6 @@ binary_sensor:
     id: nilan_door_open
     register_type: read
     address: 102
-    bitmask: 1
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Smoke alarm"
-    id: nilan_smoke_alarm
-    register_type: read
-    address: 103
     bitmask: 1
     
   - platform: modbus_controller
@@ -349,14 +195,6 @@ binary_sensor:
     id: nilan_airflow_monitor
     register_type: read
     address: 106
-    bitmask: 1
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "High pressure switch"
-    id: nilan_high_pressure
-    register_type: read
-    address: 107
     bitmask: 1
 
   - platform: modbus_controller
@@ -389,14 +227,6 @@ binary_sensor:
     id: nilan_damper_opened
     register_type: read
     address: 115
-    bitmask: 1
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Summer mode"
-    id: nilan_is_summer
-    register_type: read
-    address: 1200
     bitmask: 1
 
 text_sensor:
@@ -458,140 +288,3 @@ text_sensor:
         default: type_str = "Unknown"; break;
       }
       return type_str;
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Software version"
-    id: nilan_version_info
-    register_type: read
-    register_count: 3
-    response_size: 6
-    address: 1
-    lambda: !lambda |-
-      float bus_version = nilan_bus_version->get_state();
-      std::string output;
-      
-      if (bus_version == 8) {
-        output = data[item->offset+1];
-        output += data[item->offset+0];
-        output += data[item->offset+3];
-        output += data[item->offset+2];
-        output += data[item->offset+5]; 
-        output += data[item->offset+4];
-      } else {  
-        output = data[item->offset+0];
-        output += data[item->offset+1];
-        output += '.';
-        output += data[item->offset+2];
-        output += data[item->offset+3];
-        output += '.';
-        output += data[item->offset+4];
-        output += data[item->offset+5];
-      }
- 
-      ESP_LOGD("main","Parsed SW version: %s", output.c_str()); 
-      return output;
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Actual user function"
-    id: nilan_actual_user_function
-    register_type: holding
-    address: 600
-    lambda: !lambda |-
-      uint16_t int_user_function = (data[item->offset] << 8) + data[item->offset+1];
-      ESP_LOGD("main","Parsed user function int : %d", int_user_function);
-      std::string actual_user_function;
-      switch(int_user_function) {
-        case 0: { actual_user_function = "0 : None"; break; }
-        case 1: { actual_user_function = "1 : Extend"; break; }
-        case 2: { actual_user_function = "2 : Inlet"; break; }
-        case 3: { actual_user_function = "3 : Exhaust"; break; }
-        case 4: { actual_user_function = "4 : External heater offset"; break; }
-        case 5: { actual_user_function = "5 : Ventilate"; break; }
-        case 6: { actual_user_function = "6 : Cooker Hood"; break; }
-      }
-      return actual_user_function;
-      
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Control mode"
-    id: nilan_control_state
-    register_type: read
-    address: 1002
-    lambda: !lambda |-
-      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
-      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
-      std::string mode_str;
-      switch (int_mode) {
-        case 0:  mode_str = "Off"; break;
-        case 1:  mode_str = "Shift"; break;
-        case 2:  mode_str = "Stop"; break;
-        case 3:  mode_str = "Start"; break;
-        case 4:  mode_str = "Standby"; break;
-        case 5:  mode_str = "Ventilation stop"; break;
-        case 6:  mode_str = "Ventilation"; break;
-        case 7:  mode_str = "Heating"; break;
-        case 8:  mode_str = "Cooling"; break;
-        case 9:  mode_str = "Hot water"; break;
-        case 10: mode_str = "Legionella"; break;
-        case 11: mode_str = "Cooling + hot water"; break;
-        case 12: mode_str = "Central heating"; break;
-        case 13: mode_str = "Defrost"; break;
-        default: mode_str = "Unknown"; break;
-      }
-      return mode_str;
-           
-number:
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "User time set (minutes)"
-    id: nilan_user_time_set
-    value_type: U_WORD
-    min_value: 1.0
-    max_value: 480.0
-    lambda: !lambda |-
-      uint16_t hours = x/100; // 100 is 1 hour
-      uint16_t minutes = ((uint16_t)x) % 100;
-      return (hours*60) + minutes;
-    write_lambda: !lambda |-
-      uint16_t intVal = x;
-      uint16_t firstDigit = (intVal / 60); // 1 hour is written as '100' and not '60'
-      uint16_t lastDigits = (intVal % 60); // 1:30 hours is written as '130' and not '90'
-      uint16_t result = (firstDigit*100) + lastDigits;
-      payload = modbus_controller::float_to_payload(result, modbus_controller::SensorValueType::U_WORD);
-      return x;
-    step: 1.0
-    address: 602
-    force_new_range: true
-    
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "User ventilation speed set"
-    id: nilan_user_ventilation_speed_set
-    min_value: 0.0
-    max_value: 4.0
-    step: 1.0
-    address: 603
-    force_new_range: true
-  
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "User temperature set"
-    id: nilan_user_temperature_set
-    min_value: 15.0
-    max_value: 30.0
-    step: 1.0
-    address: 604
-    force_new_range: true
-
-switch:
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "On/Off state"
-    id: nilan_on_off_state
-    register_type: holding
-    bitmask: 1
-    force_new_range: true
-    use_write_multiple: true
-    address: 1001
