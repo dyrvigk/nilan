@@ -269,3 +269,28 @@ text_sensor:
         default: type_str = "Unknown"; break;
       }
       return type_str;
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Top temperature set"
+    id: nilan_top_temperature_set
+    min_value: 15
+    max_value: 30
+    step: 1.0
+    address: 1700
+    force_new_range: true
+    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
+    lambda: "return x*0.01;"
+  
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Bottom temperature set"
+    id: nilan_bottom_temperature_set
+    min_value: 15
+    max_value: 30
+    step: 1.0
+    address: 1701
+    force_new_range: true
+    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
+    lambda: "return x*0.01;"
