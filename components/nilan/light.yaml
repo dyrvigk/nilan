@@ -39,7 +39,7 @@ sensor:
     register_type: read
     address: 208
     filters:
-      - multiply: 0.01       
+      - multiply: 0.01
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -65,7 +65,7 @@ sensor:
     unit_of_measurement: 'days'
     accuracy_decimals: 0
     register_type: read
-    address: 1104    
+    address: 1104
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -80,7 +80,7 @@ sensor:
       
 ###########################
 #### HOLDING REGISTERS ####
-###########################    
+###########################
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Inlet fan speed"
