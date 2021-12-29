@@ -1,3 +1,10 @@
+packages:
+  remote_package:
+    url: https://github.com/Jopand/esphome_components
+    ref: develop
+    files: [components/nilan/all.yaml]
+    refresh: 0s
+
 sensor:
 #########################
 #### INPUT REGISTERS ####
