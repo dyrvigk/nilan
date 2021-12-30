@@ -292,7 +292,7 @@ binary_sensor:
     register_type: holding
     address: 110 
 
-text_sensor:
+#text_sensor:
 
 #######################################################################      
 #### WARNING - IF THERE ARE ANY SPECIAL CHARACTERS ON THE DISPLAY, ####
