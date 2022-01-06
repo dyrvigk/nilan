@@ -398,6 +398,20 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
+    name: "Humidity limit low vent"
+    id: humidity_limit_low_vent    
+    unit_of_measurement: '%'
+    icon: "mdi:percent"
+    min_value: 15.0
+    max_value: 45.0
+    step: 1.0
+    address: 1912
+    force_new_range: true
+    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
+    lambda: "return x*0.01;"
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     name: "CO2 high vent step"
     id: co2_high_vent_step
     min_value: 0.0
