@@ -339,6 +339,7 @@ number:
     step: 1.0
     address: 602
     force_new_range: true
+    use_write_multiple: true
   
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -349,6 +350,7 @@ number:
     step: 1.0
     address: 603
     force_new_range: true
+    use_write_multiple: true
   
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -359,8 +361,7 @@ number:
     step: 1.0
     address: 604
     force_new_range: true
-    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
-    lambda: "return x*0.01;"
+    use_write_multiple: true
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -371,8 +372,7 @@ number:
     step: 1.0
     address: 605
     force_new_range: true
-    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
-    lambda: "return x*0.01;"
+    use_write_multiple: true
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -407,6 +407,7 @@ number:
     step: 1.0
     address: 1912
     force_new_range: true
+    use_write_multiple: true
     write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
     lambda: "return x*0.01;"
 
