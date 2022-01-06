@@ -81,6 +81,7 @@ sensor:
     name: "Bus version"
     id: nilan_bus_version
     accuracy_decimals: 0
+    entity_category: diagnostic
     register_type: read
     address: 0
 
@@ -434,6 +435,7 @@ text_sensor:
     register_count: 3
     response_size: 6
     address: 1
+    entity_category: diagnostic
     lambda: !lambda |-
       float bus_version = nilan_bus_version->get_state();
       std::string output;
