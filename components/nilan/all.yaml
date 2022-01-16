@@ -73,14 +73,6 @@ binary_sensor:
     address: 125
 
 sensor:
-  - platform: template
-    name: "Calculated difference exhaust and inlet"
-    id: calculated_value_inlet_exhaust
-    icon: "mdi:thermometer"
-    unit_of_measurement: °C
-    update_interval: 10s
-    lambda: 'return id(nilan_exhaust_temp_t3).state - id(nilan_inlet_temp_t7).state;'
-
 #########################
 #### INPUT REGISTERS ####
 #########################
