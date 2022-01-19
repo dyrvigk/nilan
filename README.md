@@ -7,7 +7,7 @@ My creation of a nilan component for ESPHome.
 packages:
   remote_package:
     url: https://github.com/Jopand/esphome_components
-    ref: develop
+    ref: main
     files: [components/nilan/basic.yaml]
     refresh: 0s
 
@@ -35,7 +35,7 @@ modbus_controller:
 packages:
   remote_package:
     url: https://github.com/Jopand/esphome_components
-    ref: develop
+    ref: main
     files: [components/nilan/all.yaml]
     refresh: 0s
 
@@ -63,7 +63,7 @@ modbus_controller:
 packages:
   remote_package:
     url: https://github.com/Jopand/esphome_components
-    ref: develop
+    ref: main
     files: [components/nilan/light.yaml]
     refresh: 0s
 
@@ -93,7 +93,7 @@ modbus_controller:
 packages:
   remote_package:
     url: https://github.com/Jopand/esphome_components
-    ref: develop
+    ref: main
     files: [components/nilan/comfort.yaml]
     refresh: 0s
 

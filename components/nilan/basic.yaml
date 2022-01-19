@@ -1,7 +1,7 @@
 external_components:
-  - source: github://Jopand/esphome_components@develop
+  - source: github://Jopand/esphome_components@main
     refresh: 0s
-  - source: github://esphome/esphome@dev
+  - source: github://esphome/esphome@main
     refresh: 0s
     components: [ modbus, modbus_controller ]
 
