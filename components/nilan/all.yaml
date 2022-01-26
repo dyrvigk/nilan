@@ -126,23 +126,6 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Humidity"
-    id: nilan_humidity
-    unit_of_measurement: '%'
-    accuracy_decimals: 1
-    device_class: humidity
-    register_type: read
-    address: 221
-    filters:
-      - multiply: 0.01
-    on_value: 
-      - lambda: !lambda |-
-          id(aqi_humidity).publish_state( (x < 35) ? "Too Dry" : 
-                                          (x < 65) ? "Perfect" : 
-                                          "Too Humid");
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
     name: "CO2"
     id: nilan_co2_level
     unit_of_measurement: "ppm"
@@ -316,21 +299,6 @@ sensor:
     filters:
       - multiply: 0.01
 
-###########################
-#### HOLDING REGISTERS ####
-###########################
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Exhaust fan speed"
-    id: nilan_exhaust_fan_speed
-    unit_of_measurement: '%'
-    icon: "mdi:percent"
-    accuracy_decimals: 0
-    register_type: holding
-    address: 200
-    filters:
-      - multiply: 0.01
-
 number:
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -478,11 +446,6 @@ text_sensor:
     name: "Air Quality Index CO2 (AQI)"
     id: aqi_co2
     icon: mdi:air-filter    
-    
-  - platform: template
-    name: "Air Quality Index Humidity (AQI)"
-    id: aqi_humidity
-    icon: mdi:water-percent 
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -538,38 +501,6 @@ text_sensor:
         case 6: { actual_user_function = "6 : Cooker Hood"; break; }
       }
       return actual_user_function;
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Control mode"
-    id: nilan_control_state
-    register_type: read
-    address: 1002
-    lambda: !lambda |-
-      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
-      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
-      std::string mode_str;
-      switch (int_mode) {
-        case 0:  mode_str = "Off"; break;
-        case 1:  mode_str = "Shift"; break;
-        case 2:  mode_str = "Stop"; break;
-        case 3:  mode_str = "Start"; break;
-        case 4:  mode_str = "Standby"; break;
-        case 5:  mode_str = "Ventilation stop"; break;
-        case 6:  mode_str = "Ventilation"; break;
-        case 7:  mode_str = "Heating"; break;
-        case 8:  mode_str = "Cooling"; break;
-        case 9:  mode_str = "Hot water"; break;
-        case 10: mode_str = "Legionella"; break;
-        case 11: mode_str = "Cooling + hot water"; break;
-        case 12: mode_str = "Central heating"; break;
-        case 13: mode_str = "Defrost"; break;
-        case 14: mode_str = "Frost secure"; break;
-        case 15: mode_str = "Service"; break;
-        case 16: mode_str = "Alarm"; break;
-        default: mode_str = "Unknown"; break;
-      }
-      return mode_str;
 
 switch:
   - platform: modbus_controller
