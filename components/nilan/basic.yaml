@@ -153,8 +153,7 @@ number:
     address: 1004
     force_new_range: true
     use_write_multiple: true
-    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
-    lambda: "return x*0.01;"
+    multiply: 100
 
 text_sensor:
   - platform: template
