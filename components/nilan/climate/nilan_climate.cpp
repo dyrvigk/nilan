@@ -40,7 +40,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     this->target_temperature = *call.get_target_temperature();
     float target = target_temperature;
     ESP_LOGD(TAG, "Target temperature changed to: %f", target);
-    temp_setpoint_number_->control(target);
+    temp_setpoint_number_->publish_state(target);
   }
 
   if (call.get_mode().has_value())
@@ -53,7 +53,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     auto options = mode_select_->traits.get_options();
 
     if(operation_mode < options.size()) {
-      mode_select_->control(options[operation_mode]);
+      mode_select_->publish_state(options[operation_mode]);
     }
   }
 
@@ -64,7 +64,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     custom_fan_mode.reset();
 
     ESP_LOGD(TAG, "Custom Fan mode set to: 0");
-    fan_speed_number_->control(0);
+    fan_speed_number_->publish_state(0);
   }
 
   if (call.get_custom_fan_mode().has_value())
@@ -77,7 +77,7 @@ void NilanClimate::control(const climate::ClimateCall& call) {
     {
       auto nilan_fan_mode = optional_nilan_fan_mode.value();
       ESP_LOGD(TAG, "Custom Fan mode set to: %i", static_cast<int>(nilan_fan_mode));
-      fan_speed_number_->control(nilan_fan_mode);
+      fan_speed_number_->publish_state(nilan_fan_mode);
     }
   }
   this->publish_state();
