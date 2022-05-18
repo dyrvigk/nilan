@@ -6,18 +6,19 @@ packages:
     refresh: 0s
 
 select:
-  - platform: nilan
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Week program select"
     id: nilan_week_program_select
     address: 500
     force_new_range: true
-    options:
-      - "None"
-      - "Program 1"
-      - "Program 2"
-      - "Program 3"
-      - "Erase"
+    value_type: U_WORD
+    optionsmap:
+      "None" : 0
+      "Program 1" : 1
+      "Program 2" : 2
+      "Program 3" : 3
+      "Erase" : 4
 
 binary_sensor:
 #########################

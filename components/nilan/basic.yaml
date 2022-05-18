@@ -2,35 +2,35 @@ external_components:
   - source: github://Jopand/esphome_components@develop
     refresh: 0s
 
-nilan:
-
 select:
-  - platform: nilan
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Set user function"
     id: nilan_set_user_function
     address: 601
     force_new_range: true
-    options:
-      - "None"
-      - "Extend"
-      - "Inlet"
-      - "Exhaust"
-      - "External heater offset"
-      - "Ventilate"
-      - "Cooker Hood"
+    value_type: U_WORD
+    optionsmap:
+      "None" : 0
+      "Extend" : 1
+      "Inlet" : 2
+      "Exhaust" : 3
+      "External heater offset" : 4
+      "Ventilate" : 5
+      "Cooker Hood" : 6
       
-  - platform: nilan
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Set operation mode"
     id: nilan_set_operation_mode
     address: 1002
     force_new_range: true
-    options:
-      - "Off"
-      - "Heat"
-      - "Cool"
-      - "Auto"
+    value_type: U_WORD
+    optionsmap:
+      "Off" : 0
+      "Heat" : 1
+      "Cool" : 2
+      "Auto" : 3
 
 sensor:
 #########################
