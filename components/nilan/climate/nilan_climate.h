@@ -55,7 +55,7 @@ private:
 
   void nilanfanspeed_to_fanmode(const int state);
   int climatemode_to_nilanoperationmode(const climate::ClimateMode mode);
-  void nilanmodetext_to_climatemode(const std::string& nilan_mode);
+  void nilanmodetext_to_climatemode(const size_t index);
 };
 } // namespace nilan
 } // namespace esphome

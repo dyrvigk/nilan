@@ -30,7 +30,8 @@ void NilanClimate::setup() {
 
   current_temperature = current_temp_sensor_->state;
   target_temperature  = temp_setpoint_number_->state;
-  nilanmodetext_to_climatemode(mode_select_->state);
+  size_t current_mode_index = static_cast<size_t>(mode_select_->active_index().value());
+  nilanmodetext_to_climatemode(current_mode_index);
   nilanfanspeed_to_fanmode(fan_speed_number_->state); // Will update either fan_mode or custom_fan_mode
 }
 
@@ -149,11 +150,12 @@ int NilanClimate::climatemode_to_nilanoperationmode(const climate::ClimateMode m
 
 void NilanClimate::nilanmodetext_to_climatemode(const size_t index)
 {
-  switch(index):
+  switch(index) {
     case 0: this->mode = climate::CLIMATE_MODE_OFF; break;
     case 1: this->mode = climate::CLIMATE_MODE_HEAT; break;
     case 2: this->mode = climate::CLIMATE_MODE_COOL; break;
     default: this->mode = climate::CLIMATE_MODE_HEAT_COOL;
+  }
 }
 
 } // namespace nilan
