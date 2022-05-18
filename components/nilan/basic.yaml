@@ -11,6 +11,7 @@ select:
     id: nilan_set_user_function
     address: 601
     force_new_range: true
+    use_write_multiple: true
     value_type: U_WORD
     optionsmap:
       "None" : 0
@@ -27,6 +28,7 @@ select:
     id: nilan_set_operation_mode
     address: 1002
     force_new_range: true
+    use_write_multiple: true
     value_type: U_WORD
     optionsmap:
       "Off" : 0

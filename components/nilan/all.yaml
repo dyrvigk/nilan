@@ -12,6 +12,7 @@ select:
     id: nilan_week_program_select
     address: 500
     force_new_range: true
+    use_write_multiple: true
     value_type: U_WORD
     optionsmap:
       "None" : 0
