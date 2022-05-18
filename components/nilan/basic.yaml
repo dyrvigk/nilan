@@ -2,6 +2,8 @@ external_components:
   - source: github://Jopand/esphome_components@develop
     refresh: 0s
 
+nilan:
+
 select:
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
