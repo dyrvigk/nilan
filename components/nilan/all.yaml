@@ -493,13 +493,14 @@ text_sensor:
       ESP_LOGD("main","Parsed user function int : %d", int_user_function);
       std::string actual_user_function;
       switch(int_user_function) {
-        case 0: { actual_user_function = "0 : None"; break; }
-        case 1: { actual_user_function = "1 : Extend"; break; }
-        case 2: { actual_user_function = "2 : Inlet"; break; }
-        case 3: { actual_user_function = "3 : Exhaust"; break; }
-        case 4: { actual_user_function = "4 : External heater offset"; break; }
-        case 5: { actual_user_function = "5 : Ventilate"; break; }
-        case 6: { actual_user_function = "6 : Cooker Hood"; break; }
+        case 0: actual_user_function = "0 : None"; break;
+        case 1: actual_user_function = "1 : Extend"; break;
+        case 2: actual_user_function = "2 : Inlet"; break;
+        case 3: actual_user_function = "3 : Exhaust"; break;
+        case 4: actual_user_function = "4 : External heater offset"; break;
+        case 5: actual_user_function = "5 : Ventilate"; break;
+        case 6: actual_user_function = "6 : Cooker Hood"; break;
+        default: actual_user_function = ""; break;
       }
       return actual_user_function;
 

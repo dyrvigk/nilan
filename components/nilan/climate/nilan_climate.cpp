@@ -9,12 +9,12 @@ static const char *TAG = "nilan.climate";
 void NilanClimate::setup() {
   current_temp_sensor_->add_on_state_callback([this](float state) {
     // ESP_LOGD(TAG, "CURRENT TEMP SENSOR CALLBACK: %f", state);
-    current_temperature = state;
+    this->current_temperature = state;
     publish_state();
   });
   temp_setpoint_number_->add_on_state_callback([this](float state) {
     // ESP_LOGD(TAG, "TEMP SETPOINT SENSOR CALLBACK: %f", state);
-    target_temperature = state;
+    this->target_temperature = state;
     publish_state();
   });
   mode_select_->add_on_state_callback([this](std::string state, size_t index) {
@@ -28,8 +28,8 @@ void NilanClimate::setup() {
     publish_state();
   });
 
-  current_temperature = current_temp_sensor_->state;
-  target_temperature  = temp_setpoint_number_->state;
+  this->current_temperature = current_temp_sensor_->state;
+  this->target_temperature  = temp_setpoint_number_->state;
   size_t current_mode_index = static_cast<size_t>(mode_select_->active_index().value());
   nilanmodetext_to_climatemode(current_mode_index);
   nilanfanspeed_to_fanmode(fan_speed_number_->state); // Will update either fan_mode or custom_fan_mode
@@ -39,9 +39,9 @@ void NilanClimate::control(const climate::ClimateCall& call) {
   if (call.get_target_temperature().has_value())
   {
     this->target_temperature = *call.get_target_temperature();
-    float target = target_temperature;
-    ESP_LOGD(TAG, "Target temperature changed to: %f", target);
-    temp_setpoint_number_->make_call().set_value(target).perform();
+    
+    ESP_LOGD(TAG, "Target temperature changed to: %f", this->target_temperature);
+    temp_setpoint_number_->make_call().set_value(this->target_temperature).perform();
   }
 
   if (call.get_mode().has_value())
@@ -114,8 +114,6 @@ void NilanClimate::dump_config() {
 
 void NilanClimate::nilanfanspeed_to_fanmode(const int state)
 {
-  climate::ClimateFanMode return_value;
-
   this->custom_fan_mode.reset();
   this->fan_mode.reset();
 
@@ -154,7 +152,7 @@ void NilanClimate::nilanmodetext_to_climatemode(const size_t index)
     case 0: this->mode = climate::CLIMATE_MODE_OFF; break;
     case 1: this->mode = climate::CLIMATE_MODE_HEAT; break;
     case 2: this->mode = climate::CLIMATE_MODE_COOL; break;
-    default: this->mode = climate::CLIMATE_MODE_HEAT_COOL;
+    default: this->mode = climate::CLIMATE_MODE_HEAT_COOL; break;
   }
 }
 
