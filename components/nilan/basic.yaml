@@ -1,5 +1,5 @@
 external_components:
-  - source: github://Jopand/esphome_components@2022_5_0-fixes
+  - source: github://Jopand/esphome_components@develop
     refresh: 0s
 
 nilan:
