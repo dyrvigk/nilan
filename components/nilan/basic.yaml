@@ -5,32 +5,36 @@ external_components:
 nilan:
 
 select:
-  - platform: nilan
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Set user function"
     id: nilan_set_user_function
     address: 601
     force_new_range: true
-    options:
-      - "None"
-      - "Extend"
-      - "Inlet"
-      - "Exhaust"
-      - "External heater offset"
-      - "Ventilate"
-      - "Cooker Hood"
+    use_write_multiple: true
+    value_type: U_WORD
+    optionsmap:
+      "None" : 0
+      "Extend" : 1
+      "Inlet" : 2
+      "Exhaust" : 3
+      "External heater offset" : 4
+      "Ventilate" : 5
+      "Cooker Hood" : 6
       
-  - platform: nilan
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Set operation mode"
     id: nilan_set_operation_mode
     address: 1002
     force_new_range: true
-    options:
-      - "Off"
-      - "Heat"
-      - "Cool"
-      - "Auto"
+    use_write_multiple: true
+    value_type: U_WORD
+    optionsmap:
+      "Off" : 0
+      "Heat" : 1
+      "Cool" : 2
+      "Auto" : 3
 
 sensor:
 #########################
@@ -153,8 +157,7 @@ number:
     address: 1004
     force_new_range: true
     use_write_multiple: true
-    write_lambda: "payload = modbus_controller::float_to_payload(x*100, modbus_controller::SensorValueType::U_WORD); return x;"
-    lambda: "return x*0.01;"
+    multiply: 100
 
 text_sensor:
   - platform: template
