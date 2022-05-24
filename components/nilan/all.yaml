@@ -82,6 +82,7 @@ sensor:
     modbus_controller_id: nilan_modbus_controller
     name: "Bus version"
     id: nilan_bus_version
+    skip_updates: 60
     internal: true
     accuracy_decimals: 0
     entity_category: diagnostic
@@ -452,6 +453,7 @@ text_sensor:
     modbus_controller_id: nilan_modbus_controller
     name: "Software version"
     id: nilan_version_info
+    skip_updates: 60
     register_type: read
     register_count: 3
     response_size: 6
@@ -509,6 +511,7 @@ text_sensor:
     name: "Aggregate type"
     id: nilan_platform_id
     entity_category: diagnostic
+    skip_updates: 60
     register_type: holding
     address: 1000
     lambda: !lambda |-
