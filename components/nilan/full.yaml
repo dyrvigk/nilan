@@ -238,19 +238,28 @@ binary_sensor:
     register_type: holding
     address: 101
 
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Bypass open request"
-    id: nilan_bypass_open_request
-    register_type: holding
-    address: 102
+  - platform: template
+    id: nilan_bypass_state
+    name: Bypass state
+    device_class: opening
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Bypass close request"
+    id: nilan_bypass_open_request
+    register_type: holding
+    address: 102
+    on_state: 
+    - lambda: !lambda |-
+        id(nilan_bypass_state).publish_state(true);
+        
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     id: nilan_bypass_close_request
     register_type: holding
     address: 103
+    on_state: 
+    - lambda: !lambda |-
+        id(nilan_bypass_state).publish_state(false);
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
