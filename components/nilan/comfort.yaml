@@ -99,9 +99,9 @@ binary_sensor:
     name: "Air filter alarm"
     id: nilan_filter_alarm
     lambda: !lambda |-
-      return id(nilan_alarm_list_1_id).state == 19
+      return (id(nilan_alarm_list_1_id).state == 19
         || id(nilan_alarm_list_2_id).state == 19
-        || id(nilan_alarm_list_3_id).state == 19
+        || id(nilan_alarm_list_3_id).state == 19);
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
