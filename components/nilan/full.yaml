@@ -1,7 +1,7 @@
 packages:
   remote_package:
     url: https://github.com/Jopand/esphome_components
-    ref: main
+    ref: develop
     files: [components/nilan/comfort.yaml]
     refresh: 0s
 

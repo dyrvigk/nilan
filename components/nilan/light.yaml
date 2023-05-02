@@ -120,15 +120,15 @@ sensor:
 binary_sensor:
 #########################
 #### INPUT REGISTERS ####
-#########################
-  - platform: modbus_controller
+  - platform: template
     modbus_controller_id: nilan_modbus_controller
     name: "Air filter alarm"
     id: nilan_filter_alarm
-    register_type: read
-    address: 101
-    bitmask: 1
-    
+    lambda: !lambda |-
+      return id(nilan_alarm_list_1_id).state == 19
+        || id(nilan_alarm_list_2_id).state == 19
+        || id(nilan_alarm_list_3_id).state == 19
+        
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Door open"
