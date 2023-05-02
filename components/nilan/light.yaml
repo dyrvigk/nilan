@@ -121,7 +121,6 @@ binary_sensor:
 #########################
 #### INPUT REGISTERS ####
   - platform: template
-    modbus_controller_id: nilan_modbus_controller
     name: "Air filter alarm"
     id: nilan_filter_alarm
     lambda: !lambda |-
