@@ -10,9 +10,6 @@ namespace esphome {
 namespace nilan {
 class NilanClimate : public climate::Climate, public Component {
 public:
-
-  NilanClimate() {}
-
   void setup() override;
   void dump_config() override;
 
