@@ -163,7 +163,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 1 date"
+    internal: true
     id: nilan_alarm_list_1_date
     accuracy_decimals: 0
     register_type: read
@@ -171,7 +171,7 @@ sensor:
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 1 time"
+    internal: true
     id: nilan_alarm_list_1_time
     accuracy_decimals: 0
     register_type: read
@@ -187,7 +187,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 2 date"
+    internal: true
     id: nilan_alarm_list_2_date
     accuracy_decimals: 0
     register_type: read
@@ -195,7 +195,7 @@ sensor:
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 2 time"
+    internal: true
     id: nilan_alarm_list_2_time
     accuracy_decimals: 0
     register_type: read
@@ -211,7 +211,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 3 date"
+    internal: true
     id: nilan_alarm_list_3_date
     accuracy_decimals: 0
     register_type: read
@@ -219,7 +219,7 @@ sensor:
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Alarm list 3 time"
+    internal: true
     id: nilan_alarm_list_3_time
     accuracy_decimals: 0
     register_type: read
@@ -448,7 +448,75 @@ text_sensor:
     name: "Air Quality Index CO2 (AQI)"
     id: aqi_co2
     icon: mdi:air-filter    
-
+  - platform: template
+    name: "Alarm 1 timestamp"
+    id: nilan_alarm_list_1_datetime
+    lambda: |-
+      uint16_t alarmDate = id(nilan_alarm_list_1_date).state;
+      uint16_t alarmTime = id(nilan_alarm_list_1_time).state;
+      
+      if(!alarmDate ||!alarmTime) return std::string("");
+      
+      // Parse the date
+      auto year = (alarmDate >> 9) + 1980;
+      auto month = (alarmDate >> 5) & 0b00001111;
+      auto day = alarmDate & 0b00011111;
+      auto hour = (alarmTime >> 11) & 0b00011111;
+      auto minute = (alarmTime >> 5) & 0b0011111;
+      auto second = (alarmTime & 0b00011111) * 2;
+      
+      return std::to_string(year) + "-" +
+        ((month < 10) ? "0" : "") + std::to_string(month) + "-" + 
+        ((day < 10) ? "0" : "") + std::to_string(day) + " " +
+        ((hour < 10) ? "0" : "") + std::to_string(hour) + ":" +
+        ((minute < 10) ? "0" : "") + std::to_string(minute) + ":" +
+        ((second < 10) ? "0" : "") + std::to_string(second);
+  - platform: template
+    name: "Alarm 2 timestamp"
+    id: nilan_alarm_list_2_datetime
+    lambda: |-
+      uint16_t alarmDate = id(nilan_alarm_list_2_date).state;
+      uint16_t alarmTime = id(nilan_alarm_list_2_time).state;
+      
+      if(!alarmDate ||!alarmTime) return std::string("");
+      
+      // Parse the date
+      auto year = (alarmDate >> 9) + 1980;
+      auto month = (alarmDate >> 5) & 0b00001111;
+      auto day = alarmDate & 0b00011111;
+      auto hour = (alarmTime >> 11) & 0b00011111;
+      auto minute = (alarmTime >> 5) & 0b0011111;
+      auto second = (alarmTime & 0b00011111) * 2;
+      
+      return std::to_string(year) + "-" +
+        ((month < 10) ? "0" : "") + std::to_string(month) + "-" + 
+        ((day < 10) ? "0" : "") + std::to_string(day) + " " +
+        ((hour < 10) ? "0" : "") + std::to_string(hour) + ":" +
+        ((minute < 10) ? "0" : "") + std::to_string(minute) + ":" +
+        ((second < 10) ? "0" : "") + std::to_string(second);
+  - platform: template
+    name: "Alarm 3 timestamp"
+    id: nilan_alarm_list_3_datetime
+    lambda: |-
+      uint16_t alarmDate = id(nilan_alarm_list_3_date).state;
+      uint16_t alarmTime = id(nilan_alarm_list_3_time).state;
+      
+      if(!alarmDate ||!alarmTime) return std::string("");
+      
+      // Parse the date
+      auto year = (alarmDate >> 9) + 1980;
+      auto month = (alarmDate >> 5) & 0b00001111;
+      auto day = alarmDate & 0b00011111;
+      auto hour = (alarmTime >> 11) & 0b00011111;
+      auto minute = (alarmTime >> 5) & 0b0011111;
+      auto second = (alarmTime & 0b00011111) * 2;
+      
+      return std::to_string(year) + "-" +
+        ((month < 10) ? "0" : "") + std::to_string(month) + "-" + 
+        ((day < 10) ? "0" : "") + std::to_string(day) + " " +
+        ((hour < 10) ? "0" : "") + std::to_string(hour) + ":" +
+        ((minute < 10) ? "0" : "") + std::to_string(minute) + ":" +
+        ((second < 10) ? "0" : "") + std::to_string(second);
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Software version"
