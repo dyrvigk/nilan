@@ -227,6 +227,7 @@ climate:
 
 output:
   - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     id: nilan_reset_alarm
     address: 400
     use_write_multiple: true
