@@ -63,7 +63,7 @@ sensor:
     accuracy_decimals: 1
     device_class: temperature
     register_type: read
-    address: 207
+    address: 202
     filters:
       - multiply: 0.01
 
