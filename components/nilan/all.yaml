@@ -89,17 +89,6 @@ sensor:
     register_type: read
     address: 0
 
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Controller temperature"
-    id: nilan_controller_temp_t0
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    register_type: read
-    address: 200
-    filters:
-      - multiply: 0.01
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -111,19 +100,6 @@ sensor:
     value_type: S_WORD
     register_type: read
     address: 210
-    filters:
-      - multiply: 0.01
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "Room temperature"
-    id: nilan_room_temp_t15
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 215
     filters:
       - multiply: 0.01
 
@@ -622,6 +598,17 @@ text_sensor:
         case 32: type_str = "VP 18 Version 1"; break;
         case 33: type_str = "Combi 300"; break;
         case 34: type_str = "Compact med 4-vejsventil uden køl"; break;
+        case 35: type_str = "test1"; break;
+        case 36: type_str = "test2"; break;
+        case 37: type_str = "test3"; break;
+        case 38: type_str = "test4"; break;
+        case 39: type_str = "test5"; break;
+        case 40: type_str = "test6"; break;
+        case 41: type_str = "test7"; break;
+        case 42: type_str = "test8"; break;
+        case 43: type_str = "test9"; break;
+        case 44: type_str = "test10"; break;
+        case 45: type_str = "test11"; break;
         default: type_str = "Unknown"; break;
       }
       return type_str;
