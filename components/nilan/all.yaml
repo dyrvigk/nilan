@@ -607,7 +607,7 @@ text_sensor:
         case 41: type_str = "test7"; break;
         case 42: type_str = "test8"; break;
         case 43: type_str = "test9"; break;
-        case 44: type_str = "test10"; break;
+        case 44: type_str = "Compact P2 GEO9 Med Jordvarme"; break;
         case 45: type_str = "test11"; break;
         default: type_str = "Unknown"; break;
       }
