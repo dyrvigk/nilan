@@ -58,12 +58,12 @@ sensor:
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Inlet (after heater) temperature"
-    id: nilan_inlet_temp_t2
+    id: nilan_inlet_temp_t7
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     register_type: read
-    address: 202
+    address: 207
     filters:
       - multiply: 0.01
 
@@ -197,7 +197,7 @@ text_sensor:
 climate:
   - platform: nilan
     name: Nilan
-    current_temp_sensor_id: nilan_inlet_temp_t2
+    current_temp_sensor_id: nilan_inlet_temp_t7
     target_temp_sensor_id: nilan_target_temperature_set
     fan_speed_sensor_id: nilan_ventilation_speed_set
     mode_select_id: nilan_set_operation_mode
