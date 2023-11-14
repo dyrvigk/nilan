@@ -1,6 +1,6 @@
 packages:
   remote_package:
-    url: https://github.com/Jopand/esphome_components
+    url: https://github.com/dyrvigk/nilan
     ref: develop
     files: [components/nilan/all.yaml]
     refresh: 0s
