@@ -166,14 +166,14 @@ sensor:
       - multiply: 0.01
 
 # NOT WORKING ON COMFORT MODEL
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Actual inlet fan step"
-#    id: nilan_actual_inlet_fan_step
-#    unit_of_measurement: 'days'
-#    accuracy_decimals: 0
-#    register_type: read
-#    address: 1101
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Actual inlet fan step"
+    id: nilan_actual_inlet_fan_step
+    unit_of_measurement: 'step'
+    accuracy_decimals: 0
+    register_type: read
+    address: 1101
 
 # NOT WORKING ON COMFORT MODEL
 #  - platform: modbus_controller
