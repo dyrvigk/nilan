@@ -314,6 +314,29 @@ binary_sensor:
     id: nilan_compressor_2
     register_type: holding
     address: 110 
+    
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air condenser active"
+    id: nilan_air_condenser_active
+    register_type: holding
+    address: 114 
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Air condenser inactive"
+    id: nilan_air_condenser_inactive
+    register_type: holding
+    address: 115 
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "External radiator heat "
+    id: nilan_external_radiator_heat 
+    register_type: holding
+    address: 122   
+
+  
 
 #text_sensor:
 
