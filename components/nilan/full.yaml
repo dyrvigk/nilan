@@ -161,7 +161,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 215
+    address: 220
     filters:
       - multiply: 0.01   
 
