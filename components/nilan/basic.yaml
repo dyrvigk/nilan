@@ -190,6 +190,7 @@ text_sensor:
         case 14: mode_str = "Frost secure"; break;
         case 15: mode_str = "Service"; break;
         case 16: mode_str = "Alarm"; break;
+        case 17: mode_str = "Heating + Hot water"; break;
         default: mode_str = "Unknown"; break;
       }
       return mode_str;
