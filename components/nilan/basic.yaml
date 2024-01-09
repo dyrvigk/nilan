@@ -49,7 +49,7 @@ sensor:
       
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Outlet T4 temperature"
+    name: "Outlet temperature"
     id: nilan_outlet_temp_t4
     unit_of_measurement: °C
     accuracy_decimals: 1
