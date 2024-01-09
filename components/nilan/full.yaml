@@ -178,6 +178,32 @@ sensor:
     filters:
       - multiply: 0.01   
 
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "T8"
+    id: nilan_t8_temp_t8
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 208
+    filters:
+      - multiply: 0.01   
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "T9"
+    id: nilan_t9_temp_t9
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 208
+    filters:
+      - multiply: 0.01       
   
   
 # NOT WORKING ON COMFORT MODEL
