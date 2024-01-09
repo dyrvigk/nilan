@@ -135,7 +135,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 221
+    address: 231
     filters:
       - multiply: 0.01
 
