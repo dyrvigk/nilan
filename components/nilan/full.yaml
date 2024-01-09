@@ -11,7 +11,7 @@ sensor:
 #########################
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Fresh air intake temperature"
+    name: "Fresh air intake T1 temperature"
     id: nilan_intake_temp_t1
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -24,7 +24,20 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Inlet (before heater) temperature"
+    name: "Afkast T4 temperature"
+    id: nilan_outlet_temp_t4
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 204
+    filters:
+      - multiply: 0.01    
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Inlet (before heater) T2 temperature"
     id: nilan_inlet_temp_t2
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -37,7 +50,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Condenser temperature"
+    name: "Condenser T5 temperature"
     id: nilan_condenser_temp_t5
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -50,7 +63,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Evaporator temperature"
+    name: "Evaporator T6 temperature"
     id: nilan_evap_temp_t6
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -63,7 +76,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Hot weater top temperature"
+    name: "Hot weater top T11 temperature"
     id: nilan_top_temp_t11
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -76,7 +89,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Hot water bottom temperature"
+    name: "Hot water bottom T12 temperature"
     id: nilan_bottom_temp_t12
     unit_of_measurement: °C
     accuracy_decimals: 1
