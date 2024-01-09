@@ -49,7 +49,7 @@ sensor:
       
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Outlet temperature"
+    name: "Outlet T4 temperature"
     id: nilan_outlet_temp_t4
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -201,6 +201,30 @@ text_sensor:
         default: mode_str = "Unknown"; break;
       }
       return mode_str;
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Control Servicemode"
+    id: nilan_service_control_state
+    register_type: read
+    address: 1005
+    lambda: !lambda |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "Off"; break;
+        case 1:  mode_str = "Defrost"; break;
+        case 2:  mode_str = "Flaps"; break;
+        case 3:  mode_str = "Inlet"; break;
+        case 4:  mode_str = "Exhaust"; break;
+        case 5:  mode_str = "Compressor"; break;
+        case 6:  mode_str = "Heating"; break;
+        case 7:  mode_str = "Hot Water"; break;
+        case 8:  mode_str = "Central heat"; break;
+        default: mode_str = "Unknown"; break;
+      }
+      return mode_str;    
 
 climate:
   - platform: nilan
