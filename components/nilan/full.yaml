@@ -135,7 +135,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 231
+    address: 216
     filters:
       - multiply: 0.01
 
@@ -148,7 +148,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 224
+    address: 200
     filters:
       - multiply: 0.01   
 
@@ -161,7 +161,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 223
+    address: 203
     filters:
       - multiply: 0.01    
 
@@ -174,7 +174,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 225
+    address: 220
     filters:
       - multiply: 0.01   
 
@@ -188,7 +188,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 226
+    address: 208
     filters:
       - multiply: 0.01   
 
@@ -201,7 +201,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 227
+    address: 209
     filters:
       - multiply: 0.01 
       
@@ -214,7 +214,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 228
+    address: 217
     filters:
       - multiply: 0.01  
 
@@ -227,7 +227,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 229
+    address: 218
     filters:
       - multiply: 0.01       
 
@@ -240,7 +240,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 230
+    address: 219
     filters:
       - multiply: 0.01           
   
