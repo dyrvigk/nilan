@@ -203,8 +203,46 @@ sensor:
     register_type: read
     address: 208
     filters:
+      - multiply: 0.01 
+      
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "T17"
+    id: nilan_t17_temp_t17
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 217
+    filters:
+      - multiply: 0.01  
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "T18"
+    id: nilan_t18_temp_t18
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 218
+    filters:
       - multiply: 0.01       
-  
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "T19"
+    id: nilan_t19_temp_t19
+    unit_of_measurement: °C
+    accuracy_decimals: 1
+    device_class: temperature
+    value_type: S_WORD
+    register_type: read
+    address: 219
+    filters:
+      - multiply: 0.01           
   
 # NOT WORKING ON COMFORT MODEL
 #  - platform: modbus_controller
