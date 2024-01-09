@@ -89,7 +89,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "EK return temperature"
+    name: "T13"
     id: nilan_return_temp_t13
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -102,7 +102,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "EK supply temperature"
+    name: "T14"
     id: nilan_supply_temp_t14
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -115,7 +115,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Before kondensator"
+    name: "T16"
     id: nilan_before_kondensator_temp_t16
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -128,7 +128,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "After Kondensator"
+    name: "T0"
     id: nilan_after_kondensator_temp_t17
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -141,7 +141,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Buffertank Temp"
+    name: "T3"
     id: nilan_buffertank_temp_t18
     unit_of_measurement: °C
     accuracy_decimals: 1
@@ -154,7 +154,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Outdoor Temp"
+    name: "T20"
     id: nilan_outdoor_temp_t20
     unit_of_measurement: °C
     accuracy_decimals: 1
