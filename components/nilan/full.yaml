@@ -24,7 +24,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "Afkast temperature"
+    name: "Afkast T4 temperature"
     id: nilan_outlet_temp_t7
     unit_of_measurement: °C
     accuracy_decimals: 1
