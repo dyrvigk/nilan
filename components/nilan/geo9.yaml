@@ -128,145 +128,85 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T16"
-    id: nilan_before_kondensator_temp_t16
+    name: "HeatPump Return T16"
+    id: nilan_heatpump_return_temp_t16
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 216
+    address: 1901
     filters:
       - multiply: 0.01
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T0"
-    id: nilan_after_kondensator_temp_t17
+    name: "HeatPump Supply T17"
+    id: nilan_heatpump_supply_temp_t17
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 200
+    address: 1900
     filters:
       - multiply: 0.01   
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T3"
-    id: nilan_buffertank_temp_t18
+    name: "HeatPump Ambient T20"
+    id: nilan_heatpump_ambient_temp_t20
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 203
+    address: 21903
     filters:
       - multiply: 0.01    
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T20"
-    id: nilan_outdoor_temp_t20
+    name: "HeatPump BufferTank T18"
+    id: nilan_heatpump_buffertank_temp_t18
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 220
+    address: 6169
     filters:
       - multiply: 0.01   
 
       
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T8"
-    id: nilan_t8_temp_t8
+    name: "HeatPump Cold Side return T13"
+    id: nilan_heatpump_cold_side_return_t13
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 208
+    address: 6171
     filters:
       - multiply: 0.01   
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
-    name: "T9"
-    id: nilan_t9_temp_t9
+    name: "Heatpump Prespipe T35"
+    id: nilan_heatpump_prespipe_temp_t35
     unit_of_measurement: °C
     accuracy_decimals: 1
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 209
+    address: 6173
     filters:
       - multiply: 0.01 
       
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "T17"
-    id: nilan_t17_temp_t17
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 217
-    filters:
-      - multiply: 0.01  
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "T18"
-    id: nilan_t18_temp_t18
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 218
-    filters:
-      - multiply: 0.01       
-
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
-    name: "T19"
-    id: nilan_t19_temp_t19
-    unit_of_measurement: °C
-    accuracy_decimals: 1
-    device_class: temperature
-    value_type: S_WORD
-    register_type: read
-    address: 219
-    filters:
-      - multiply: 0.01           
   
-# NOT WORKING ON COMFORT MODEL
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Actual inlet fan step"
-#    id: nilan_actual_inlet_fan_step
-#    unit_of_measurement: 'days'
-#    accuracy_decimals: 0
-#    register_type: read
-#    address: 1101
 
-# NOT WORKING ON COMFORT MODEL
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Actual exhaust fan step"
-#    id: nilan_actual_exhaust_fan_step
-#    unit_of_measurement: 'days'
-#    accuracy_decimals: 0
-#    register_type: read
-#    address: 1102
-      
-###########################
-#### HOLDING REGISTERS ####
-###########################
 
 binary_sensor:
 #########################
@@ -366,7 +306,7 @@ binary_sensor:
     name: "Compressor 2"
     id: nilan_compressor_2
     register_type: holding
-    address: 110 
+    address: 1920 
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -391,28 +331,49 @@ binary_sensor:
 
   
 
-#text_sensor:
+text_sensor:
 
-#######################################################################      
-#### WARNING - IF THERE ARE ANY SPECIAL CHARACTERS ON THE DISPLAY, ####
-#### ENABLING THESE SENSORS WILL CRASH THE PROGRAM WHEN PUBLISHING ####
-#######################################################################
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Display upper line"
-#    id: nilan_display_upper_line
-#    force_new_range: true
-#    register_type: read
-#    register_count: 4
-#    response_size: 8
-#    address: 2002
-    
-#  - platform: modbus_controller
-#    modbus_controller_id: nilan_modbus_controller
-#    name: "Display lower line"
-#    id: nilan_display_lower_line
-#    force_new_range: true
-#    register_type: read
-#    register_count: 4
-#    response_size: 8
-#    address: 2007
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Heatpump Control mode"
+    id: nilan_heatpump_state
+    register_type: read
+    address: 1931
+    lambda: !lambda |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "Off"; break;
+        case 1:  mode_str = "Ready"; break;
+        case 2:  mode_str = "Hot Water Startup"; break;
+        case 3:  mode_str = "Hot Water"; break;
+        case 4:  mode_str = "Heating Startup"; break;
+        case 5:  mode_str = "Heating"; break;
+        case 6:  mode_str = "Heatpump Stop"; break;
+        case 7:  mode_str = "El Heating"; break;
+        case 8:  mode_str = "El Hot Water"; break;
+        case 9:  mode_str = "Forced Cold Pump"; break;
+        case 10: mode_str = "Heatpump Stop"; break;
+        case 11: mode_str = "Defrost"; break;
+        case 12: mode_str = "Air Defrost"; break;
+        case 13: mode_str = "Hotgas Defrost"; break;
+        case 14: mode_str = "Drip Delay"; break;
+        case 15: mode_str = "Hot Water + Heatpump Stop"; break;
+        case 16: mode_str = "Heating + Heatpump Stop"; break;
+        case 17: mode_str = "Stop"; break;
+        case 18: mode_str = "Heating + Heatpump Stop"; break;
+        case 19: mode_str = "Hot Water + Heatpump Stop"; break;
+        case 20: mode_str = "Pump Exercise"; break;
+        case 21: mode_str = "Forced Startup"; break;
+        case 22: mode_str = "Forced Running"; break;
+        case 23: mode_str = "Forced Running"; break;
+        case 24: mode_str = "Forced Running Heatpump Stop"; break;
+        case 25: mode_str = "Manual"; break;
+        case 26: mode_str = "Cooling Start"; break;
+        case 27: mode_str = "Cooling"; break;
+        case 28: mode_str = "Ext Stop"; break;
+        case 29: mode_str = "Forced Low Speed"; break;
+        default: mode_str = "Default"; break;
+      }
+      return mode_str;
