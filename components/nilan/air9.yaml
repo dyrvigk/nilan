@@ -137,7 +137,7 @@ sensor:
     register_type: read
     address: 1901
     filters:
-      - multiply: 0.01
+      - multiply: 0.1
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -150,7 +150,7 @@ sensor:
     register_type: read
     address: 1900
     filters:
-      - multiply: 0.01   
+      - multiply: 0.1   
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -163,7 +163,7 @@ sensor:
     register_type: read
     address: 1903
     filters:
-      - multiply: 0.01    
+      - multiply: 0.1    
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -176,7 +176,7 @@ sensor:
     register_type: read
     address: 6169
     filters:
-      - multiply: 0.01   
+      - multiply: 0.1   
 
       
   - platform: modbus_controller
@@ -190,7 +190,7 @@ sensor:
     register_type: read
     address: 6171
     filters:
-      - multiply: 0.01   
+      - multiply: 0.1   
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
@@ -203,7 +203,7 @@ sensor:
     register_type: read
     address: 6173
     filters:
-      - multiply: 0.01 
+      - multiply: 0.1 
       
   
 
