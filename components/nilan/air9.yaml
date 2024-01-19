@@ -161,7 +161,7 @@ sensor:
     device_class: temperature
     value_type: S_WORD
     register_type: read
-    address: 21903
+    address: 1903
     filters:
       - multiply: 0.01    
 
