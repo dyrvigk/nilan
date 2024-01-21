@@ -305,7 +305,7 @@ binary_sensor:
     modbus_controller_id: nilan_modbus_controller
     name: "Compressor 2"
     id: nilan_compressor_2
-    register_type: holding
+    register_type: read
     address: 1920 
     
   - platform: modbus_controller
