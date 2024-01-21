@@ -452,7 +452,8 @@ number:
     force_new_range: true
     use_write_multiple: true
     multiply: 10
-
+    lambda: "return x-65536;"
+    write_lambda: "return x+65536;"
 
 text_sensor:
 
