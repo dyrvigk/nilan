@@ -451,8 +451,8 @@ number:
     address: 6564
     force_new_range: true
     use_write_multiple: true
-    lambda: "return x-65536/10;"
-    write_lambda: "return x+65536*10;"
+    lambda: "return x-65536;"
+    write_lambda: "return x+65536;"
 
 text_sensor:
 
