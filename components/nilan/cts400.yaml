@@ -228,7 +228,7 @@ text_sensor:
     id: nilan_alarm_list_1_id
     filters:
       - map:
-        - 00 -> ingen alarm
+        - 00 -> ingenalarm
         - 01 -> HARDWARE
  
 
