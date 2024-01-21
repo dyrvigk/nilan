@@ -203,6 +203,14 @@ binary_sensor:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
+    name: "Bypass damper status"
+    id: nilan_bypass_damper
+    register_type: read
+    address: 23
+    bitmask: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     name: "Summer mode"
     id: nilan_is_summer
     register_type: read
@@ -224,6 +232,15 @@ text_sensor:
       } else {
         return {"Filter OK"};
       }  
+
+  - platform: template
+    name: "Bypass damper status"
+    lambda: |-
+      if (id(nilan_filter_alarm).state) {
+        return {"Bypass Open"};
+      } else {
+        return {"Bypass Closed"};
+      }     
 number:
     
   - platform: modbus_controller
