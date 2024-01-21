@@ -272,7 +272,7 @@ number:
     address: 34
     multiply: 10
 
-    - platform: modbus_controller
+  - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
     name: "Days between filter change"
     id: nilan_days_between_filter_change_set
