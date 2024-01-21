@@ -382,8 +382,8 @@ number:
     modbus_controller_id: nilan_modbus_controller
     name: "Heatpump Outdoor temp stop"
     id: nilan_heatpump_outdoor_temp_stop_set
-    min_value: 45.0
-    max_value: 10.0
+    min_value: -45.0
+    max_value:  10.0
     step: 1.0
     address: 6538
     force_new_range: true
@@ -445,8 +445,8 @@ number:
     modbus_controller_id: nilan_modbus_controller
     name: "Heatpump Evaporator Min"
     id: nilan_heatpump_evaporator_min_temp
-    min_value: 45.0
-    max_value: 5.0
+    min_value: -45.0
+    max_value: -5.0
     step: 1.0
     address: 6564
     force_new_range: true
