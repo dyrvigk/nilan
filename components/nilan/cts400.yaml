@@ -223,39 +223,14 @@ binary_sensor:
 
 
 text_sensor:
-  - platform: modbus_controller
-    modbus_controller_id: nilan_modbus_controller
+  - platform: template
     name: "Alarm"
-    id: nilan_Alarm_state
-    register_type: read
-    address: 51
-    lambda: !lambda |-
-      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
-      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
-      std::string mode_str;
-      switch (int_mode) {
-        case 00:  mode_str = "ingen alarm"; break;
-        case 01:  mode_str = "HARDWARE"; break;
-        case 02:  mode_str = "TIMEOUT"; break;
-        case 03:  mode_str = "BRAND"; break;
-        case 07:  mode_str = "FROST"; break;
-        case 08:  mode_str = "FROST"; break;
-        case 10:  mode_str = "OVERHED"; break;
-        case 11:  mode_str = "LUFTFLOW"; break;
-        case 15:  mode_str = "RUM LAV"; break;
-        case 16:  mode_str = "SOFTWARE"; break;
-        case 17: mode_str = "WATCHDOG"; break;
-        case 18: mode_str = "CONFIG"; break;
-        case 19: mode_str = "FILTER"; break;
-        case 21: mode_str = "INDSTIL TID"; break;
-        case 22: mode_str = "T LUFT"; break;
-        case 71: mode_str = "VEKS AFR"; break;
-        case 91: mode_str = "OPT IO"; break;
-        case 92: mode_str = "NULSTIL"; break;
-        default: mode_str = "Unknown"; break;
-      }
-      return mode_str;
-
+    id: nilan_alarm_list_1_id
+    filters:
+      - map:
+        - 00 -> ingen alarm
+        - 01 -> HARDWARE
+ 
 
   
   - platform: template
