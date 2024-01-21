@@ -284,10 +284,10 @@ sensor:
     id: nilan_compressor_capasity
     unit_of_measurement: '%'
     accuracy_decimals: 0
-    register_type: holding
+    register_type: read
     address: 6185
     filters:
-      - multiply: 0.01
+      - multiply: 0.1
 
 number:
   - platform: modbus_controller
