@@ -223,14 +223,7 @@ binary_sensor:
 
 
 text_sensor:
-  - platform: template
-    name: "Alarm"
-    id: nilan_alarm_list_1_id
-    filters:
-      - map:
-        - 00 -> ingenalarm
-        - 01 -> HARDWARE
- 
+  
 
   
   - platform: template
