@@ -256,6 +256,43 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
+    name: "Low level humidity (%)"
+    id: nilan_low_level_humidity_set
+    min_value: 15
+    max_value: 45
+    step: 1.0
+    address: 31 
+    multiply: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Fan speed level by low level humidity"
+    id: nilan_fan_speed_low_level_humidity_set
+    min_value: 0
+    max_value: 3
+    step: 1.0
+    address: 32   
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Fan speed level by high level humidity"
+    id: nilan_fan_speed_high_level_humidity_set
+    min_value: 2
+    max_value: 4
+    step: 1.0
+    address: 33   
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Timeout high level humidity"
+    id: nilan_timeout_high_level_humidity_set
+    min_value: 0
+    max_value: 180
+    step: 1.0
+    address: 34   
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
     name: "Temperature set"
     id: nilan_target_temperature_set
     min_value: 10
@@ -263,6 +300,16 @@ number:
     step: 1.0
     address: 37
     multiply: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: nilan_modbus_controller
+    name: "Summer / winter mode"
+    id: nilan_summer_winter_temperature_set
+    min_value: 5
+    max_value: 20
+    step: 1.0
+    address: 45
+    multiply: 10  
     
   - platform: modbus_controller
     modbus_controller_id: nilan_modbus_controller
