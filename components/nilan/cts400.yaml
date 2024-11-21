@@ -458,14 +458,14 @@ switch:
     address: 51
  
   - platform: gpio
-    pin: 3
+    pin: ${user_function_1_output}
     name: "Brugervalg 1"   
     id: nilan_user_function2_switch
       
   - platform: gpio
-    pin: 4
+    pin: ${user_function_2_output}
     name: "Brugervalg 2"   
-    id: nilan_user_funtion2_switch       
+    id: nilan_user_funtion2_switch        
     
 climate:
   - platform: nilan
