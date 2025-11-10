@@ -1,4 +1,6 @@
-
+external_components:
+  - source: github://dyrvigk/nilan@main
+    refresh: 0s
     
 nilan:
     
